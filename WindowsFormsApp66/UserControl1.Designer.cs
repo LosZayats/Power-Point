@@ -57,6 +57,8 @@
             this.Name = "UserControl1";
             this.Size = new System.Drawing.Size(255, 280);
             this.Load += new System.EventHandler(this.UserControl1_Load);
+            this.Click += new System.EventHandler(this.UserControl1_Click);
+            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.UserControl1_MouseDown);
             this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.UserControl1_MouseMove);
             this.ResumeLayout(false);
 

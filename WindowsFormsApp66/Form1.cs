@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -14,31 +15,59 @@ namespace WindowsFormsApp66
     {
         public Form1()
         {
-            InitializeComponent();            
+            InitializeComponent();
+            font = label1.Font;
+            panel1.BackgroundImage = UserControl2.Gradient.MakeGradient(Color.OrangeRed, UserControl2.Direction.down, panel1);
+            panel2.BackgroundImage = UserControl2.Gradient.MakeGradient(Color.OrangeRed, UserControl2.Direction.down, panel1);
+            panel3.BackgroundImage = UserControl2.Gradient.MakeGradient(Color.OrangeRed, UserControl2.Direction.down, panel1);
+            panel4.BackgroundImage = UserControl2.Gradient.MakeGradient(Color.OrangeRed, UserControl2.Direction.down, panel1);
+            panel1.Controls.Add(button1);
+            panel1.Controls.Add(button2);
+            panel5.BackgroundImage = UserControl2.Gradient.MakeGradient(Color.OrangeRed, UserControl2.Direction.up, panel1);
+            panel6.BackgroundImage = UserControl2.Gradient.MakeGradient(Color.OrangeRed, UserControl2.Direction.up, panel1);
+            panel7.BackgroundImage = UserControl2.Gradient.MakeGradient(Color.OrangeRed, UserControl2.Direction.up, panel1);
+            panel8.BackgroundImage = UserControl2.Gradient.MakeGradient(Color.OrangeRed, UserControl2.Direction.up, panel1);
+            panel7.Controls.Add(button3);
+            panel7.Controls.Add(button4);
         }
         bool b;
-        class Page
+        public static RichTextBox workTextBox;
+        Point DownPoint;
+        bool ableToMove;
+        public static int counter;
+        public static Color allColor = Color.Black;
+        public static Font font;
+        public static List<Text1> texts = new List<Text1>();
+        public static List<RichTextBox> richTextBoxes = new List<RichTextBox>();
+        public static List<int> layers = new List<int>();
+        public static Page PageNow = new Page();
+        public class Page
         {
-            public static List<Text1> visComponents = new List<Text1>();
-            public static List<int> layers = new List<int>();
-            public static Bitmap imageOfPage = new Bitmap(1920, 1080);
+            public List<Text1> visComponents = new List<Text1>();
+            public List<int> layers = new List<int>();
+            public Bitmap imageOfPage = new Bitmap(1920, 1080);
             public Page()
             {
+                page = Graphics.FromImage(imageOfPage);
+            }
+            public void Clear(Text1 element)
+            {
+                var ind = visComponents.IndexOf(element);
+                visComponents.Remove(element);
+                layers.Add(layers[ind]);
             }
             public void VisualizeOnPage(Text1 element, int layer)
             {
                 page.Clear(Color.Transparent);
-                Page.visComponents.Add(element);
-                Page.layers.Add(layer);
+                visComponents.Add(element);
+                layers.Add(layer);
                 int index = 0;
                 for (bool end = true; end;)
                 {
-                    var ind = Page.layers.IndexOf(index);
-                    if (ind !=-1)
+                    var ind = layers.IndexOf(index);
+                    if (ind != -1)
                     {
-                        page.DrawImage(Page.visComponents[ind].image, element.drawPoint);
-                        //Page.visComponents.Remove(Page.visComponents[index]);
-                        //Page.layers.Remove(index);
+                        page.DrawImage(visComponents[ind].image, element.drawPoint);
                     }
                     if (ind == -1)
                     {
@@ -48,54 +77,158 @@ namespace WindowsFormsApp66
                 }
 
             }
-            public Graphics page = Graphics.FromImage(imageOfPage);
+            public Graphics page;
+            public List<Text1> texts2 = new List<Text1>();
+            public List<RichTextBox> richTextBoxes2 = new List<RichTextBox>();
+            public List<int> layers2 = new List<int>();
+            public int counter;
         }
-        class Text1
+        public class Text1
         {
-            public Bitmap image = new Bitmap(1920, 1080);
+            public Bitmap image;
             public System.Drawing.Point drawPoint = new System.Drawing.Point();
-            public void VisMe(TextBox text, System.Drawing.Point drawPoint, Label l, Color c)
+            public void VisMe(RichTextBox text, System.Drawing.Point drawPoint, Label l, Color c)
             {
+                image = new Bitmap(1920, 1080);
                 var graph = Graphics.FromImage(image);
                 this.drawPoint = drawPoint;
-                graph.DrawString(text.Text, l.Font,new SolidBrush(c), new System.Drawing.Point(0, 0)/*new StringFormat(StringFormatFlags.NoClip)*/);
-            }          
+                graph.DrawString(text.Text, font, new SolidBrush(c), new System.Drawing.Point(0, 0)/*new StringFormat(StringFormatFlags.NoClip)*/);
+            }
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
+            var text2 = new Text1();
+            var text = new Text1();
+            var page = new Page();
+            page.VisualizeOnPage(text2, 0);
+            page.VisualizeOnPage(text, 1);
+            pictureBox1.Image = PageNow.imageOfPage;
+
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if(b)
+        }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            var textBox = new RichTextBox();
+            textBox.Left = 100;
+            textBox.Top = 200;
+            textBox.Height = 20;
+            textBox.Parent = this;
+            texts.Add(new Text1());
+            this.Controls.Add(textBox);
+            textBox.BorderStyle = BorderStyle.None;
+            textBox.Cursor = Cursors.Hand;
+            textBox.BringToFront();
+            workTextBox = textBox;
+            textBox.MouseDown += textBox2_MouseDown;
+            textBox.TextChanged += textBox2_TextChanged;
+            textBox.MouseMove += textBox2_MouseMove;
+            textBox.MouseUp += textBox2_MouseUp;
+            layers.Add(counter);
+            richTextBoxes.Add(textBox);
+            counter++;
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+            Text1 text1 = null;
+            text1 = texts[texts.Count - 1];
+            var send = (RichTextBox)sender;
+            text1.VisMe(send, new Point(send.Left, send.Top), label1, allColor);
+        }
+
+        private void textBox2_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
             {
-                var text2 = new Text1();
-                var text = new Text1();
-                var page = new Page();
-                text.VisMe(textBox1, new System.Drawing.Point(20, 20), label1, Color.Blue);
-                text2.VisMe(textBox2, new System.Drawing.Point(20, 30), label1, Color.Orange);
-                page.VisualizeOnPage(text2, 0);
-                page.VisualizeOnPage(text, 1);
-                pictureBox1.Image = Page.imageOfPage;
-                Page.layers.Clear();
-                Page.visComponents.Clear();
-                b = false;
+                DownPoint.Y = e.Y;
+                DownPoint.X = e.X;
+                ableToMove = true;
+                workTextBox = (RichTextBox)sender;
+                workTextBox.BorderStyle = BorderStyle.None;
             }
-            else
+            else if (e.Button == MouseButtons.Right)
             {
-                var text2 = new Text1();
-                var text = new Text1();
-                var page = new Page();
-                text.VisMe(textBox1, new System.Drawing.Point(20, 20), label1, Color.Blue);
-                text2.VisMe(textBox2, new System.Drawing.Point(20, 30), label1, Color.Orange);
-                page.VisualizeOnPage(text2, 1);
-                page.VisualizeOnPage(text, 0);
-                pictureBox1.Image = Page.imageOfPage;
-                Page.layers.Clear();
-                Page.visComponents.Clear();
-                b = true;
+                userControl21.Visible = true;
+                workTextBox = (RichTextBox)sender;
+                userControl21.Left = workTextBox.Left;
+                userControl21.Top = workTextBox.Top - userControl21.Height;
             }
+
+        }
+
+        private void textBox2_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (ableToMove)
+            {
+                var send = (RichTextBox)sender;
+                if (send.Top <= 100)
+                {
+                    send.Top = 100;
+                }
+                else if (send.Top + send.Height >= this.Height - 40)
+                {
+                    send.Top = this.Height - 60;
+                }
+                else
+                {
+                    send.Top += e.Y - DownPoint.Y;
+                }
+                if (send.Left + send.Width >= this.Width - 20)
+                {
+                    send.Left = this.Width - 14 - send.Width;
+                }
+                else if (send.Left <= 0)
+                {
+                    send.Left = 0;
+                }
+                else
+                {
+                    send.Left += e.X - DownPoint.X;
+                }
+            }
+        }
+
+        private void textBox2_MouseUp(object sender, MouseEventArgs e)
+        {
+            ableToMove = false;
+            workTextBox.BackColor = Color.WhiteSmoke;
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (workTextBox != null)
+            {
+                workTextBox.BackColor = Color.LightCyan;
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            foreach (var text in texts)
+            {
+                text.drawPoint.X = richTextBoxes[texts.IndexOf(text)].Left;
+                text.drawPoint.Y = richTextBoxes[texts.IndexOf(text)].Top;
+                PageNow.VisualizeOnPage(text, layers[texts.IndexOf(text)]);
+            }
+            pictureBox1.Image = PageNow.imageOfPage;
+            PageNow.layers.Clear();
+            PageNow.visComponents.Clear();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            var page = new Page();
+            counter = 0;
         }
     }
 }
