@@ -47,7 +47,7 @@ namespace WindowsFormsApp66
             panel7.Controls.Add(button4);
             panel7.Controls.Add(label2);
             label2.BringToFront();
-            var load = new ProgrammSettings();
+            var load = LoadSettings();
             if (load.pages == null)
             {
                 load.pages = new List<Page2>();
@@ -131,12 +131,14 @@ namespace WindowsFormsApp66
         {
             public Bitmap image;
             public System.Drawing.Point drawPoint = new System.Drawing.Point();
-            public void VisMe(RichTextBox text, System.Drawing.Point drawPoint, Label l, Color c)
+            public string text2;
+            public void VisMe(RichTextBox text, System.Drawing.Point drawPoint, Color c)
             {
                 image = new Bitmap(1920, 1080);
                 var graph = Graphics.FromImage(image);
                 this.drawPoint = drawPoint;
                 graph.DrawString(text.Text, font, new SolidBrush(c), new System.Drawing.Point(0, 0)/*new StringFormat(StringFormatFlags.NoClip)*/);
+                text2 = text.Text;
             }
         }
 
@@ -182,7 +184,7 @@ namespace WindowsFormsApp66
             Text1 text1 = null;
             text1 = texts[texts.Count - 1];
             var send = (RichTextBox)sender;
-            text1.VisMe(send, new Point(send.Left, send.Top), label1, allColor);
+            text1.VisMe(send, new Point(send.Left, send.Top), allColor);
         }
 
         private void textBox2_MouseDown(object sender, MouseEventArgs e)
@@ -279,32 +281,40 @@ namespace WindowsFormsApp66
                 pictureBox1.Image = PageNow.imageOfPage;
             }
             label2.Text = pageNum.ToString();
+            SaveSettings(loadSettings);
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
             var loadSettings = LoadSettings();
             var page2 = new Page2();
-            pictureBox1.Image = null;
+            pictureBox1.Image = null;                     
             if (loadSettings.pages.Count == pageNum + 1)
             {
                 page2.layers2 = layers;
                 page2.counter = counter;
                 page2.texts2 = texts;
-                loadSettings.pages[pageNum] = page2;
+                loadSettings.pages[pageNum] = page2;                
                 var page3 = new Page2();
                 loadSettings.pages.Add(page3);
                 PageNow = new Page();
                 pageNum++;
             }
-            else if (loadSettings.pages.Count > pageNum + 1)
+            else if (loadSettings.pages.Count > pageNum)
             {
-                var page = loadSettings.pages[pageNum];
+                var page = loadSettings.pages[pageNum+1];                
                 layers = page.layers2;
                 texts = page.texts2;
-                counter = page.counter;
+                counter = page.counter;                
+                //var page4 = loadSettings.pages[pageNum];
+                //page4.layers2 = layers;
+                //page4.counter = counter;
+                //page4.texts2 = texts;
                 foreach (var text in texts)
                 {
+                    var textbox = new RichTextBox();
+                    textbox.Text = text.text2;
+                    text.VisMe(textbox, text.drawPoint, allColor);
                     PageNow.VisualizeOnPage(text, 0);
                     pictureBox1.Image = PageNow.imageOfPage;
                 }
