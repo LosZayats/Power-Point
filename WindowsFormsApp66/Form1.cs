@@ -255,6 +255,13 @@ namespace WindowsFormsApp66
 
         private void button2_Click(object sender, EventArgs e)
         {
+            var loadSettings = LoadSettings();
+            var page2 = new Page2();
+            page2.layers2 = layers;
+            page2.counter = counter;
+            page2.texts2 = texts;
+            loadSettings.pages[pageNum] = page2;
+            SaveSettings(loadSettings);
             foreach (var text in texts)
             {
                 text.drawPoint.X = richTextBoxes[texts.IndexOf(text)].Left;
@@ -275,6 +282,7 @@ namespace WindowsFormsApp66
             texts = page.texts2;
             counter = page.counter;
             pageNum--;
+            PageNow = new Page();
             foreach (var text in texts)
             {
                 PageNow.VisualizeOnPage(text, 0);
@@ -286,15 +294,23 @@ namespace WindowsFormsApp66
 
         private void button4_Click(object sender, EventArgs e)
         {
+            foreach(var textbox in Controls )
+            {
+                var text = textbox as RichTextBox;
+                if(text!=null)
+                {
+                    text.Dispose(); 
+                }
+            }
             var loadSettings = LoadSettings();
             var page2 = new Page2();
-            pictureBox1.Image = null;                     
-            if (loadSettings.pages.Count == pageNum + 1)
+            pictureBox1.Image = null;
+            if (loadSettings.pages.Count <= pageNum + 1)
             {
                 page2.layers2 = layers;
                 page2.counter = counter;
                 page2.texts2 = texts;
-                loadSettings.pages[pageNum] = page2;                
+                loadSettings.pages[pageNum] = page2;
                 var page3 = new Page2();
                 loadSettings.pages.Add(page3);
                 PageNow = new Page();
@@ -302,13 +318,14 @@ namespace WindowsFormsApp66
             }
             else if (loadSettings.pages.Count > pageNum)
             {
-                var page = loadSettings.pages[pageNum+1];                
+                var page = loadSettings.pages[pageNum + 1];
                 layers = page.layers2;
                 texts = page.texts2;
-                counter = page.counter;                
+                counter = page.counter;
                 //var page4 = loadSettings.pages[pageNum];
                 //page4.layers2 = layers;
                 //page4.counter = counter;
+                PageNow = new Page();
                 //page4.texts2 = texts;
                 foreach (var text in texts)
                 {
