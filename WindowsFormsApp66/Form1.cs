@@ -255,6 +255,7 @@ namespace WindowsFormsApp66
 
         private void button2_Click(object sender, EventArgs e)
         {
+            PageNow.page.Clear(Color.Transparent);
             var loadSettings = LoadSettings();
             var page2 = new Page2();
             page2.layers2 = layers;
@@ -275,17 +276,25 @@ namespace WindowsFormsApp66
 
         private void button3_Click(object sender, EventArgs e)
         {
+            foreach (var textbox in Controls)
+            {
+                var text = textbox as RichTextBox;
+                if (text != null)
+                {
+                    text.Dispose();
+                }
+            }
             var loadSettings = LoadSettings();
+            pageNum--;
             pictureBox1.Image = null;
             var page = loadSettings.pages[pageNum];
             layers = page.layers2;
             texts = page.texts2;
-            counter = page.counter;
-            pageNum--;
+            counter = page.counter;            
             PageNow = new Page();
             foreach (var text in texts)
             {
-                PageNow.VisualizeOnPage(text, 0);
+                PageNow.VisualizeOnPage(text, layers[texts.IndexOf(text)]);
                 pictureBox1.Image = PageNow.imageOfPage;
             }
             label2.Text = pageNum.ToString();
@@ -332,7 +341,7 @@ namespace WindowsFormsApp66
                     var textbox = new RichTextBox();
                     textbox.Text = text.text2;
                     text.VisMe(textbox, text.drawPoint, allColor);
-                    PageNow.VisualizeOnPage(text, 0);
+                    PageNow.VisualizeOnPage(text, layers[texts.IndexOf(text)]);
                     pictureBox1.Image = PageNow.imageOfPage;
                 }
                 pageNum++;
