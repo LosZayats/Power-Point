@@ -8,11 +8,27 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace WindowsFormsApp66
 {
     public partial class Form1 : Form
     {
+        const string SettingsFileName = "презентация.pttx";
+        [Serializable] //Это атрибут, который позволяет автоматически сериализовать и десериализовать 
+        public struct ProgrammSettings
+        {
+            public List<Page2> pages;
+        }
+        public static void SaveSettings(ProgrammSettings settings)
+        {
+            using (Stream stream = File.Open(SettingsFileName, FileMode.Create))
+            {
+                var formatter = new BinaryFormatter();
+                formatter.Serialize(stream, settings);
+            }
+        }
         public Form1()
         {
             InitializeComponent();
@@ -29,6 +45,16 @@ namespace WindowsFormsApp66
             panel8.BackgroundImage = UserControl2.Gradient.MakeGradient(Color.OrangeRed, UserControl2.Direction.up, panel1);
             panel7.Controls.Add(button3);
             panel7.Controls.Add(button4);
+            panel7.Controls.Add(label2);
+            label2.BringToFront();
+            var load = new ProgrammSettings();
+            if (load.pages == null)
+            {
+                load.pages = new List<Page2>();
+            }
+            load.pages.Add(new Page2());
+            SaveSettings(load);
+
         }
         bool b;
         public static RichTextBox workTextBox;
@@ -37,10 +63,24 @@ namespace WindowsFormsApp66
         public static int counter;
         public static Color allColor = Color.Black;
         public static Font font;
+        int pageNum = 0;
         public static List<Text1> texts = new List<Text1>();
         public static List<RichTextBox> richTextBoxes = new List<RichTextBox>();
         public static List<int> layers = new List<int>();
         public static Page PageNow = new Page();
+        public static ProgrammSettings LoadSettings()
+        {
+            if (File.Exists(SettingsFileName))
+            {
+                using (Stream stream = File.Open(SettingsFileName, FileMode.Open))
+                {
+                    var formatter = new BinaryFormatter();
+                    return (ProgrammSettings)formatter.Deserialize(stream);
+                }
+            }
+            return default(ProgrammSettings);
+        }
+        [Serializable] //Это атрибут, который позволяет автоматически сериализовать и десериализовать 
         public class Page
         {
             public List<Text1> visComponents = new List<Text1>();
@@ -78,11 +118,15 @@ namespace WindowsFormsApp66
 
             }
             public Graphics page;
+        }
+        [Serializable]
+        public class Page2
+        {
             public List<Text1> texts2 = new List<Text1>();
-            public List<RichTextBox> richTextBoxes2 = new List<RichTextBox>();
             public List<int> layers2 = new List<int>();
             public int counter;
         }
+        [Serializable]
         public class Text1
         {
             public Bitmap image;
@@ -222,13 +266,52 @@ namespace WindowsFormsApp66
 
         private void button3_Click(object sender, EventArgs e)
         {
-
+            var loadSettings = LoadSettings();
+            pictureBox1.Image = null;
+            var page = loadSettings.pages[pageNum];
+            layers = page.layers2;
+            texts = page.texts2;
+            counter = page.counter;
+            pageNum--;
+            foreach (var text in texts)
+            {
+                PageNow.VisualizeOnPage(text, 0);
+                pictureBox1.Image = PageNow.imageOfPage;
+            }
+            label2.Text = pageNum.ToString();
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            var page = new Page();
-            counter = 0;
+            var loadSettings = LoadSettings();
+            var page2 = new Page2();
+            pictureBox1.Image = null;
+            if (loadSettings.pages.Count == pageNum + 1)
+            {
+                page2.layers2 = layers;
+                page2.counter = counter;
+                page2.texts2 = texts;
+                loadSettings.pages[pageNum] = page2;
+                var page3 = new Page2();
+                loadSettings.pages.Add(page3);
+                PageNow = new Page();
+                pageNum++;
+            }
+            else if (loadSettings.pages.Count > pageNum + 1)
+            {
+                var page = loadSettings.pages[pageNum];
+                layers = page.layers2;
+                texts = page.texts2;
+                counter = page.counter;
+                foreach (var text in texts)
+                {
+                    PageNow.VisualizeOnPage(text, 0);
+                    pictureBox1.Image = PageNow.imageOfPage;
+                }
+                pageNum++;
+            }
+            label2.Text = pageNum.ToString();
+            SaveSettings(loadSettings);
         }
     }
 }
