@@ -107,7 +107,7 @@ namespace WindowsFormsApp66
                     var ind = layers.IndexOf(index);
                     if (ind != -1)
                     {
-                        page.DrawImage(visComponents[ind].image, element.drawPoint);
+                        page.DrawImage(visComponents[ind].image, 0,0);
                     }
                     if (ind == -1)
                     {
@@ -119,6 +119,28 @@ namespace WindowsFormsApp66
             }
             public Graphics page;
         }
+        public void Func()
+        {
+            foreach (var textbox in Controls)
+            {
+                var text = textbox as RichTextBox;
+                if (text != null)
+                {
+                    text.Dispose();
+                }
+            }
+            foreach(var textbox in Controls)
+            {
+                var text = textbox as RichTextBox;
+                if(text!=null)
+                {
+                    Func();
+                }
+            }
+            richTextBoxes.Clear();               
+            counter = 0;
+        }
+
         [Serializable]
         public class Page2
         {
@@ -137,7 +159,7 @@ namespace WindowsFormsApp66
                 image = new Bitmap(1920, 1080);
                 var graph = Graphics.FromImage(image);
                 this.drawPoint = drawPoint;
-                graph.DrawString(text.Text, font, new SolidBrush(c), new System.Drawing.Point(0, 0)/*new StringFormat(StringFormatFlags.NoClip)*/);
+                graph.DrawString(text.Text, font, new SolidBrush(c), drawPoint);
                 text2 = text.Text;
             }
         }
@@ -177,12 +199,32 @@ namespace WindowsFormsApp66
             layers.Add(counter);
             richTextBoxes.Add(textBox);
             counter++;
+            //Text1 removing = null;
+            //foreach(var text in texts)
+            //{
+            //    foreach (var text2 in texts)
+            //    {
+            //        if(text.Equals(text2))
+            //        {
+            //            removing = text2;
+            //        }
+            //    }
+            //}
+            //texts.Remove(removing);
         }
 
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
+            int ind = 0;
+            foreach (var textbox in texts)
+            {
+                if (textbox.text2 == workTextBox.Text)
+                {
+                    ind = texts.IndexOf(textbox);
+                }
+            }
             Text1 text1 = null;
-            text1 = texts[texts.Count - 1];
+            text1 = texts[ind];
             var send = (RichTextBox)sender;
             text1.VisMe(send, new Point(send.Left, send.Top), allColor);
         }
@@ -265,9 +307,17 @@ namespace WindowsFormsApp66
             SaveSettings(loadSettings);
             foreach (var text in texts)
             {
-                text.drawPoint.X = richTextBoxes[texts.IndexOf(text)].Left;
-                text.drawPoint.Y = richTextBoxes[texts.IndexOf(text)].Top;
-                PageNow.VisualizeOnPage(text, layers[texts.IndexOf(text)]);
+                if(text.drawPoint.Y == 0)
+                {
+                }
+                else
+                {
+
+                    text.drawPoint.X = richTextBoxes[texts.IndexOf(text)].Left;
+                    text.drawPoint.Y = richTextBoxes[texts.IndexOf(text)].Top;
+                    text.VisMe(richTextBoxes[texts.IndexOf(text)], text.drawPoint, allColor);
+                    PageNow.VisualizeOnPage(text, layers[texts.IndexOf(text)]);
+                }
             }
             pictureBox1.Image = PageNow.imageOfPage;
             PageNow.layers.Clear();
@@ -303,14 +353,7 @@ namespace WindowsFormsApp66
 
         private void button4_Click(object sender, EventArgs e)
         {
-            foreach(var textbox in Controls )
-            {
-                var text = textbox as RichTextBox;
-                if(text!=null)
-                {
-                    text.Dispose(); 
-                }
-            }
+            Func();   
             var loadSettings = LoadSettings();
             var page2 = new Page2();
             pictureBox1.Image = null;
@@ -324,30 +367,32 @@ namespace WindowsFormsApp66
                 loadSettings.pages.Add(page3);
                 PageNow = new Page();
                 pageNum++;
+                SaveSettings(loadSettings);
             }
             else if (loadSettings.pages.Count > pageNum)
             {
-                var page = loadSettings.pages[pageNum + 1];
-                layers = page.layers2;
-                texts = page.texts2;
-                counter = page.counter;
                 //var page4 = loadSettings.pages[pageNum];
                 //page4.layers2 = layers;
                 //page4.counter = counter;
+                //PageNow = new Page();
+                //page4.texts2 = texts;      
                 PageNow = new Page();
-                //page4.texts2 = texts;
+                var page = loadSettings.pages[pageNum+1];
+                layers = page.layers2;
+                texts = page.texts2;
+                counter = page.counter;
+                PageNow.page.Clear(Color.Transparent);                                                      
                 foreach (var text in texts)
                 {
-                    var textbox = new RichTextBox();
-                    textbox.Text = text.text2;
-                    text.VisMe(textbox, text.drawPoint, allColor);
+                    text.VisMe(new RichTextBox() {Text = text.text2 }, text.drawPoint, allColor);
                     PageNow.VisualizeOnPage(text, layers[texts.IndexOf(text)]);
-                    pictureBox1.Image = PageNow.imageOfPage;
                 }
+                pictureBox1.Image = PageNow.imageOfPage;
+                PageNow.layers.Clear();
+                PageNow.visComponents.Clear();
                 pageNum++;
             }
-            label2.Text = pageNum.ToString();
-            SaveSettings(loadSettings);
+            label2.Text = pageNum.ToString();            
         }
     }
 }
