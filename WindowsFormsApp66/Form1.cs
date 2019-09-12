@@ -43,8 +43,8 @@ namespace WindowsFormsApp66
             panel6.BackgroundImage = UserControl2.Gradient.MakeGradient(Color.OrangeRed, UserControl2.Direction.up, panel1);
             panel7.BackgroundImage = UserControl2.Gradient.MakeGradient(Color.OrangeRed, UserControl2.Direction.up, panel1);
             panel8.BackgroundImage = UserControl2.Gradient.MakeGradient(Color.OrangeRed, UserControl2.Direction.up, panel1);
-            panel7.Controls.Add(button3);
-            panel7.Controls.Add(button4);
+            panel8.Controls.Add(button3);
+            panel6.Controls.Add(button4);
             panel7.Controls.Add(label2);
             label2.BringToFront();
             var load = LoadSettings();
@@ -278,6 +278,8 @@ namespace WindowsFormsApp66
                 {
                     send.Left += e.X - DownPoint.X;
                 }
+                var ind = richTextBoxes.IndexOf((RichTextBox)sender);
+                texts[ind].drawPoint = richTextBoxes[ind].Location;
             }
         }
 
@@ -297,31 +299,42 @@ namespace WindowsFormsApp66
 
         private void button2_Click(object sender, EventArgs e)
         {
-            PageNow.page.Clear(Color.Transparent);
-            var loadSettings = LoadSettings();
-            var page2 = new Page2();
-            page2.layers2 = layers;
-            page2.counter = counter;
-            page2.texts2 = texts;
-            loadSettings.pages[pageNum] = page2;
-            SaveSettings(loadSettings);
-            foreach (var text in texts)
+            bool ex = false;
+            foreach(var text in Controls)
             {
-                if(text.drawPoint.Y == 0)
+                if(text as RichTextBox!=null)
                 {
-                }
-                else
-                {
-
-                    text.drawPoint.X = richTextBoxes[texts.IndexOf(text)].Left;
-                    text.drawPoint.Y = richTextBoxes[texts.IndexOf(text)].Top;
-                    text.VisMe(richTextBoxes[texts.IndexOf(text)], text.drawPoint, allColor);
-                    PageNow.VisualizeOnPage(text, layers[texts.IndexOf(text)]);
+                    ex = true;
                 }
             }
-            pictureBox1.Image = PageNow.imageOfPage;
-            PageNow.layers.Clear();
-            PageNow.visComponents.Clear();
+            if(ex)
+            {
+                PageNow.page.Clear(Color.Transparent);
+                var loadSettings = LoadSettings();
+                var page2 = new Page2();
+                page2.layers2 = layers;
+                page2.counter = counter;
+                page2.texts2 = texts;
+                loadSettings.pages[pageNum] = page2;
+                SaveSettings(loadSettings);
+                foreach (var text in texts)
+                {
+                    if (text.drawPoint.Y == 0)
+                    {
+                    }
+                    else
+                    {
+
+                        text.drawPoint.X = richTextBoxes[texts.IndexOf(text)].Left;
+                        text.drawPoint.Y = richTextBoxes[texts.IndexOf(text)].Top;
+                        text.VisMe(richTextBoxes[texts.IndexOf(text)], text.drawPoint, allColor);
+                        PageNow.VisualizeOnPage(text, layers[texts.IndexOf(text)]);
+                    }
+                }
+                pictureBox1.Image = PageNow.imageOfPage;
+                PageNow.layers.Clear();
+                PageNow.visComponents.Clear();
+            }            
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -349,6 +362,21 @@ namespace WindowsFormsApp66
             }
             label2.Text = pageNum.ToString();
             SaveSettings(loadSettings);
+            foreach(var text in texts)
+            {
+                var textBox = new RichTextBox() { Text = text.text2 };
+                textBox.Location = text.drawPoint;
+                richTextBoxes.Add(textBox);
+                textBox.Parent = this;
+                textBox.BorderStyle = BorderStyle.None;
+                workTextBox = textBox;
+                textBox.MouseDown += textBox2_MouseDown;
+                textBox.TextChanged += textBox2_TextChanged;
+                textBox.MouseMove += textBox2_MouseMove;
+                textBox.MouseUp += textBox2_MouseUp;
+                textBox.BringToFront();
+                textBox.Height = 20;
+            }
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -368,6 +396,21 @@ namespace WindowsFormsApp66
                 PageNow = new Page();
                 pageNum++;
                 SaveSettings(loadSettings);
+                foreach (var text in texts)
+                {
+                    var textBox = new RichTextBox() { Text = text.text2 };
+                    textBox.Location = text.drawPoint;
+                    richTextBoxes.Add(textBox);
+                    textBox.Parent = this;
+                    textBox.BringToFront();
+                    workTextBox = textBox;
+                    textBox.MouseDown += textBox2_MouseDown;
+                    textBox.TextChanged += textBox2_TextChanged;
+                    textBox.MouseMove += textBox2_MouseMove;
+                    textBox.MouseUp += textBox2_MouseUp;
+                    textBox.Height = 20;
+                    textBox.BorderStyle = BorderStyle.None;
+                }
             }
             else if (loadSettings.pages.Count > pageNum)
             {
@@ -391,8 +434,28 @@ namespace WindowsFormsApp66
                 PageNow.layers.Clear();
                 PageNow.visComponents.Clear();
                 pageNum++;
+                foreach (var text in texts)
+                {
+                    var textBox = new RichTextBox() { Text = text.text2 };
+                    textBox.Location = text.drawPoint;
+                    richTextBoxes.Add(textBox);
+                    textBox.Parent = this;
+                    textBox.BringToFront();
+                    workTextBox = textBox;
+                    textBox.MouseDown += textBox2_MouseDown;
+                    textBox.TextChanged += textBox2_TextChanged;
+                    textBox.MouseMove += textBox2_MouseMove;
+                    textBox.MouseUp += textBox2_MouseUp;
+                    textBox.Height = 20;
+                    textBox.BorderStyle = BorderStyle.None;
+                }
             }
             label2.Text = pageNum.ToString();            
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

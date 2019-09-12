@@ -41,13 +41,15 @@
             this.panel5 = new System.Windows.Forms.Panel();
             this.panel6 = new System.Windows.Forms.Panel();
             this.panel7 = new System.Windows.Forms.Panel();
+            this.label2 = new System.Windows.Forms.Label();
             this.button4 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.panel8 = new System.Windows.Forms.Panel();
-            this.label2 = new System.Windows.Forms.Label();
             this.userControl21 = new WindowsFormsApp66.UserControl2();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.panel6.SuspendLayout();
             this.panel7.SuspendLayout();
+            this.panel8.SuspendLayout();
             this.SuspendLayout();
             // 
             // pictureBox1
@@ -58,6 +60,7 @@
             this.pictureBox1.Size = new System.Drawing.Size(806, 456);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
+            this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             // 
             // label1
             // 
@@ -141,6 +144,7 @@
             // 
             // panel6
             // 
+            this.panel6.Controls.Add(this.button4);
             this.panel6.Location = new System.Drawing.Point(510, 392);
             this.panel6.Name = "panel6";
             this.panel6.Size = new System.Drawing.Size(255, 60);
@@ -149,12 +153,21 @@
             // panel7
             // 
             this.panel7.Controls.Add(this.label2);
-            this.panel7.Controls.Add(this.button4);
-            this.panel7.Controls.Add(this.button3);
             this.panel7.Location = new System.Drawing.Point(255, 392);
             this.panel7.Name = "panel7";
             this.panel7.Size = new System.Drawing.Size(255, 60);
             this.panel7.TabIndex = 16;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.BackColor = System.Drawing.Color.Transparent;
+            this.label2.Font = new System.Drawing.Font("Impact", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label2.Location = new System.Drawing.Point(107, 16);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(24, 26);
+            this.label2.TabIndex = 21;
+            this.label2.Text = "0";
             // 
             // button4
             // 
@@ -162,7 +175,7 @@
             this.button4.FlatAppearance.BorderSize = 0;
             this.button4.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button4.Location = new System.Drawing.Point(119, 14);
+            this.button4.Location = new System.Drawing.Point(0, 14);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(94, 32);
             this.button4.TabIndex = 20;
@@ -176,7 +189,7 @@
             this.button3.FlatAppearance.BorderSize = 0;
             this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button3.Location = new System.Drawing.Point(19, 14);
+            this.button3.Location = new System.Drawing.Point(161, 14);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(94, 32);
             this.button3.TabIndex = 19;
@@ -186,20 +199,11 @@
             // 
             // panel8
             // 
+            this.panel8.Controls.Add(this.button3);
             this.panel8.Location = new System.Drawing.Point(0, 392);
             this.panel8.Name = "panel8";
             this.panel8.Size = new System.Drawing.Size(255, 60);
             this.panel8.TabIndex = 15;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.BackColor = System.Drawing.Color.Transparent;
-            this.label2.Location = new System.Drawing.Point(90, 27);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(35, 13);
-            this.label2.TabIndex = 21;
-            this.label2.Text = "label2";
             // 
             // userControl21
             // 
@@ -232,8 +236,10 @@
             this.Name = "Form1";
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.panel6.ResumeLayout(false);
             this.panel7.ResumeLayout(false);
             this.panel7.PerformLayout();
+            this.panel8.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
