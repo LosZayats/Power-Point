@@ -21,6 +21,7 @@ namespace WindowsFormsApp66
         {
             public List<Page2> pages;
         }
+        double Frame;
         public static void SaveSettings(ProgrammSettings settings)
         {
             using (Stream stream = File.Open(SettingsFileName, FileMode.Create))
@@ -29,9 +30,51 @@ namespace WindowsFormsApp66
                 formatter.Serialize(stream, settings);
             }
         }
+        bool anim;
         public Form1()
         {
             InitializeComponent();
+            Func2(true);
+            redact = true;
+            Func();
+            var loadSettings = LoadSettings();
+            var page2 = new Page2();            
+            if (loadSettings.pages.Count > pageNum)
+            {
+                PageNow = new Page();
+                var page = loadSettings.pages[pageNum];
+                layers = page.layers2;
+                texts = page.texts2;
+                counter = page.counter;
+                PageNow.page.Clear(Color.Transparent);
+                foreach (var text in texts)
+                {
+                    text.VisMe(new RichTextBox() { Text = text.text2 }, text.drawPoint, allColor);
+                    PageNow.VisualizeOnPage(text, layers[texts.IndexOf(text)]);
+                }
+                pictureBox1.Image = PageNow.imageOfPage;
+                PageNow.layers.Clear();
+                PageNow.visComponents.Clear();                
+                foreach (var text in texts)
+                {
+                    var textBox = new RichTextBox() { Text = text.text2 };
+                    textBox.Location = text.drawPoint;
+                    richTextBoxes.Add(textBox);
+                    textBox.Parent = this;
+                    textBox.BringToFront();
+                    workTextBox = textBox;
+                    textBox.MouseDown += textBox2_MouseDown;
+                    textBox.TextChanged += textBox2_TextChanged;
+                    textBox.MouseMove += textBox2_MouseMove;
+                    textBox.MouseUp += textBox2_MouseUp;
+                    textBox.Height = 20;
+                    textBox.BorderStyle = BorderStyle.None;
+                    var ind = texts.IndexOf(text);
+                    richTextBoxes[ind].Font = text.myFont;
+                    richTextBoxes[ind].Size = new Size(new Point((int)PageNow.page.MeasureString(workTextBox.Text, text.myFont).Width + 20, (int)PageNow.page.MeasureString(workTextBox.Text, text.myFont).Height));
+                }
+            }
+            label2.Text = pageNum.ToString();
             font = label1.Font;
             panel1.BackgroundImage = UserControl2.Gradient.MakeGradient(Color.OrangeRed, UserControl2.Direction.down, panel1);
             panel2.BackgroundImage = UserControl2.Gradient.MakeGradient(Color.OrangeRed, UserControl2.Direction.down, panel1);
@@ -54,16 +97,65 @@ namespace WindowsFormsApp66
             }
             load.pages.Add(new Page2());
             SaveSettings(load);
-
+            header = UserControl2.Gradient.MakeGradient(Color.Orange, UserControl2.Direction.down, this);
+            panels.Add(panel1);
+            panels.Add(panel2);
+            panels.Add(panel3);
+            panels.Add(panel4);
+            panels2.Add(panel5);
+            panels2.Add(panel6);
+            panels2.Add(panel7);
+            panels2.Add(panel8);
+            font = label1.Font;
+            allColor = Color.Black;
         }
         bool b;
+        Bitmap header;
+        bool loading = false;
+        bool redact = true;
         public static RichTextBox workTextBox;
         Point DownPoint;
         bool ableToMove;
         public static int counter;
-        public static Color allColor = Color.Black;
+        static Color allCol;
+        public void Loading(Graphics e)
+        {
+            if (loading)
+            {
+                e.Clear(Color.White);
+                pictureBox1.Image = PageNow.imageOfPage;
+                e.DrawImage((Image)Properties.Resources.ResourceManager.GetObject("_" + ((int)Frame).ToString()), this.Width / 2 - 150, 100);
+                Frame += 0.2;
+                if (Frame >= 47)
+                {
+                    Frame = 0;
+                }
+            }
+        }
+        public async void Load2(Graphics e)
+        {
+            await Task.Run(() => Loading(e));
+        }
+        public static Color allColor
+        {
+            get
+            {
+                return allCol;
+            }
+            set
+            {
+                allCol = value;
+                if (workTextBox != null)
+                {
+                    var ind = richTextBoxes.IndexOf(workTextBox);
+                    texts[ind].myColor = value;
+                }
+            }
+        }
         public static Font font;
         int pageNum = 0;
+        List<Panel> panels = new List<Panel>();
+        List<Panel> panels2 = new List<Panel>();
         public static List<Text1> texts = new List<Text1>();
         public static List<RichTextBox> richTextBoxes = new List<RichTextBox>();
         public static List<int> layers = new List<int>();
@@ -140,7 +232,17 @@ namespace WindowsFormsApp66
             richTextBoxes.Clear();
             counter = 0;
         }
-
+        public void Func2(bool Visible2)
+        {
+            foreach (var textbox in Controls)
+            {
+                var text = textbox as RichTextBox;
+                if (text != null)
+                {
+                    text.Visible = Visible2;
+                }
+            }
+        }
         [Serializable]
         public class Page2
         {
@@ -151,6 +253,8 @@ namespace WindowsFormsApp66
         [Serializable]
         public class Text1
         {
+            public Font myFont = Form1.font;
+            public Color myColor = Color.Black;
             public Bitmap image;
             public System.Drawing.Point drawPoint = new System.Drawing.Point();
             public string text2;
@@ -159,7 +263,15 @@ namespace WindowsFormsApp66
                 image = new Bitmap(1920, 1080);
                 var graph = Graphics.FromImage(image);
                 this.drawPoint = drawPoint;
-                graph.DrawString(text.Text, font, new SolidBrush(c), drawPoint);
+                if (myFont == null)
+                {
+                    myFont = Form1.font;
+                }
+                if (myColor == null)
+                {
+                    myColor = Color.Black;
+                }
+                graph.DrawString(text.Text, myFont, new SolidBrush(myColor), drawPoint);
                 text2 = text.Text;
             }
         }
@@ -181,6 +293,8 @@ namespace WindowsFormsApp66
 
         private void button1_Click_1(object sender, EventArgs e)
         {
+            Func2(true);
+            redact = true;
             var textBox = new RichTextBox();
             textBox.Left = 100;
             textBox.Top = 200;
@@ -295,59 +409,78 @@ namespace WindowsFormsApp66
             {
                 workTextBox.BackColor = Color.LightCyan;
             }
+            pictureBox1.Refresh();
+
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            PageNow.page.Clear(Color.Transparent);
-            bool ex = false;
-            foreach (var text in Controls)
+            anim = true;
+            loading = true;
+            if (redact)
             {
-                if (text as RichTextBox != null)
-                {
-                    ex = true;
-                }
+                Func2(true);
+                redact = false;
+                button2.Text = "preview";
+                pictureBox1.Image = null;
             }
-            if (ex)
+            else
             {
-                var loadSettings = LoadSettings();
-                var page2 = new Page2();
-                page2.layers2 = layers;
-                page2.counter = counter;
-                page2.texts2 = texts;
-                loadSettings.pages[pageNum] = page2;
-                SaveSettings(loadSettings);
-                foreach (var text in texts)
+                Func2(false);
+                PageNow.page.Clear(Color.Transparent);
+                bool ex = false;
+                foreach (var text in Controls)
                 {
-                    if (text.drawPoint.Y == 0)
+                    if (text as RichTextBox != null)
                     {
-                    }
-                    else
-                    {
-
-                        text.drawPoint.X = richTextBoxes[texts.IndexOf(text)].Left;
-                        text.drawPoint.Y = richTextBoxes[texts.IndexOf(text)].Top;
-                        text.VisMe(richTextBoxes[texts.IndexOf(text)], text.drawPoint, allColor);
-                        PageNow.VisualizeOnPage(text, layers[texts.IndexOf(text)]);
+                        ex = true;
                     }
                 }
-                SaveSettings(loadSettings);
-                PageNow.layers.Clear();
-                PageNow.visComponents.Clear();
-            }
-            var loadSettings2 = LoadSettings();
-            var page22 = new Page2();
-            page22.layers2 = layers;
-            page22.counter = counter;
-            page22.texts2 = texts;
-            loadSettings2.pages[pageNum] = page22;
-            SaveSettings(loadSettings2);
-            pictureBox1.Image = PageNow.imageOfPage;
+                if (ex)
+                {
+                    var loadSettings = LoadSettings();
+                    var page2 = new Page2();
+                    page2.layers2 = layers;
+                    page2.counter = counter;
+                    page2.texts2 = texts;
+                    loadSettings.pages[pageNum] = page2;
+                    SaveSettings(loadSettings);
+                    foreach (var text in texts)
+                    {
+                        if (text.drawPoint.Y == 0)
+                        {
+                        }
+                        else
+                        {
 
+                            text.drawPoint.X = richTextBoxes[texts.IndexOf(text)].Left;
+                            text.drawPoint.Y = richTextBoxes[texts.IndexOf(text)].Top;
+                            text.VisMe(richTextBoxes[texts.IndexOf(text)], text.drawPoint, allColor);
+                            PageNow.VisualizeOnPage(text, layers[texts.IndexOf(text)]);
+                        }
+                    }
+                    SaveSettings(loadSettings);
+                    PageNow.layers.Clear();
+                    PageNow.visComponents.Clear();
+                }
+                var loadSettings2 = LoadSettings();
+                var page22 = new Page2();
+                page22.layers2 = layers;
+                page22.counter = counter;
+                page22.texts2 = texts;
+                loadSettings2.pages[pageNum] = page22;
+                SaveSettings(loadSettings2);
+                pictureBox1.Image = PageNow.imageOfPage;
+                redact = true;
+                button2.Text = "redact";
+            }
+            loading = false;
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
+            Func2(true);
+            redact = true;
             foreach (var textbox in Controls)
             {
                 var text = textbox as RichTextBox;
@@ -390,6 +523,8 @@ namespace WindowsFormsApp66
 
         private void button4_Click(object sender, EventArgs e)
         {
+            Func2(true);
+            redact = true;
             Func();
             var loadSettings = LoadSettings();
             var page2 = new Page2();
@@ -419,6 +554,9 @@ namespace WindowsFormsApp66
                     textBox.MouseUp += textBox2_MouseUp;
                     textBox.Height = 20;
                     textBox.BorderStyle = BorderStyle.None;
+                    var ind = texts.IndexOf(text);
+                    richTextBoxes[ind].Font = text.myFont;
+                    richTextBoxes[ind].Size = new Size(new Point((int)PageNow.page.MeasureString(workTextBox.Text, text.myFont).Width + 20, (int)PageNow.page.MeasureString(workTextBox.Text, text.myFont).Height));
                 }
             }
             else if (loadSettings.pages.Count > pageNum)
@@ -457,6 +595,9 @@ namespace WindowsFormsApp66
                     textBox.MouseUp += textBox2_MouseUp;
                     textBox.Height = 20;
                     textBox.BorderStyle = BorderStyle.None;
+                    var ind = texts.IndexOf(text);
+                    richTextBoxes[ind].Font = text.myFont;
+                    richTextBoxes[ind].Size = new Size(new Point((int)PageNow.page.MeasureString(workTextBox.Text, text.myFont).Width + 20, (int)PageNow.page.MeasureString(workTextBox.Text, text.myFont).Height));
                 }
             }
             label2.Text = pageNum.ToString();
@@ -465,6 +606,125 @@ namespace WindowsFormsApp66
         private void pictureBox1_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void Form1_Paint(object sender, PaintEventArgs e)
+        {
+            //    e.Graphics.DrawImage(header,0,0);
+        }
+
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            int width = 0;
+            foreach (var panel in panels)
+            {
+                width += panel.Width;
+            }
+            int width2 = 0;
+            foreach (var panel in panels2)
+            {
+                width2 += panel.Width;
+                panel.Top = this.Height - 100;
+            }
+            if (width >= this.Width)
+            {
+
+            }
+            else
+            {
+                for (; width <= this.Width;)
+                {
+                    var panel = new Panel();
+                    panel.Left = width;
+                    panel.Parent = this;
+                    panel.Width = 255;
+                    panel.Height = 100;
+                    width += panel.Width;
+                    panel.BringToFront();
+                    panel.BackgroundImage = panel1.BackgroundImage;
+                    panels.Add(panel);
+                }
+                for (; width2 <= this.Width;)
+                {
+                    var panel = new Panel();
+                    panel.Left = width2;
+                    panel.Parent = this;
+                    panel.Width = 255;
+                    panel.Height = 60;
+                    panel.Top = this.Height - 100;
+                    width2 += panel.Width;
+                    panel.BringToFront();
+                    panel.BackgroundImage = panel5.BackgroundImage;
+                    panels2.Add(panel);
+                }
+            }
+            pictureBox1.Image = PageNow.imageOfPage;
+        }
+
+        private void pictureBox1_Paint(object sender, PaintEventArgs e)
+        {
+            if (anim)
+            {
+                if (button2.Text == "preview")
+                {
+                    var btn = new Button();
+                    btn.Width = 200;
+                    btn.Height = 50;
+                    var bmp = UserControl2.Gradient.MakeGradient(Color.DarkOrange, UserControl2.Direction.right, btn);
+                    if (Frame < 200 * this.Width / 812 & Frame > 150 * this.Width / 812)
+                    {
+                        Frame += 0.5;
+                    }
+                    else if (Frame < 150 * this.Width / 812)
+                    {
+                        Frame += 6;
+                    }
+                    else
+                    {
+                        Frame += 20 * this.Width / 812;
+                    }
+                    e.Graphics.DrawImage(bmp, new Point((int)Frame, 200));
+                    e.Graphics.DrawString("Preview mode : off", label2.Font, new SolidBrush(Color.Black), new Point((int)Frame, 10 + 200));
+                    if (Frame >= this.Width)
+                    {
+                        Frame = 0;
+                        anim = false;
+                    }
+                }
+                else
+                {
+                    var btn = new Button();
+                    btn.Width = 200;
+                    btn.Height = 50;
+                    var bmp = UserControl2.Gradient.MakeGradient(Color.DarkOrange, UserControl2.Direction.right, btn);
+                    if (Frame < 200 * this.Width / 812 & Frame > 150 * this.Width / 812)
+                    {
+                        Frame += 0.5;
+                    }
+                    else if (Frame < 150 * this.Width / 812)
+                    {
+                        Frame += 6;
+                    }
+                    else
+                    {
+                        Frame += 20 * this.Width / 812;
+                    }
+                    e.Graphics.DrawImage(bmp, new Point((int)Frame, 200));
+                    e.Graphics.DrawString("Preview mode : on", label2.Font, new SolidBrush(Color.Black), new Point((int)Frame, 10 + 200));
+                    if (Frame >= this.Width)
+                    {
+                        Frame = 0;
+                        anim = false;
+                    }
+                }
+            }
+        }
+        private void OnFrameChange2d(object o, EventArgs e)
+        {
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
         }
     }
 }

@@ -53,6 +53,12 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Form2.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form2.Designer.cs">
+      <DependentUpon>Form2.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UserControl1.cs">
@@ -69,6 +75,9 @@
     </Compile>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Form2.resx">
+      <DependentUpon>Form2.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -101,6 +110,159 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\курсор.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\editor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\editor.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\0.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\1.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\2.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\3.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\4.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\5.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\6.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\7.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\8.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\9.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\10.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\11.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\12.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\13.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\14.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\15.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\16.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\17.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\18.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\19.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\20.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\21.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\22.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\23.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\24.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\25.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\26.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\27.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\28.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\29.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\30.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\31.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\32.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\33.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\34.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\35.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\36.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\37.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\38.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\39.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\40.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\41.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\42.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\43.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\44.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\45.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\46.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\47.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\loading.gif" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
