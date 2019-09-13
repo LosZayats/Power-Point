@@ -34,11 +34,18 @@ namespace WindowsFormsApp66
         public Form1()
         {
             InitializeComponent();
+            var load = LoadSettings();
+            if (load.pages == null)
+            {
+                load.pages = new List<Page2>();
+            }
+            load.pages.Add(new Page2());
+            SaveSettings(load);
             Func2(true);
             redact = true;
             Func();
             var loadSettings = LoadSettings();
-            var page2 = new Page2();            
+            var page2 = new Page2();
             if (loadSettings.pages.Count > pageNum)
             {
                 PageNow = new Page();
@@ -54,7 +61,7 @@ namespace WindowsFormsApp66
                 }
                 pictureBox1.Image = PageNow.imageOfPage;
                 PageNow.layers.Clear();
-                PageNow.visComponents.Clear();                
+                PageNow.visComponents.Clear();
                 foreach (var text in texts)
                 {
                     var textBox = new RichTextBox() { Text = text.text2 };
@@ -90,13 +97,6 @@ namespace WindowsFormsApp66
             panel6.Controls.Add(button4);
             panel7.Controls.Add(label2);
             label2.BringToFront();
-            var load = LoadSettings();
-            if (load.pages == null)
-            {
-                load.pages = new List<Page2>();
-            }
-            load.pages.Add(new Page2());
-            SaveSettings(load);
             header = UserControl2.Gradient.MakeGradient(Color.Orange, UserControl2.Direction.down, this);
             panels.Add(panel1);
             panels.Add(panel2);
@@ -248,8 +248,10 @@ namespace WindowsFormsApp66
         {
             public List<Text1> texts2 = new List<Text1>();
             public List<int> layers2 = new List<int>();
+            public List<Image2> images = new List<Image2>();
             public int counter;
         }
+        public List<Image2> imagess = new List<Image2>();
         [Serializable]
         public class Text1
         {
@@ -274,6 +276,13 @@ namespace WindowsFormsApp66
                 graph.DrawString(text.Text, myFont, new SolidBrush(myColor), drawPoint);
                 text2 = text.Text;
             }
+        }
+        [Serializable]
+        public class Image2
+        {
+            public Rectangle rect;
+            public Bitmap image;
+            public System.Drawing.Point drawPoint = new System.Drawing.Point();
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -443,6 +452,7 @@ namespace WindowsFormsApp66
                     page2.layers2 = layers;
                     page2.counter = counter;
                     page2.texts2 = texts;
+                    page2.images = imagess;
                     loadSettings.pages[pageNum] = page2;
                     SaveSettings(loadSettings);
                     foreach (var text in texts)
@@ -459,6 +469,12 @@ namespace WindowsFormsApp66
                             PageNow.VisualizeOnPage(text, layers[texts.IndexOf(text)]);
                         }
                     }
+                    foreach (var image in imagess)
+                    {
+                        PageNow.page.DrawImage(image.image, image.rect);
+                        pictureBox1.Image = PageNow.imageOfPage;
+                    }
+
                     SaveSettings(loadSettings);
                     PageNow.layers.Clear();
                     PageNow.visComponents.Clear();
@@ -496,6 +512,7 @@ namespace WindowsFormsApp66
             layers = page.layers2;
             texts = page.texts2;
             counter = page.counter;
+            imagess = page.images;
             PageNow = new Page();
             foreach (var text in texts)
             {
@@ -519,6 +536,11 @@ namespace WindowsFormsApp66
                 textBox.BringToFront();
                 textBox.Height = 20;
             }
+            foreach (var image in imagess)
+            {
+                PageNow.page.DrawImage(image.image, image.rect);
+                pictureBox1.Image = PageNow.imageOfPage;
+            }
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -533,6 +555,7 @@ namespace WindowsFormsApp66
             {
                 page2.layers2 = layers;
                 page2.counter = counter;
+                page2.images = imagess;
                 page2.texts2 = texts;
                 loadSettings.pages[pageNum] = page2;
                 var page3 = new Page2();
@@ -558,6 +581,11 @@ namespace WindowsFormsApp66
                     richTextBoxes[ind].Font = text.myFont;
                     richTextBoxes[ind].Size = new Size(new Point((int)PageNow.page.MeasureString(workTextBox.Text, text.myFont).Width + 20, (int)PageNow.page.MeasureString(workTextBox.Text, text.myFont).Height));
                 }
+                foreach (var image in imagess)
+                {
+                    PageNow.page.DrawImage(image.image, image.rect);
+                    pictureBox1.Image = PageNow.imageOfPage;
+                }
             }
             else if (loadSettings.pages.Count > pageNum)
             {
@@ -571,6 +599,7 @@ namespace WindowsFormsApp66
                 layers = page.layers2;
                 texts = page.texts2;
                 counter = page.counter;
+                imagess = page.images;
                 PageNow.page.Clear(Color.Transparent);
                 foreach (var text in texts)
                 {
@@ -598,6 +627,11 @@ namespace WindowsFormsApp66
                     var ind = texts.IndexOf(text);
                     richTextBoxes[ind].Font = text.myFont;
                     richTextBoxes[ind].Size = new Size(new Point((int)PageNow.page.MeasureString(workTextBox.Text, text.myFont).Width + 20, (int)PageNow.page.MeasureString(workTextBox.Text, text.myFont).Height));
+                }
+                foreach (var image in imagess)
+                {
+                    PageNow.page.DrawImage(image.image, image.rect);
+                    pictureBox1.Image = PageNow.imageOfPage;
                 }
             }
             label2.Text = pageNum.ToString();
@@ -725,6 +759,55 @@ namespace WindowsFormsApp66
 
         private void Form1_Load(object sender, EventArgs e)
         {
+        }
+
+        private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
+        {
+            foreach (var im in imagess)
+            {
+                if (e.X > im.rect.X + im.rect.Width - 4 & e.Y > im.rect.Y - 4)
+                {
+                    if (e.X <= im.rect.X + im.rect.Width + 4 & e.Y <= im.rect.Y + im.rect.Height + 4)
+                    {
+                        pictureBox1.Cursor = Cursors.SizeNESW;
+                    }
+                    else
+                    {
+                        pictureBox1.Cursor = Cursors.Default;
+                    }
+                }
+                else
+                {
+                    pictureBox1.Cursor = Cursors.Default;
+                }
+            }
+            if (e.Button == MouseButtons.Left)
+            {
+                foreach (var im in imagess)
+                {
+                    if (e.X > im.rect.X - 4 & e.Y > im.rect.Y - 4)
+                    {
+                        if (e.X <= im.rect.X + im.rect.Width + 4 & e.Y <= im.rect.Y + im.rect.Height + 4)
+                        {
+                            im.rect.Width += e.X - (im.rect.X + im.rect.Width);
+                            PageNow.page.DrawImage(im.image, im.rect);
+                        }
+                    }
+                }
+            }
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            var image = new Image2();
+            OpenFileDialog open = new OpenFileDialog();
+            open.Filter = "Image files (*.png) | *.png";
+            if (open.ShowDialog() == DialogResult.OK)
+            {
+                image.image = new Bitmap(open.FileName);
+            }
+            image.rect = new Rectangle(100, 200, image.image.Width, image.image.Height);
+            imagess.Add(image);
         }
     }
 }
