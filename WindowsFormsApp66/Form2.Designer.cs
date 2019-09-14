@@ -33,6 +33,7 @@
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.userControl11 = new WindowsFormsApp66.UserControl1();
+            this.button3 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // fontDialog1
@@ -74,17 +75,31 @@
             this.userControl11.TabIndex = 0;
             this.userControl11.Load += new System.EventHandler(this.userControl11_Load);
             // 
+            // button3
+            // 
+            this.button3.FlatAppearance.BorderSize = 0;
+            this.button3.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.button3.Location = new System.Drawing.Point(12, 375);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(255, 35);
+            this.button3.TabIndex = 3;
+            this.button3.Text = "Layer Back";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
             // Form2
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(288, 378);
+            this.ClientSize = new System.Drawing.Size(288, 413);
+            this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.userControl11);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MaximumSize = new System.Drawing.Size(304, 417);
-            this.MinimumSize = new System.Drawing.Size(304, 417);
+            this.MaximumSize = new System.Drawing.Size(304, 452);
+            this.MinimumSize = new System.Drawing.Size(304, 452);
             this.Name = "Form2";
             this.Text = "Text Editor";
             this.Load += new System.EventHandler(this.Form2_Load);
@@ -98,5 +113,6 @@
         private System.Windows.Forms.FontDialog fontDialog1;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button button3;
     }
 }

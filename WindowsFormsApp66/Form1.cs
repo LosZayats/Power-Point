@@ -53,6 +53,7 @@ namespace WindowsFormsApp66
                 layers = page.layers2;
                 texts = page.texts2;
                 counter = page.counter;
+                imagess = page.images;
                 PageNow.page.Clear(Color.Transparent);
                 foreach (var text in texts)
                 {
@@ -79,6 +80,10 @@ namespace WindowsFormsApp66
                     var ind = texts.IndexOf(text);
                     richTextBoxes[ind].Font = text.myFont;
                     richTextBoxes[ind].Size = new Size(new Point((int)PageNow.page.MeasureString(workTextBox.Text, text.myFont).Width + 20, (int)PageNow.page.MeasureString(workTextBox.Text, text.myFont).Height));
+                }
+                foreach (var image in imagess)
+                {
+                    PageNow.page.DrawImage(image.image, image.rect);
                 }
             }
             label2.Text = pageNum.ToString();
@@ -172,6 +177,15 @@ namespace WindowsFormsApp66
             }
             return default(ProgrammSettings);
         }
+        
+        public void DrawStroke(int strokeThickness, Rectangle rect2)
+        {
+            for (int left = 0; left < strokeThickness; left++)
+            {
+                Rectangle rect = new Rectangle(rect2.X - left, rect2.Y - left, rect2.Width + left * 2, rect2.Height + left * 2);
+                PageNow.page.DrawRectangle(new Pen(Color.LightGreen), rect);
+            }
+        }
         [Serializable] //Это атрибут, который позволяет автоматически сериализовать и десериализовать 
         public class Page
         {
@@ -190,7 +204,6 @@ namespace WindowsFormsApp66
             }
             public void VisualizeOnPage(Text1 element, int layer)
             {
-                page.Clear(Color.Transparent);
                 visComponents.Add(element);
                 layers.Add(layer);
                 int index = 0;
@@ -246,6 +259,7 @@ namespace WindowsFormsApp66
         [Serializable]
         public class Page2
         {
+            public Bitmap BackGround;
             public List<Text1> texts2 = new List<Text1>();
             public List<int> layers2 = new List<int>();
             public List<Image2> images = new List<Image2>();
@@ -280,8 +294,10 @@ namespace WindowsFormsApp66
         [Serializable]
         public class Image2
         {
+            public bool Back;
             public Rectangle rect;
             public Bitmap image;
+            public int layer;
             public System.Drawing.Point drawPoint = new System.Drawing.Point();
         }
 
@@ -350,6 +366,8 @@ namespace WindowsFormsApp66
             text1 = texts[ind];
             var send = (RichTextBox)sender;
             text1.VisMe(send, new Point(send.Left, send.Top), allColor);
+            var textBox = (RichTextBox)sender;
+            textBox.Size = new Size(new Point((int)PageNow.page.MeasureString(textBox.Text, textBox.Font).Width + 20, (int)Form1.PageNow.page.MeasureString(textBox.Text, textBox.Font).Height));
         }
 
         private void textBox2_MouseDown(object sender, MouseEventArgs e)
@@ -432,6 +450,13 @@ namespace WindowsFormsApp66
                 redact = false;
                 button2.Text = "preview";
                 pictureBox1.Image = null;
+                PageNow.page.Clear(Color.Transparent);
+                foreach (var image in imagess)
+                {
+                    PageNow.page.DrawImage(image.image, image.rect);
+                    DrawStroke(4, image.rect);
+                    pictureBox1.Image = PageNow.imageOfPage;
+                }
             }
             else
             {
@@ -440,7 +465,7 @@ namespace WindowsFormsApp66
                 bool ex = false;
                 foreach (var text in Controls)
                 {
-                    if (text as RichTextBox != null)
+                    if (text as RichTextBox != null |imagess.Count!=0)
                     {
                         ex = true;
                     }
@@ -453,28 +478,34 @@ namespace WindowsFormsApp66
                     page2.counter = counter;
                     page2.texts2 = texts;
                     page2.images = imagess;
+                    page2.BackGround = LoadSettings().pages[pageNum].BackGround;
                     loadSettings.pages[pageNum] = page2;
                     SaveSettings(loadSettings);
+                    var g = LoadSettings();
+                    PageNow.page.Clear(Color.Transparent);
+                    if (loadSettings.pages[pageNum].BackGround != null)
+                    {
+                        pictureBox1.BackgroundImage = LoadSettings().pages[pageNum].BackGround;
+                        PageNow.page.DrawImage(LoadSettings().pages[pageNum].BackGround, 0, 0);
+                    }
                     foreach (var text in texts)
                     {
                         if (text.drawPoint.Y == 0)
                         {
                         }
                         else
-                        {
-
+                        {                            
                             text.drawPoint.X = richTextBoxes[texts.IndexOf(text)].Left;
                             text.drawPoint.Y = richTextBoxes[texts.IndexOf(text)].Top;
                             text.VisMe(richTextBoxes[texts.IndexOf(text)], text.drawPoint, allColor);
                             PageNow.VisualizeOnPage(text, layers[texts.IndexOf(text)]);
                         }
-                    }
+                    }                    
                     foreach (var image in imagess)
                     {
-                        PageNow.page.DrawImage(image.image, image.rect);
-                        pictureBox1.Image = PageNow.imageOfPage;
+                        PageNow.page.DrawImage(image.image, image.rect);                                             
                     }
-
+                    pictureBox1.Image = PageNow.imageOfPage;
                     SaveSettings(loadSettings);
                     PageNow.layers.Clear();
                     PageNow.visComponents.Clear();
@@ -484,6 +515,7 @@ namespace WindowsFormsApp66
                 page22.layers2 = layers;
                 page22.counter = counter;
                 page22.texts2 = texts;
+                page22.images = imagess;
                 loadSettings2.pages[pageNum] = page22;
                 SaveSettings(loadSettings2);
                 pictureBox1.Image = PageNow.imageOfPage;
@@ -514,11 +546,11 @@ namespace WindowsFormsApp66
             counter = page.counter;
             imagess = page.images;
             PageNow = new Page();
-            foreach (var text in texts)
-            {
-                PageNow.VisualizeOnPage(text, layers[texts.IndexOf(text)]);
-                pictureBox1.Image = PageNow.imageOfPage;
-            }
+            //foreach (var text in texts)
+            //{
+            //    PageNow.VisualizeOnPage(text, layers[texts.IndexOf(text)]);
+            //    pictureBox1.Image = PageNow.imageOfPage;
+            //}
             label2.Text = pageNum.ToString();
             SaveSettings(loadSettings);
             foreach (var text in texts)
@@ -529,16 +561,20 @@ namespace WindowsFormsApp66
                 textBox.Parent = this;
                 textBox.BorderStyle = BorderStyle.None;
                 workTextBox = textBox;
+                textBox.Cursor = Cursors.Hand;
                 textBox.MouseDown += textBox2_MouseDown;
                 textBox.TextChanged += textBox2_TextChanged;
                 textBox.MouseMove += textBox2_MouseMove;
                 textBox.MouseUp += textBox2_MouseUp;
+                textBox.Font = text.myFont;
+                textBox.Size = new Size(new Point((int)PageNow.page.MeasureString(textBox.Text, text.myFont).Width + 20, (int)Form1.PageNow.page.MeasureString(text.text2, text.myFont).Height));
                 textBox.BringToFront();
-                textBox.Height = 20;
+                textBox.ScrollBars = RichTextBoxScrollBars.None;
             }
             foreach (var image in imagess)
             {
                 PageNow.page.DrawImage(image.image, image.rect);
+                DrawStroke(4, image.rect);
                 pictureBox1.Image = PageNow.imageOfPage;
             }
         }
@@ -576,14 +612,17 @@ namespace WindowsFormsApp66
                     textBox.MouseMove += textBox2_MouseMove;
                     textBox.MouseUp += textBox2_MouseUp;
                     textBox.Height = 20;
+                    textBox.Cursor = Cursors.Hand;
                     textBox.BorderStyle = BorderStyle.None;
                     var ind = texts.IndexOf(text);
                     richTextBoxes[ind].Font = text.myFont;
+                    textBox.ScrollBars = RichTextBoxScrollBars.None;
                     richTextBoxes[ind].Size = new Size(new Point((int)PageNow.page.MeasureString(workTextBox.Text, text.myFont).Width + 20, (int)PageNow.page.MeasureString(workTextBox.Text, text.myFont).Height));
                 }
                 foreach (var image in imagess)
                 {
                     PageNow.page.DrawImage(image.image, image.rect);
+                    DrawStroke(4, image.rect);
                     pictureBox1.Image = PageNow.imageOfPage;
                 }
             }
@@ -593,7 +632,8 @@ namespace WindowsFormsApp66
                 //page4.layers2 = layers;
                 //page4.counter = counter;
                 //PageNow = new Page();
-                //page4.texts2 = texts;      
+                //page4.texts2 = texts;   
+                button2.Text = "preview";
                 PageNow = new Page();
                 var page = loadSettings.pages[pageNum + 1];
                 layers = page.layers2;
@@ -601,11 +641,11 @@ namespace WindowsFormsApp66
                 counter = page.counter;
                 imagess = page.images;
                 PageNow.page.Clear(Color.Transparent);
-                foreach (var text in texts)
-                {
-                    text.VisMe(new RichTextBox() { Text = text.text2 }, text.drawPoint, allColor);
-                    PageNow.VisualizeOnPage(text, layers[texts.IndexOf(text)]);
-                }
+                //foreach (var text in texts)
+                //{
+                //    text.VisMe(new RichTextBox() { Text = text.text2 }, text.drawPoint, allColor);
+                //    PageNow.VisualizeOnPage(text, layers[texts.IndexOf(text)]);
+                //}
                 pictureBox1.Image = PageNow.imageOfPage;
                 PageNow.layers.Clear();
                 PageNow.visComponents.Clear();
@@ -626,11 +666,13 @@ namespace WindowsFormsApp66
                     textBox.BorderStyle = BorderStyle.None;
                     var ind = texts.IndexOf(text);
                     richTextBoxes[ind].Font = text.myFont;
-                    richTextBoxes[ind].Size = new Size(new Point((int)PageNow.page.MeasureString(workTextBox.Text, text.myFont).Width + 20, (int)PageNow.page.MeasureString(workTextBox.Text, text.myFont).Height));
+                    textBox.ScrollBars = RichTextBoxScrollBars.None;
+                    richTextBoxes[ind].Size = new Size(new Point((int)PageNow.page.MeasureString(workTextBox.Text, text.myFont).Width + 20, (int)PageNow.page.MeasureString(workTextBox.Text, text.myFont).Height+20));
                 }
                 foreach (var image in imagess)
                 {
                     PageNow.page.DrawImage(image.image, image.rect);
+                    DrawStroke(4, image.rect);
                     pictureBox1.Image = PageNow.imageOfPage;
                 }
             }
@@ -765,11 +807,11 @@ namespace WindowsFormsApp66
         {
             foreach (var im in imagess)
             {
-                if (e.X > im.rect.X + im.rect.Width - 4 & e.Y > im.rect.Y - 4)
+                if (e.X > im.rect.X + im.rect.Width - 4 & e.Y > im.rect.Y)
                 {
-                    if (e.X <= im.rect.X + im.rect.Width + 4 & e.Y <= im.rect.Y + im.rect.Height + 4)
+                    if (e.X <= im.rect.X + im.rect.Width + 4 & e.Y <= im.rect.Y + im.rect.Height)
                     {
-                        pictureBox1.Cursor = Cursors.SizeNESW;
+                        pictureBox1.Cursor = Cursors.SizeWE;
                     }
                     else
                     {
@@ -785,12 +827,18 @@ namespace WindowsFormsApp66
             {
                 foreach (var im in imagess)
                 {
-                    if (e.X > im.rect.X - 4 & e.Y > im.rect.Y - 4)
+                    if (e.X > im.rect.X - 8 & e.Y > im.rect.Y)
                     {
-                        if (e.X <= im.rect.X + im.rect.Width + 4 & e.Y <= im.rect.Y + im.rect.Height + 4)
-                        {
+                        if (e.X <= im.rect.X + im.rect.Width + 8 & e.Y <= im.rect.Y + im.rect.Height)
+                        {                            
                             im.rect.Width += e.X - (im.rect.X + im.rect.Width);
-                            PageNow.page.DrawImage(im.image, im.rect);
+                            PageNow.page.Clear(Color.Transparent);
+                            foreach (var image in imagess)
+                            {
+                                PageNow.page.DrawImage(image.image, image.rect);                                
+                                pictureBox1.Image = PageNow.imageOfPage;
+                            }
+                            DrawStroke(4, im.rect);
                         }
                     }
                 }
@@ -805,9 +853,29 @@ namespace WindowsFormsApp66
             if (open.ShowDialog() == DialogResult.OK)
             {
                 image.image = new Bitmap(open.FileName);
+                image.rect = new Rectangle(100, 200, image.image.Width, image.image.Height);
+                image.layer = counter;
+                imagess.Add(image);
+                var loadSett = LoadSettings();
+                loadSett.pages[pageNum].images.Add(image);
+                SaveSettings(loadSett);
+            }            
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+        }
+
+        private void pictureBox1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            OpenFileDialog open = new OpenFileDialog();
+            open.Filter = "Image files (*.png) | *.png";
+            if (open.ShowDialog() == DialogResult.OK)
+            {
+                var loadsett = LoadSettings();
+                loadsett.pages[pageNum].BackGround= new Bitmap(open.FileName);
+                SaveSettings(loadsett);
             }
-            image.rect = new Rectangle(100, 200, image.image.Width, image.image.Height);
-            imagess.Add(image);
         }
     }
 }

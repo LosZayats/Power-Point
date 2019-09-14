@@ -48,5 +48,16 @@ namespace WindowsFormsApp66
         {
 
         }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            var ind = Form1.richTextBoxes.IndexOf(Form1.workTextBox);
+            if(Form1.layers[ind]>=1)
+            {
+                Form1.layers[ind]--;
+                var ind2 = Form1.layers.IndexOf(Form1.layers[ind]);
+                Form1.layers[ind2]++;
+            }
+        }
     }
 }
