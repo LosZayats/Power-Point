@@ -55,11 +55,6 @@ namespace WindowsFormsApp66
                 counter = page.counter;
                 imagess = page.images;
                 PageNow.page.Clear(Color.Transparent);
-                foreach (var text in texts)
-                {
-                    text.VisMe(new RichTextBox() { Text = text.text2 }, text.drawPoint, allColor);
-                    PageNow.VisualizeOnPage(text, layers[texts.IndexOf(text)]);
-                }
                 pictureBox1.Image = PageNow.imageOfPage;
                 PageNow.layers.Clear();
                 PageNow.visComponents.Clear();
@@ -120,6 +115,7 @@ namespace WindowsFormsApp66
         bool redact = true;
         public static RichTextBox workTextBox;
         Point DownPoint;
+        Point OnPPoint;
         bool ableToMove;
         public static int counter;
         static Color allCol;
@@ -177,7 +173,7 @@ namespace WindowsFormsApp66
             }
             return default(ProgrammSettings);
         }
-        
+
         public void DrawStroke(int strokeThickness, Rectangle rect2)
         {
             for (int left = 0; left < strokeThickness; left++)
@@ -465,7 +461,7 @@ namespace WindowsFormsApp66
                 bool ex = false;
                 foreach (var text in Controls)
                 {
-                    if (text as RichTextBox != null |imagess.Count!=0)
+                    if (text as RichTextBox != null | imagess.Count != 0)
                     {
                         ex = true;
                     }
@@ -494,16 +490,16 @@ namespace WindowsFormsApp66
                         {
                         }
                         else
-                        {                            
+                        {
                             text.drawPoint.X = richTextBoxes[texts.IndexOf(text)].Left;
                             text.drawPoint.Y = richTextBoxes[texts.IndexOf(text)].Top;
                             text.VisMe(richTextBoxes[texts.IndexOf(text)], text.drawPoint, allColor);
                             PageNow.VisualizeOnPage(text, layers[texts.IndexOf(text)]);
                         }
-                    }                    
+                    }
                     foreach (var image in imagess)
                     {
-                        PageNow.page.DrawImage(image.image, image.rect);                                             
+                        PageNow.page.DrawImage(image.image, image.rect);
                     }
                     pictureBox1.Image = PageNow.imageOfPage;
                     SaveSettings(loadSettings);
@@ -667,7 +663,7 @@ namespace WindowsFormsApp66
                     var ind = texts.IndexOf(text);
                     richTextBoxes[ind].Font = text.myFont;
                     textBox.ScrollBars = RichTextBoxScrollBars.None;
-                    richTextBoxes[ind].Size = new Size(new Point((int)PageNow.page.MeasureString(workTextBox.Text, text.myFont).Width + 20, (int)PageNow.page.MeasureString(workTextBox.Text, text.myFont).Height+20));
+                    richTextBoxes[ind].Size = new Size(new Point((int)PageNow.page.MeasureString(workTextBox.Text, text.myFont).Width + 20, (int)PageNow.page.MeasureString(workTextBox.Text, text.myFont).Height + 20));
                 }
                 foreach (var image in imagess)
                 {
@@ -820,25 +816,60 @@ namespace WindowsFormsApp66
                 }
                 else
                 {
-                    pictureBox1.Cursor = Cursors.Default;
+                    if(e.X< im.rect.X + im.rect.Width&e.X> im.rect.X)
+                    {
+                        if(e.Y>im.rect.Y&e.Y<im.rect.Y+im.rect.Height)
+                        {
+                            pictureBox1.Cursor = Cursors.Hand;
+                        }
+                        else
+                        {
+                            pictureBox1.Cursor = Cursors.Default;
+                        }
+                    }
+                    else
+                    {
+                        pictureBox1.Cursor = Cursors.Default;
+                    }                    
                 }
+                
             }
             if (e.Button == MouseButtons.Left)
             {
                 foreach (var im in imagess)
                 {
-                    if (e.X > im.rect.X - 8 & e.Y > im.rect.Y)
+                    Func2(true);
+                    redact = false;
+                    button2.Text = "preview";
+                    pictureBox1.Image = null;
+                    PageNow.page.Clear(Color.Transparent);
+                    foreach (var image in imagess)
+                    {
+                        PageNow.page.DrawImage(image.image, image.rect);
+                        DrawStroke(4, image.rect);
+                        pictureBox1.Image = PageNow.imageOfPage;
+                    }
+                    if (e.X > im.rect.X + im.rect.Width - 8 & e.Y > im.rect.Y)
                     {
                         if (e.X <= im.rect.X + im.rect.Width + 8 & e.Y <= im.rect.Y + im.rect.Height)
-                        {                            
+                        {
                             im.rect.Width += e.X - (im.rect.X + im.rect.Width);
                             PageNow.page.Clear(Color.Transparent);
                             foreach (var image in imagess)
                             {
-                                PageNow.page.DrawImage(image.image, image.rect);                                
+                                PageNow.page.DrawImage(image.image, image.rect);
                                 pictureBox1.Image = PageNow.imageOfPage;
                             }
                             DrawStroke(4, im.rect);
+                        }
+                    }
+                    else
+                    {
+                        if (e.X < im.rect.X + im.rect.Width & e.X > im.rect.X)
+                        {
+                            if (e.Y > im.rect.Y & e.Y < im.rect.Y + im.rect.Height)
+                            {
+                            }
                         }
                     }
                 }
@@ -859,7 +890,7 @@ namespace WindowsFormsApp66
                 var loadSett = LoadSettings();
                 loadSett.pages[pageNum].images.Add(image);
                 SaveSettings(loadSett);
-            }            
+            }
         }
 
         private void button7_Click(object sender, EventArgs e)
@@ -873,7 +904,7 @@ namespace WindowsFormsApp66
             if (open.ShowDialog() == DialogResult.OK)
             {
                 var loadsett = LoadSettings();
-                loadsett.pages[pageNum].BackGround= new Bitmap(open.FileName);
+                loadsett.pages[pageNum].BackGround = new Bitmap(open.FileName);
                 SaveSettings(loadsett);
             }
         }
