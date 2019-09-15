@@ -157,7 +157,28 @@ namespace WindowsFormsApp66
             }
         }
         public static Font font;
-        int pageNum = 0;
+        int pagenum;
+        public int pageNum
+        {
+            get
+            {
+                return pagenum;
+            }
+            set
+            {
+                Func();
+                pagenum = value;
+                RichTextBoxVisualize();
+                if (LoadSettings().pages[pageNum].BackGround != null)
+                {
+                    pictureBox1.BackgroundImage = LoadSettings().pages[pageNum].BackGround;
+                }
+                else
+                {
+                    pictureBox1.BackgroundImage = null;
+                }
+            }
+        }
         List<Panel> panels = new List<Panel>();
         List<Panel> panels2 = new List<Panel>();
         public static List<Text1> texts = new List<Text1>();
@@ -177,7 +198,32 @@ namespace WindowsFormsApp66
             return
         default(ProgrammSettings);
         }
-
+        public void RichTextBoxVisualize()
+        {
+            foreach (var text in texts)
+            {
+                var textBox = new RichTextBox()
+                {
+                    Text = text.text2
+                };
+                textBox.Location = text.drawPoint;
+                richTextBoxes.Add(textBox);
+                textBox.Parent = this;
+                textBox.BringToFront();
+                workTextBox = textBox;
+                textBox.MouseDown += textBox2_MouseDown;
+                textBox.TextChanged += textBox2_TextChanged;
+                textBox.MouseMove += textBox2_MouseMove;
+                textBox.MouseUp += textBox2_MouseUp;
+                textBox.Height = 20;
+                textBox.Cursor = Cursors.Hand;
+                textBox.BorderStyle = BorderStyle.None;
+                var ind = texts.IndexOf(text);
+                richTextBoxes[ind].Font = text.myFont;
+                textBox.ScrollBars = RichTextBoxScrollBars.None;
+                richTextBoxes[ind].Size = new Size(new Point((int)PageNow.page.MeasureString(workTextBox.Text, text.myFont).Width + 20, (int)PageNow.page.MeasureString(workTextBox.Text, text.myFont).Height));
+            }
+        }
         public void DrawStroke(int strokeThickness, Rectangle rect2)
         {
             for (int left = 0; left < strokeThickness; left++)
@@ -423,14 +469,7 @@ namespace WindowsFormsApp66
                 workTextBox.BackColor = Color.LightCyan;
             }
             pictureBox1.Refresh();
-            if(LoadSettings().pages[pageNum].BackGround!=null)
-            {
-                pictureBox1.BackgroundImage = LoadSettings().pages[pageNum].BackGround;
-            }
-            else
-            {
-                pictureBox1.BackgroundImage = null;
-            }
+            
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -519,61 +558,30 @@ namespace WindowsFormsApp66
 
         private void button3_Click(object sender, EventArgs e)
         {
-            Func2(true);
-            redact = true;
-            foreach (var textbox in Controls)
-            {
-                var text = textbox as RichTextBox;
-                if (text != null)
-                {
-                    text.Dispose();
-                }
-            }
-            var loadSettings = LoadSettings();
-            pageNum--;
+            
+            redact = true;            
+            var loadSettings = LoadSettings();                      
             pictureBox1.Image = null;
-            var page = loadSettings.pages[pageNum];
+            var page = loadSettings.pages[pageNum-1];
             layers = page.layers2;
             texts = page.texts2;
+            pageNum--;
             counter = page.counter;
             imagess = page.images;
             PageNow = new Page();            
             label2.Text = pageNum.ToString();
-            SaveSettings(loadSettings);
-            foreach (var text in texts)
-            {
-                var textBox = new RichTextBox()
-                {
-                    Text = text.text2
-                };
-                textBox.Location = text.drawPoint;
-                richTextBoxes.Add(textBox);
-                textBox.Parent = this;
-                textBox.BorderStyle = BorderStyle.None;
-                workTextBox = textBox;
-                textBox.Cursor = Cursors.Hand;
-                textBox.MouseDown += textBox2_MouseDown;
-                textBox.TextChanged += textBox2_TextChanged;
-                textBox.MouseMove += textBox2_MouseMove;
-                textBox.MouseUp += textBox2_MouseUp;
-                textBox.Font = text.myFont;
-                textBox.Size = new Size(new Point((int)PageNow.page.MeasureString(textBox.Text, text.myFont).Width + 20, (int)Form1.PageNow.page.MeasureString(text.text2, text.myFont).Height));
-                textBox.BringToFront();
-                textBox.ScrollBars = RichTextBoxScrollBars.None;
-            }
+            SaveSettings(loadSettings);            
             foreach (var image in imagess)
             {
                 PageNow.page.DrawImage(image.image, image.rect);
                 DrawStroke(4, image.rect);
                 pictureBox1.Image = PageNow.imageOfPage;
-            }
+            }            
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
-            Func2(true);
-            redact = true;
-            Func();
+            redact = true;            
             var loadSettings = LoadSettings();
             var page2 = new Page2();
             pictureBox1.Image = null;
@@ -588,30 +596,7 @@ namespace WindowsFormsApp66
                 loadSettings.pages.Add(page3);
                 PageNow = new Page();
                 pageNum++;
-                SaveSettings(loadSettings);
-                foreach (var text in texts)
-                {
-                    var textBox = new RichTextBox()
-                    {
-                        Text = text.text2
-                    };
-                    textBox.Location = text.drawPoint;
-                    richTextBoxes.Add(textBox);
-                    textBox.Parent = this;
-                    textBox.BringToFront();
-                    workTextBox = textBox;
-                    textBox.MouseDown += textBox2_MouseDown;
-                    textBox.TextChanged += textBox2_TextChanged;
-                    textBox.MouseMove += textBox2_MouseMove;
-                    textBox.MouseUp += textBox2_MouseUp;
-                    textBox.Height = 20;
-                    textBox.Cursor = Cursors.Hand;
-                    textBox.BorderStyle = BorderStyle.None;
-                    var ind = texts.IndexOf(text);
-                    richTextBoxes[ind].Font = text.myFont;
-                    textBox.ScrollBars = RichTextBoxScrollBars.None;
-                    richTextBoxes[ind].Size = new Size(new Point((int)PageNow.page.MeasureString(workTextBox.Text, text.myFont).Width + 20, (int)PageNow.page.MeasureString(workTextBox.Text, text.myFont).Height));
-                }
+                SaveSettings(loadSettings);                
                 foreach (var image in imagess)
                 {
                     PageNow.page.DrawImage(image.image, image.rect);
@@ -637,29 +622,7 @@ namespace WindowsFormsApp66
                 pictureBox1.Image = PageNow.imageOfPage;
                 PageNow.layers.Clear();
                 PageNow.visComponents.Clear();
-                pageNum++;
-                foreach (var text in texts)
-                {
-                    var textBox = new RichTextBox()
-                    {
-                        Text = text.text2
-                    };
-                    textBox.Location = text.drawPoint;
-                    richTextBoxes.Add(textBox);
-                    textBox.Parent = this;
-                    textBox.BringToFront();
-                    workTextBox = textBox;
-                    textBox.MouseDown += textBox2_MouseDown;
-                    textBox.TextChanged += textBox2_TextChanged;
-                    textBox.MouseMove += textBox2_MouseMove;
-                    textBox.MouseUp += textBox2_MouseUp;
-                    textBox.Height = 20;
-                    textBox.BorderStyle = BorderStyle.None;
-                    var ind = texts.IndexOf(text);
-                    richTextBoxes[ind].Font = text.myFont;
-                    textBox.ScrollBars = RichTextBoxScrollBars.None;
-                    richTextBoxes[ind].Size = new Size(new Point((int)PageNow.page.MeasureString(workTextBox.Text, text.myFont).Width + 20, (int)PageNow.page.MeasureString(workTextBox.Text, text.myFont).Height + 20));
-                }
+                pageNum++;                
                 foreach (var image in imagess)
                 {
                     PageNow.page.DrawImage(image.image, image.rect);
