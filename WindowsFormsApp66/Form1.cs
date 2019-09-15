@@ -60,7 +60,10 @@ namespace WindowsFormsApp66
                 PageNow.visComponents.Clear();
                 foreach (var text in texts)
                 {
-                    var textBox = new RichTextBox() { Text = text.text2 };
+                    var textBox = new RichTextBox()
+                    {
+                        Text = text.text2
+                    };
                     textBox.Location = text.drawPoint;
                     richTextBoxes.Add(textBox);
                     textBox.Parent = this;
@@ -171,7 +174,8 @@ namespace WindowsFormsApp66
                     return (ProgrammSettings)formatter.Deserialize(stream);
                 }
             }
-            return default(ProgrammSettings);
+            return
+        default(ProgrammSettings);
         }
 
         public void DrawStroke(int strokeThickness, Rectangle rect2)
@@ -308,9 +312,7 @@ namespace WindowsFormsApp66
 
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-        }
+        private void button1_Click(object sender, EventArgs e) { }
 
         private void button1_Click_1(object sender, EventArgs e)
         {
@@ -333,19 +335,7 @@ namespace WindowsFormsApp66
             textBox.MouseUp += textBox2_MouseUp;
             layers.Add(counter);
             richTextBoxes.Add(textBox);
-            counter++;
-            //Text1 removing = null;
-            //foreach(var text in texts)
-            //{
-            //    foreach (var text2 in texts)
-            //    {
-            //        if(text.Equals(text2))
-            //        {
-            //            removing = text2;
-            //        }
-            //    }
-            //}
-            //texts.Remove(removing);
+            counter++;           
         }
 
         private void textBox2_TextChanged(object sender, EventArgs e)
@@ -433,7 +423,14 @@ namespace WindowsFormsApp66
                 workTextBox.BackColor = Color.LightCyan;
             }
             pictureBox1.Refresh();
-
+            if(LoadSettings().pages[pageNum].BackGround!=null)
+            {
+                pictureBox1.BackgroundImage = LoadSettings().pages[pageNum].BackGround;
+            }
+            else
+            {
+                pictureBox1.BackgroundImage = null;
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -486,9 +483,7 @@ namespace WindowsFormsApp66
                     }
                     foreach (var text in texts)
                     {
-                        if (text.drawPoint.Y == 0)
-                        {
-                        }
+                        if (text.drawPoint.Y == 0) { }
                         else
                         {
                             text.drawPoint.X = richTextBoxes[texts.IndexOf(text)].Left;
@@ -512,6 +507,7 @@ namespace WindowsFormsApp66
                 page22.counter = counter;
                 page22.texts2 = texts;
                 page22.images = imagess;
+                page22.BackGround = LoadSettings().pages[pageNum].BackGround;
                 loadSettings2.pages[pageNum] = page22;
                 SaveSettings(loadSettings2);
                 pictureBox1.Image = PageNow.imageOfPage;
@@ -541,17 +537,15 @@ namespace WindowsFormsApp66
             texts = page.texts2;
             counter = page.counter;
             imagess = page.images;
-            PageNow = new Page();
-            //foreach (var text in texts)
-            //{
-            //    PageNow.VisualizeOnPage(text, layers[texts.IndexOf(text)]);
-            //    pictureBox1.Image = PageNow.imageOfPage;
-            //}
+            PageNow = new Page();            
             label2.Text = pageNum.ToString();
             SaveSettings(loadSettings);
             foreach (var text in texts)
             {
-                var textBox = new RichTextBox() { Text = text.text2 };
+                var textBox = new RichTextBox()
+                {
+                    Text = text.text2
+                };
                 textBox.Location = text.drawPoint;
                 richTextBoxes.Add(textBox);
                 textBox.Parent = this;
@@ -597,7 +591,10 @@ namespace WindowsFormsApp66
                 SaveSettings(loadSettings);
                 foreach (var text in texts)
                 {
-                    var textBox = new RichTextBox() { Text = text.text2 };
+                    var textBox = new RichTextBox()
+                    {
+                        Text = text.text2
+                    };
                     textBox.Location = text.drawPoint;
                     richTextBoxes.Add(textBox);
                     textBox.Parent = this;
@@ -636,19 +633,17 @@ namespace WindowsFormsApp66
                 texts = page.texts2;
                 counter = page.counter;
                 imagess = page.images;
-                PageNow.page.Clear(Color.Transparent);
-                //foreach (var text in texts)
-                //{
-                //    text.VisMe(new RichTextBox() { Text = text.text2 }, text.drawPoint, allColor);
-                //    PageNow.VisualizeOnPage(text, layers[texts.IndexOf(text)]);
-                //}
+                PageNow.page.Clear(Color.Transparent);                
                 pictureBox1.Image = PageNow.imageOfPage;
                 PageNow.layers.Clear();
                 PageNow.visComponents.Clear();
                 pageNum++;
                 foreach (var text in texts)
                 {
-                    var textBox = new RichTextBox() { Text = text.text2 };
+                    var textBox = new RichTextBox()
+                    {
+                        Text = text.text2
+                    };
                     textBox.Location = text.drawPoint;
                     richTextBoxes.Add(textBox);
                     textBox.Parent = this;
@@ -675,15 +670,10 @@ namespace WindowsFormsApp66
             label2.Text = pageNum.ToString();
         }
 
-        private void pictureBox1_Click(object sender, EventArgs e)
-        {
+        private void pictureBox1_Click(object sender, EventArgs e) { }
+        
 
-        }
-
-        private void Form1_Paint(object sender, PaintEventArgs e)
-        {
-            //    e.Graphics.DrawImage(header,0,0);
-        }
+        private void Form1_Paint(object sender, PaintEventArgs e)   { }
 
         private void Form1_Resize(object sender, EventArgs e)
         {
@@ -791,13 +781,9 @@ namespace WindowsFormsApp66
                 }
             }
         }
-        private void OnFrameChange2d(object o, EventArgs e)
-        {
-        }
+        private void OnFrameChange2d(object o, EventArgs e) { }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-        }
+        private void Form1_Load(object sender, EventArgs e) { }
 
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
         {
@@ -816,9 +802,9 @@ namespace WindowsFormsApp66
                 }
                 else
                 {
-                    if(e.X< im.rect.X + im.rect.Width&e.X> im.rect.X)
+                    if (e.X < im.rect.X + im.rect.Width & e.X > im.rect.X)
                     {
-                        if(e.Y>im.rect.Y&e.Y<im.rect.Y+im.rect.Height)
+                        if (e.Y > im.rect.Y & e.Y < im.rect.Y + im.rect.Height)
                         {
                             pictureBox1.Cursor = Cursors.Hand;
                         }
@@ -830,9 +816,9 @@ namespace WindowsFormsApp66
                     else
                     {
                         pictureBox1.Cursor = Cursors.Default;
-                    }                    
+                    }
                 }
-                
+
             }
             if (e.Button == MouseButtons.Left)
             {
@@ -867,9 +853,7 @@ namespace WindowsFormsApp66
                     {
                         if (e.X < im.rect.X + im.rect.Width & e.X > im.rect.X)
                         {
-                            if (e.Y > im.rect.Y & e.Y < im.rect.Y + im.rect.Height)
-                            {
-                            }
+                            if (e.Y > im.rect.Y & e.Y < im.rect.Y + im.rect.Height) { }
                         }
                     }
                 }
@@ -893,9 +877,7 @@ namespace WindowsFormsApp66
             }
         }
 
-        private void button7_Click(object sender, EventArgs e)
-        {
-        }
+        private void button7_Click(object sender, EventArgs e) { }
 
         private void pictureBox1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
