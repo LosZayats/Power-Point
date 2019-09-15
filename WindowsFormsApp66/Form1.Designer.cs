@@ -65,7 +65,6 @@
             this.pictureBox1.Size = new System.Drawing.Size(1920, 1080);
             this.pictureBox1.TabIndex = 0;
             this.pictureBox1.TabStop = false;
-            this.pictureBox1.UseWaitCursor = true;
             this.pictureBox1.Click += new System.EventHandler(this.pictureBox1_Click);
             this.pictureBox1.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox1_Paint);
             this.pictureBox1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.pictureBox1_MouseDoubleClick);
@@ -81,7 +80,6 @@
             this.label1.Size = new System.Drawing.Size(35, 14);
             this.label1.TabIndex = 2;
             this.label1.Text = "label1";
-            this.label1.UseWaitCursor = true;
             this.label1.Visible = false;
             // 
             // button1
@@ -96,7 +94,6 @@
             this.button1.TabIndex = 8;
             this.button1.Text = "+ text";
             this.button1.UseVisualStyleBackColor = false;
-            this.button1.UseWaitCursor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click_1);
             // 
             // timer1
@@ -117,7 +114,6 @@
             this.button2.TabIndex = 9;
             this.button2.Text = "preview";
             this.button2.UseVisualStyleBackColor = false;
-            this.button2.UseWaitCursor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // panel1
@@ -126,7 +122,6 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(255, 100);
             this.panel1.TabIndex = 11;
-            this.panel1.UseWaitCursor = true;
             // 
             // panel2
             // 
@@ -136,7 +131,6 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(255, 100);
             this.panel2.TabIndex = 12;
-            this.panel2.UseWaitCursor = true;
             // 
             // button6
             // 
@@ -150,7 +144,6 @@
             this.button6.TabIndex = 20;
             this.button6.Text = "+ link";
             this.button6.UseVisualStyleBackColor = false;
-            this.button6.UseWaitCursor = true;
             // 
             // button5
             // 
@@ -164,7 +157,6 @@
             this.button5.TabIndex = 19;
             this.button5.Text = "+ image";
             this.button5.UseVisualStyleBackColor = false;
-            this.button5.UseWaitCursor = true;
             this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
             // panel3
@@ -173,7 +165,6 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(255, 100);
             this.panel3.TabIndex = 13;
-            this.panel3.UseWaitCursor = true;
             // 
             // panel4
             // 
@@ -181,7 +172,6 @@
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(255, 100);
             this.panel4.TabIndex = 14;
-            this.panel4.UseWaitCursor = true;
             // 
             // panel5
             // 
@@ -189,7 +179,6 @@
             this.panel5.Name = "panel5";
             this.panel5.Size = new System.Drawing.Size(255, 60);
             this.panel5.TabIndex = 18;
-            this.panel5.UseWaitCursor = true;
             // 
             // panel6
             // 
@@ -198,7 +187,6 @@
             this.panel6.Name = "panel6";
             this.panel6.Size = new System.Drawing.Size(255, 60);
             this.panel6.TabIndex = 17;
-            this.panel6.UseWaitCursor = true;
             // 
             // button4
             // 
@@ -212,7 +200,6 @@
             this.button4.TabIndex = 20;
             this.button4.Text = ">";
             this.button4.UseVisualStyleBackColor = false;
-            this.button4.UseWaitCursor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // panel7
@@ -222,7 +209,6 @@
             this.panel7.Name = "panel7";
             this.panel7.Size = new System.Drawing.Size(255, 60);
             this.panel7.TabIndex = 16;
-            this.panel7.UseWaitCursor = true;
             // 
             // label2
             // 
@@ -234,7 +220,6 @@
             this.label2.Size = new System.Drawing.Size(24, 26);
             this.label2.TabIndex = 21;
             this.label2.Text = "0";
-            this.label2.UseWaitCursor = true;
             // 
             // button3
             // 
@@ -248,7 +233,6 @@
             this.button3.TabIndex = 19;
             this.button3.Text = "<";
             this.button3.UseVisualStyleBackColor = false;
-            this.button3.UseWaitCursor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
             // panel8
@@ -258,7 +242,6 @@
             this.panel8.Name = "panel8";
             this.panel8.Size = new System.Drawing.Size(255, 60);
             this.panel8.TabIndex = 15;
-            this.panel8.UseWaitCursor = true;
             // 
             // userControl21
             // 
@@ -267,7 +250,6 @@
             this.userControl21.Name = "userControl21";
             this.userControl21.Size = new System.Drawing.Size(189, 81);
             this.userControl21.TabIndex = 10;
-            this.userControl21.UseWaitCursor = true;
             this.userControl21.Visible = false;
             // 
             // Form1
@@ -292,7 +274,6 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.Text = "Power point";
-            this.UseWaitCursor = true;
             this.Load += new System.EventHandler(this.Form1_Load);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
             this.Resize += new System.EventHandler(this.Form1_Resize);
