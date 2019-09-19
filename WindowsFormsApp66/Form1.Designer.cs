@@ -37,6 +37,7 @@
             this.button2 = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.label3 = new System.Windows.Forms.Label();
             this.button6 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
             this.panel3 = new System.Windows.Forms.Panel();
@@ -48,7 +49,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.button3 = new System.Windows.Forms.Button();
             this.panel8 = new System.Windows.Forms.Panel();
-            this.label3 = new System.Windows.Forms.Label();
             this.userControl21 = new WindowsFormsApp66.UserControl2();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel2.SuspendLayout();
@@ -60,7 +60,7 @@
             // pictureBox1
             // 
             this.pictureBox1.BackColor = System.Drawing.Color.White;
-            this.pictureBox1.Cursor = System.Windows.Forms.Cursors.WaitCursor;
+            this.pictureBox1.Cursor = System.Windows.Forms.Cursors.Default;
             this.pictureBox1.Location = new System.Drawing.Point(-3, -12);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(1920, 1080);
@@ -134,6 +134,17 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(255, 100);
             this.panel2.TabIndex = 12;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.BackColor = System.Drawing.Color.Transparent;
+            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label3.Location = new System.Drawing.Point(80, 64);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(65, 25);
+            this.label3.TabIndex = 19;
+            this.label3.Text = "2.1.1";
             // 
             // button6
             // 
@@ -246,17 +257,6 @@
             this.panel8.Name = "panel8";
             this.panel8.Size = new System.Drawing.Size(255, 60);
             this.panel8.TabIndex = 15;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.BackColor = System.Drawing.Color.Transparent;
-            this.label3.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.label3.Location = new System.Drawing.Point(80, 64);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(65, 25);
-            this.label3.TabIndex = 19;
-            this.label3.Text = "2.1.1";
             // 
             // userControl21
             // 

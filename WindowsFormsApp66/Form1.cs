@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using System.Windows.Input;
 using System.Runtime.Serialization.Formatters.Binary;
 
 namespace WindowsFormsApp66
@@ -41,7 +42,7 @@ namespace WindowsFormsApp66
             }
             load.pages.Add(new Page2());
             SaveSettings(load);
-            Func2(true);            
+            Func2(true);
             Func();
             var loadSettings = LoadSettings();
             var page2 = new Page2();
@@ -120,6 +121,7 @@ namespace WindowsFormsApp66
         Bitmap header;
         bool loading = false;
         bool redact;
+        bool draw;
         public static RichTextBox workTextBox;
         Point DownPoint;
         Point OnPPoint;
@@ -299,6 +301,7 @@ namespace WindowsFormsApp66
             richTextBoxes.Clear();
             counter = 0;
         }
+        Point LastDrawPoint = new Point();
         public void Func2(bool Visible2)
         {
             foreach (var textbox in Controls)
@@ -420,7 +423,15 @@ namespace WindowsFormsApp66
             var send = (RichTextBox)sender;
             text1.VisMe(send, new Point(send.Left, send.Top), allColor);
             var textBox = (RichTextBox)sender;
-            textBox.Size = new Size(new Point((int)PageNow.page.MeasureString(textBox.Text, textBox.Font).Width + 20, (int)Form1.PageNow.page.MeasureString(textBox.Text, textBox.Font).Height));
+            if ((int)PageNow.page.MeasureString(textBox.Text, textBox.Font).Width == 0)
+            {
+                textBox.Width = 20;
+                textBox.Height = 20;
+            }
+            else
+            {
+                textBox.Size = new Size(new Point((int)PageNow.page.MeasureString(textBox.Text, textBox.Font).Width + 40, (int)Form1.PageNow.page.MeasureString(textBox.Text, textBox.Font).Height));
+            }
         }
 
         private void textBox2_MouseDown(object sender, MouseEventArgs e)
@@ -452,7 +463,7 @@ namespace WindowsFormsApp66
                 {
                     send.Top = 100;
                 }
-                else if (send.Top + send.Height >= this.Height - 40)
+                else if (send.Top + send.Height >= this.Height - 60)
                 {
                     send.Top = this.Height - 60;
                 }
@@ -768,7 +779,7 @@ namespace WindowsFormsApp66
                 {
                     if (text.image != null)
                     {
-                        if (e.X > text.drawPoint.X & e.X < text.drawPoint.X + text.image.Width & e.Y > text.drawPoint.Y & e.Y<text.image.Height + text.drawPoint.Y)
+                        if (e.X > text.drawPoint.X & e.X < text.drawPoint.X + Graphics.FromImage(pictureBox1.Image).MeasureString(text.text2, text.myFont).Width & e.Y > text.drawPoint.Y & e.Y < Graphics.FromImage(pictureBox1.Image).MeasureString(text.text2, text.myFont).Height + text.drawPoint.Y)
                         {
                             if (text.Link)
                             {
@@ -864,6 +875,88 @@ namespace WindowsFormsApp66
                     }
                 }
             }
+            bool imageClick = false;
+            bool TextClick = false;
+            foreach (var im in imagess)
+            {
+                if (e.X > im.rect.X + im.rect.Width - 4 & e.Y > im.rect.Y)
+                {
+                    if (e.X <= im.rect.X + im.rect.Width + 4 & e.Y <= im.rect.Y + im.rect.Height)
+                    {
+                    }
+                    else
+                    {
+                        imageClick = true;
+                    }
+                }
+                else
+                {
+                    imageClick = true;
+                }
+            }
+            foreach (var im in texts)
+            {
+                if (e.X > im.drawPoint.X & e.Y > im.drawPoint.Y)
+                {
+                    if (e.X <= im.drawPoint.X + (int)PageNow.page.MeasureString(im.text2, im.myFont).Width & e.Y <= im.drawPoint.Y + (int)PageNow.page.MeasureString(im.text2, im.myFont).Height)
+                    {
+
+                    }
+                    else
+                    {
+                        TextClick = true;
+                    }
+                }
+                else
+                {
+                    TextClick = true;
+                }
+            }
+            if (TextClick && !imageClick && e.Button == MouseButtons.Left)
+            {
+                PageNow.page.FillEllipse(new SolidBrush(Color.Brown), new Rectangle(e.X, e.Y, 10, 10));
+                int yPlus = (e.Location.Y - LastDrawPoint.Y) / 10;
+                int XPlus = 0;
+                if (e.Location.X > LastDrawPoint.X)
+                {
+                    XPlus = 1;
+                }
+                else
+                {
+                    XPlus = -1;
+                }
+                if (e.Location.Y > LastDrawPoint.Y)
+                {
+                    if (yPlus == 0)
+                    {
+
+                    }
+                    else
+                    {
+                        for (int top = 0; top * yPlus + LastDrawPoint.Y < e.Location.Y; top++)
+                        {
+                            PageNow.page.FillEllipse(new SolidBrush(Color.Brown), new Rectangle(LastDrawPoint.X + 10 * top * XPlus, LastDrawPoint.Y + top * yPlus, 10, 10));
+                        }
+                    }
+                }
+                else
+                {
+                    if (yPlus == 0)
+                    {
+
+                    }
+                    else
+                    {
+                        for (int top = 0; LastDrawPoint.Y + top * yPlus < (e.Location.Y - LastDrawPoint.Y); top++)
+                        {
+                            PageNow.page.FillEllipse(new SolidBrush(Color.Brown), new Rectangle(LastDrawPoint.X + 10 * top * XPlus, LastDrawPoint.Y + top * yPlus, 10, 10));
+                        }
+                    }
+                }
+
+                pictureBox1.Image = PageNow.imageOfPage;
+                LastDrawPoint = e.Location;
+            }
         }
 
         private void button5_Click(object sender, EventArgs e)
@@ -936,7 +1029,7 @@ namespace WindowsFormsApp66
             {
                 if (text.image != null)
                 {
-                    if (e.X > text.drawPoint.X & e.X < text.drawPoint.X + text.image.Width & e.Y > text.drawPoint.Y & text.image.Height + text.drawPoint.Y > e.Y)
+                    if (e.X > text.drawPoint.X & e.X < text.drawPoint.X + Graphics.FromImage(pictureBox1.Image).MeasureString(text.text2, text.myFont).Width & e.Y > text.drawPoint.Y & e.Y < Graphics.FromImage(pictureBox1.Image).MeasureString(text.text2, text.myFont).Height + text.drawPoint.Y)
                     {
                         if (text.Link)
                         {
