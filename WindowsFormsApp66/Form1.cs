@@ -116,6 +116,8 @@ namespace WindowsFormsApp66
             panel2.Controls.Add(label3);
             font = label1.Font;
             allColor = Color.Black;
+            DrawLine(new Point(156, 100), new Point(500, 300), 5.0);
+            pictureBox1.Image = PageNow.imageOfPage;
         }
         bool b;
         Bitmap header;
@@ -188,6 +190,31 @@ namespace WindowsFormsApp66
                     }
                 }
                 pictureBox1.Image = PageNow.imageOfPage;
+            }
+        }
+        public void DrawLine(Point start, Point end, double ThickNess)
+        {
+            double count = 0;
+            var y1 = (double)start.Y;
+            var y2 = (double)end.Y;
+            var hei = (y2 - y1) / ThickNess;
+            var wid = ((double)end.X - (double)start.X) / ThickNess;
+            if (Math.Abs(y2 - y1) > Math.Abs(end.X-start.X))
+            {
+                count = hei;
+            }
+            else
+            {
+                count = wid;
+            }
+            count = Math.Abs(count);
+            double YPlus=0;
+            double XPlus = 0;
+            YPlus = ((double)end.Y - (double)start.Y) / count;
+            XPlus = ((double)end.X - (double)start.X) / count;            
+            for (int top = 0; top/* * YPlus*/ < count/* (y2 - y1)*/; top++)
+            {
+                PageNow.page.FillRectangle(new SolidBrush(allColor), new Rectangle((int)((int)top * (int)XPlus + (int)start.X), (int)((int)top * (int)YPlus)+ (int)start.Y, (int)ThickNess, (int)ThickNess));
             }
         }
         List<Panel> panels = new List<Panel>();
@@ -912,48 +939,24 @@ namespace WindowsFormsApp66
                     TextClick = true;
                 }
             }
-            if (TextClick && !imageClick && e.Button == MouseButtons.Left)
+            if (/*TextClick && imageClick*//* &&*/ e.Button == MouseButtons.Left)
             {
-                PageNow.page.FillEllipse(new SolidBrush(Color.Brown), new Rectangle(e.X, e.Y, 10, 10));
-                int yPlus = (e.Location.Y - LastDrawPoint.Y) / 10;
-                int XPlus = 0;
-                if (e.Location.X > LastDrawPoint.X)
+                if (LastDrawPoint.X == 0&&LastDrawPoint.Y ==0)
                 {
-                    XPlus = 1;
+                    LastDrawPoint = e.Location;
                 }
-                else
-                {
-                    XPlus = -1;
-                }
-                if (e.Location.Y > LastDrawPoint.Y)
-                {
-                    if (yPlus == 0)
-                    {
-
-                    }
-                    else
-                    {
-                        for (int top = 0; top * yPlus + LastDrawPoint.Y < e.Location.Y; top++)
-                        {
-                            PageNow.page.FillEllipse(new SolidBrush(Color.Brown), new Rectangle(LastDrawPoint.X + 10 * top * XPlus, LastDrawPoint.Y + top * yPlus, 10, 10));
-                        }
-                    }
-                }
-                else
-                {
-                    if (yPlus == 0)
-                    {
-
-                    }
-                    else
-                    {
-                        for (int top = 0; LastDrawPoint.Y + top * yPlus < (e.Location.Y - LastDrawPoint.Y); top++)
-                        {
-                            PageNow.page.FillEllipse(new SolidBrush(Color.Brown), new Rectangle(LastDrawPoint.X + 10 * top * XPlus, LastDrawPoint.Y + top * yPlus, 10, 10));
-                        }
-                    }
-                }
-
+                DrawLine(LastDrawPoint, e.Location, 10);
+                //PageNow.page.FillRectangle(new SolidBrush(Color.Brown), new Rectangle(e.X, e.Y, 5, 5));                
+                //if (LastDrawPoint.Y< e.Location.Y)
+                //{
+                //    PageNow.page.DrawLine(new Pen(Color.Black), LastDrawPoint, e.Location);
+                //    DrawLine(LastDrawPoint, e.Location, 10);
+                //}
+                //else
+                //{
+                //    PageNow.page.DrawLine(new Pen(Color.Black), LastDrawPoint, e.Location);
+                //    DrawLine(e.Location, LastDrawPoint, 10);
+                //}                
                 pictureBox1.Image = PageNow.imageOfPage;
                 LastDrawPoint = e.Location;
             }
@@ -1045,6 +1048,12 @@ namespace WindowsFormsApp66
                     }
                 }
             }
+        }
+
+        private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
+        {
+            LastDrawPoint.Y = 0;
+            LastDrawPoint.X = 0;
         }
     }
 }
