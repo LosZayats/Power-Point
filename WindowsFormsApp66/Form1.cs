@@ -820,7 +820,7 @@ namespace WindowsFormsApp66
                     {
                         if (e.X > text.drawPoint.X & e.X < text.drawPoint.X + Graphics.FromImage(pictureBox1.Image).MeasureString(text.text2, text.myFont).Width & e.Y > text.drawPoint.Y & e.Y < Graphics.FromImage(pictureBox1.Image).MeasureString(text.text2, text.myFont).Height + text.drawPoint.Y)
                         {
-                            if (text.Link)
+                            if (text.Link & redact)
                             {
                                 text.myColor = Color.Purple;                                
                                 text.VisMe(new RichTextBox() { Text = text.text2 }, text.drawPoint, text.myColor);
