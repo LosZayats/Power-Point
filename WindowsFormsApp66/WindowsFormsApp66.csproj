@@ -264,5 +264,8 @@
   <ItemGroup>
     <None Include="Resources\loading.gif" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\palitra.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

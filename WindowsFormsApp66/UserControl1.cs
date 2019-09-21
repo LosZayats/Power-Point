@@ -64,7 +64,14 @@ namespace WindowsFormsApp66
         {
             if (bmp2 != null)
             {
-                Form1.allColor = bmp2.GetPixel(e.X, e.Y);
+                if(!Form1.BrushColor)
+                {
+                    Form1.allColor = bmp2.GetPixel(e.X, e.Y);
+                }
+                else
+                {
+                    Form1.BrushColor = false;
+                }                
             }
         }
     }

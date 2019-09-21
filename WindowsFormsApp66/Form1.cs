@@ -22,6 +22,13 @@ namespace WindowsFormsApp66
         {
             public List<Page2> pages;
         }
+        class Shape:Attribute
+        {
+            public enum Shapes
+            {
+                Circle,Rectangle,
+            }
+        }
         double Frame;
         public static void SaveSettings(ProgrammSettings settings)
         {
@@ -101,6 +108,7 @@ namespace WindowsFormsApp66
             panel7.BackgroundImage = UserControl2.Gradient.MakeGradient(Color.OrangeRed, UserControl2.Direction.up, panel1);
             panel8.BackgroundImage = UserControl2.Gradient.MakeGradient(Color.OrangeRed, UserControl2.Direction.up, panel1);
             panel8.Controls.Add(button3);
+            panel3.Controls.Add(button7);
             panel6.Controls.Add(button4);
             panel7.Controls.Add(label2);
             label2.BringToFront();
@@ -124,7 +132,8 @@ namespace WindowsFormsApp66
         bool draw;
         public static RichTextBox workTextBox;
         Point DownPoint;
-        Point OnPPoint;
+        public static Color brushColl;
+        public static bool BrushColor;
         bool ableToMove;
         public static int counter;
         static Color allCol;
@@ -495,6 +504,7 @@ namespace WindowsFormsApp66
                 else
                 {
                     send.Top += e.Y - DownPoint.Y;
+                    send.BringToFront();
                 }
                 if (send.Left + send.Width >= this.Width - 20)
                 {
@@ -507,6 +517,7 @@ namespace WindowsFormsApp66
                 else
                 {
                     send.Left += e.X - DownPoint.X;
+                    send.BringToFront();
                 }
                 var ind = richTextBoxes.IndexOf((RichTextBox)sender);
                 texts[ind].drawPoint = richTextBoxes[ind].Location;
@@ -1019,7 +1030,7 @@ namespace WindowsFormsApp66
             {
                 if (text.image != null)
                 {
-                    if (e.X > text.drawPoint.X & e.X < text.drawPoint.X + Graphics.FromImage(pictureBox1.Image).MeasureString(text.text2, text.myFont).Width & e.Y > text.drawPoint.Y & e.Y < Graphics.FromImage(pictureBox1.Image).MeasureString(text.text2, text.myFont).Height + text.drawPoint.Y)
+                    if (e.X > text.drawPoint.X & e.X < text.drawPoint.X + Graphics.FromImage(PageNow.imageOfPage).MeasureString(text.text2, text.myFont).Width & e.Y > text.drawPoint.Y & e.Y < Graphics.FromImage(PageNow.imageOfPage).MeasureString(text.text2, text.myFont).Height + text.drawPoint.Y)
                     {
                         if (text.Link)
                         {
@@ -1045,7 +1056,9 @@ namespace WindowsFormsApp66
 
         private void button7_Click_1(object sender, EventArgs e)
         {
-
+            Form2 f = new Form2();
+            f.Show();
+            BrushColor = true;
         }
 
         private void userControl21_Load(object sender, EventArgs e)
