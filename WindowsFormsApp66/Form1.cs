@@ -938,6 +938,7 @@ namespace WindowsFormsApp66
                             }
                             if (!redact)
                             {
+                                RichTextBoxVisualize();
                                 Func2(true);
                                 redact = false;
                                 button2.Text = "preview";
