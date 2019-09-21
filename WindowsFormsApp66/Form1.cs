@@ -184,6 +184,7 @@ namespace WindowsFormsApp66
             {
                 Func();
                 pagenum = value;
+                PageNow.page.Clear(Color.Transparent);
                 RichTextBoxVisualize();
                 ImageVisualize();
                 if (pageNum < LoadSettings().pages.Count)
@@ -349,7 +350,7 @@ namespace WindowsFormsApp66
             }
         }
         public void ImageVisualize()
-        {
+        {            
             foreach (var image in imagess)
             {
                 PageNow.page.DrawImage(image.image, image.rect);
@@ -438,6 +439,7 @@ namespace WindowsFormsApp66
             textBox.MouseMove += textBox2_MouseMove;
             textBox.MouseUp += textBox2_MouseUp;
             layers.Add(counter);
+            ImageVisualize();            
             richTextBoxes.Add(textBox);
             pictureBox1.Image = PageNow.imageOfPage;
             counter++;
@@ -820,12 +822,34 @@ namespace WindowsFormsApp66
                         {
                             if (text.Link)
                             {
-                                text.myColor = Color.Purple;
+                                text.myColor = Color.Purple;                                
                                 text.VisMe(new RichTextBox() { Text = text.text2 }, text.drawPoint, text.myColor);
                                 PageNow.page.DrawImage(text.image, 0, 0);
                                 pictureBox1.Image = PageNow.imageOfPage;
                             }
-                        }                        
+                        }
+                        else
+                        {
+                            if(e.Button == MouseButtons.None)
+                            {
+                                if (text.Link)
+                                {
+                                   // PageNow.page.Clear(Color.Transparent);                                                                    
+                                    text.myColor = Color.Blue;
+                                    text.VisMe(new RichTextBox() { Text = text.text2 }, text.drawPoint, text.myColor);
+                                    PageNow.page.DrawImage(text.image, 0, 0);
+                                    if(!redact)
+                                    {
+                                        foreach (var t in texts)
+                                        {
+                                            PageNow.page.DrawImage(t.image, 0, 0);
+                                        }
+                                        ImageVisualize();
+                                    }                                    
+                                    pictureBox1.Image = PageNow.imageOfPage;
+                                }
+                            }                            
+                        }
                     }
                 }
 
@@ -860,9 +884,11 @@ namespace WindowsFormsApp66
                     {
                         pictureBox1.Cursor = Cursors.Default;
                     }
-                }
+                }               
 
             }
+            bool resize = false;
+            bool move = false;
             if (e.Button == MouseButtons.Left)
             {
                 redact = true;
@@ -880,6 +906,7 @@ namespace WindowsFormsApp66
                             im.rect.Width += e.X - (im.rect.X + im.rect.Width);
                             Func2(true);
                             redact = false;
+                            resize = true;
                             button2.Text = "preview";
                             pictureBox1.Image = null;
                             PageNow.page.Clear(Color.Transparent);
@@ -896,6 +923,26 @@ namespace WindowsFormsApp66
                         if (e.X < im.rect.X + im.rect.Width & e.X > im.rect.X)
                         {
                             if (e.Y > im.rect.Y & e.Y < im.rect.Y + im.rect.Height) { }
+                        }                        
+                    }
+                    if (e.X > im.rect.X & e.X < im.rect.X + im.rect.Width - 8)
+                    {
+                        if (e.Y > im.rect.Y && e.Y < im.rect.Y + im.rect.Height - 8)
+                        {
+                            im.rect.X += 1;
+                            PageNow.page.Clear(Color.Transparent);
+                            foreach (var image in imagess)
+                            {
+                                PageNow.page.DrawImage(image.image, image.rect);
+                                pictureBox1.Image = PageNow.imageOfPage;
+                            }
+                            if (!redact)
+                            {
+                                Func2(true);
+                                redact = false;
+                                button2.Text = "preview";
+                            }
+                            move = true;
                         }
                     }
                 }
@@ -937,7 +984,7 @@ namespace WindowsFormsApp66
                     TextClick = true;
                 }
             }
-            if (TextClick && imageClick && e.Button == MouseButtons.Left)
+            if (e.Button == MouseButtons.Left &!resize &!move)
             {
                 if (LastDrawPoint.X == 0&&LastDrawPoint.Y ==0)
                 {
@@ -1065,6 +1112,12 @@ namespace WindowsFormsApp66
         private void userControl21_Load(object sender, EventArgs e)
         {
 
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            PageNow.page.ScaleTransform(1.0F, 2.0F);
+            pictureBox1.Image = PageNow.imageOfPage;
         }
     }
 }

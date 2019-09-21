@@ -51,8 +51,10 @@
             this.button3 = new System.Windows.Forms.Button();
             this.panel8 = new System.Windows.Forms.Panel();
             this.userControl21 = new WindowsFormsApp66.UserControl2();
+            this.button8 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel2.SuspendLayout();
+            this.panel3.SuspendLayout();
             this.panel6.SuspendLayout();
             this.panel7.SuspendLayout();
             this.panel8.SuspendLayout();
@@ -178,6 +180,7 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.button8);
             this.panel3.Location = new System.Drawing.Point(510, 0);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(255, 100);
@@ -285,6 +288,16 @@
             this.userControl21.Visible = false;
             this.userControl21.Load += new System.EventHandler(this.userControl21_Load);
             // 
+            // button8
+            // 
+            this.button8.Location = new System.Drawing.Point(162, 38);
+            this.button8.Name = "button8";
+            this.button8.Size = new System.Drawing.Size(75, 23);
+            this.button8.TabIndex = 0;
+            this.button8.Text = "button8";
+            this.button8.UseVisualStyleBackColor = true;
+            this.button8.Click += new System.EventHandler(this.button8_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -314,6 +327,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
+            this.panel3.ResumeLayout(false);
             this.panel6.ResumeLayout(false);
             this.panel7.ResumeLayout(false);
             this.panel7.PerformLayout();
@@ -346,6 +360,7 @@
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button button7;
+        private System.Windows.Forms.Button button8;
     }
 }
 
