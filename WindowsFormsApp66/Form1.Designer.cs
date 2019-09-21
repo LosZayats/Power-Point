@@ -50,8 +50,10 @@
             this.button3 = new System.Windows.Forms.Button();
             this.panel8 = new System.Windows.Forms.Panel();
             this.userControl21 = new WindowsFormsApp66.UserControl2();
+            this.button7 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel2.SuspendLayout();
+            this.panel3.SuspendLayout();
             this.panel6.SuspendLayout();
             this.panel7.SuspendLayout();
             this.panel8.SuspendLayout();
@@ -177,6 +179,7 @@
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.button7);
             this.panel3.Location = new System.Drawing.Point(510, 0);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(255, 100);
@@ -267,6 +270,21 @@
             this.userControl21.Size = new System.Drawing.Size(189, 81);
             this.userControl21.TabIndex = 10;
             this.userControl21.Visible = false;
+            this.userControl21.Load += new System.EventHandler(this.userControl21_Load);
+            // 
+            // button7
+            // 
+            this.button7.BackColor = System.Drawing.Color.Transparent;
+            this.button7.FlatAppearance.BorderSize = 0;
+            this.button7.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button7.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.button7.Location = new System.Drawing.Point(6, 12);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(104, 32);
+            this.button7.TabIndex = 21;
+            this.button7.Text = "+ image";
+            this.button7.UseVisualStyleBackColor = false;
+            this.button7.Click += new System.EventHandler(this.button7_Click_1);
             // 
             // Form1
             // 
@@ -296,6 +314,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
+            this.panel3.ResumeLayout(false);
             this.panel6.ResumeLayout(false);
             this.panel7.ResumeLayout(false);
             this.panel7.PerformLayout();
@@ -327,6 +346,7 @@
         private System.Windows.Forms.Button button5;
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button button7;
     }
 }
 

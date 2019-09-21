@@ -115,9 +115,7 @@ namespace WindowsFormsApp66
             panels2.Add(panel8);
             panel2.Controls.Add(label3);
             font = label1.Font;
-            allColor = Color.Black;
-            DrawLine(new Point(156, 100), new Point(500, 300), 5.0);
-            pictureBox1.Image = PageNow.imageOfPage;
+            allColor = Color.Black;            
         }
         bool b;
         Bitmap header;
@@ -945,18 +943,7 @@ namespace WindowsFormsApp66
                 {
                     LastDrawPoint = e.Location;
                 }
-                DrawLine(LastDrawPoint, e.Location, 10);
-                //PageNow.page.FillRectangle(new SolidBrush(Color.Brown), new Rectangle(e.X, e.Y, 5, 5));                
-                //if (LastDrawPoint.Y< e.Location.Y)
-                //{
-                //    PageNow.page.DrawLine(new Pen(Color.Black), LastDrawPoint, e.Location);
-                //    DrawLine(LastDrawPoint, e.Location, 10);
-                //}
-                //else
-                //{
-                //    PageNow.page.DrawLine(new Pen(Color.Black), LastDrawPoint, e.Location);
-                //    DrawLine(e.Location, LastDrawPoint, 10);
-                //}                
+                DrawLine(LastDrawPoint, e.Location, 10);                               
                 pictureBox1.Image = PageNow.imageOfPage;
                 LastDrawPoint = e.Location;
             }
@@ -1054,6 +1041,16 @@ namespace WindowsFormsApp66
         {
             LastDrawPoint.Y = 0;
             LastDrawPoint.X = 0;
+        }
+
+        private void button7_Click_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void userControl21_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
