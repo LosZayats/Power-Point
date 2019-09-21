@@ -832,7 +832,7 @@ namespace WindowsFormsApp66
                         {
                             if(e.Button == MouseButtons.None)
                             {
-                                if (text.Link)
+                                if (text.Link &!redact)
                                 {
                                    // PageNow.page.Clear(Color.Transparent);                                                                    
                                     text.myColor = Color.Blue;
