@@ -101,6 +101,9 @@ namespace WindowsFormsApp66
             panels2.Add(panel8);
             panel2.Controls.Add(label3);
             font = label1.Font;
+            var bmp = new Bitmap(18 * 4, 18 * 4);
+            var gr = Graphics.FromImage(bmp);
+            gr.DrawImage(Properties.Resources.pen1, new Rectangle(0, 0, 18 * 4, 18 * 4));
             allColor = Color.Black;            
         }
         bool b;
