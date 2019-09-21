@@ -12,11 +12,24 @@ namespace WindowsFormsApp66
 {
     public partial class Form2 : Form
     {
-        public Form2()
+        public Form2(bool ButtVis)
         {
             InitializeComponent();
             button1.BackgroundImage = UserControl2.Gradient.MakeGradient(Color.Red, UserControl2.Direction.right, button1);
             button2.BackgroundImage = UserControl2.Gradient.MakeGradient(Color.Indigo, UserControl2.Direction.left, button2);
+            button3.BackgroundImage = UserControl2.Gradient.MakeGradient(Color.BurlyWood, UserControl2.Direction.right, button3);
+            if (ButtVis)
+            {
+                
+            }
+            else
+            {
+                button1.Visible = false;
+                button2.Visible = false;
+                button3.Visible = false;
+                this.MinimumSize = new Size(this.Width,255 + 72);
+                this.MaximumSize = new Size(this.Width, 255 + 72);                
+            }
         }
 
         private void Form2_Load(object sender, EventArgs e)

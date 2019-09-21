@@ -30,6 +30,7 @@
         {
             this.hScrollBar1 = new System.Windows.Forms.HScrollBar();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.SuspendLayout();
             // 
             // hScrollBar1
@@ -44,13 +45,21 @@
             // 
             this.panel1.Location = new System.Drawing.Point(0, 265);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(255, 14);
+            this.panel1.Size = new System.Drawing.Size(127, 14);
             this.panel1.TabIndex = 1;
+            // 
+            // panel2
+            // 
+            this.panel2.Location = new System.Drawing.Point(127, 265);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(127, 14);
+            this.panel2.TabIndex = 2;
             // 
             // UserControl1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.hScrollBar1);
             this.DoubleBuffered = true;
@@ -68,5 +77,6 @@
 
         private System.Windows.Forms.HScrollBar hScrollBar1;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel panel2;
     }
 }

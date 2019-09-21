@@ -39,6 +39,7 @@ namespace WindowsFormsApp66
             }
         }
         bool anim;
+        
         public Form1()
         {
             InitializeComponent();
@@ -221,7 +222,7 @@ namespace WindowsFormsApp66
             XPlus = ((double)end.X - (double)start.X) / count;            
             for (int top = 0; top/* * YPlus*/ < count/* (y2 - y1)*/; top++)
             {
-                PageNow.page.FillRectangle(new SolidBrush(allColor), new Rectangle((int)((int)top * (int)XPlus + (int)start.X), (int)((int)top * (int)YPlus)+ (int)start.Y, (int)ThickNess, (int)ThickNess));
+                PageNow.page.FillRectangle(new SolidBrush(brushColl), new Rectangle((int)((int)top * (int)XPlus + (int)start.X), (int)((int)top * (int)YPlus)+ (int)start.Y, (int)ThickNess, (int)ThickNess));
             }
         }
         List<Panel> panels = new List<Panel>();
@@ -824,17 +825,7 @@ namespace WindowsFormsApp66
                                 PageNow.page.DrawImage(text.image, 0, 0);
                                 pictureBox1.Image = PageNow.imageOfPage;
                             }
-                        }
-                        else
-                        {
-                            if (text.Link)
-                            {
-                                text.myColor = Color.Blue;
-                                text.VisMe(new RichTextBox() { Text = text.text2 }, text.drawPoint, text.myColor);
-                                PageNow.page.DrawImage(text.image, 0, 0);
-                                pictureBox1.Image = PageNow.imageOfPage;
-                            }
-                        }
+                        }                        
                     }
                 }
 
@@ -876,16 +867,10 @@ namespace WindowsFormsApp66
             {
                 redact = true;
                 foreach (var im in imagess)
-                {
-                    Func2(true);
-                    redact = false;
-                    button2.Text = "preview";
-                    pictureBox1.Image = null;
-                    PageNow.page.Clear(Color.Transparent);
+                {                    
                     foreach (var image in imagess)
                     {
-                        PageNow.page.DrawImage(image.image, image.rect);
-                        DrawStroke(4, image.rect);
+                        PageNow.page.DrawImage(image.image, image.rect);                        
                         pictureBox1.Image = PageNow.imageOfPage;
                     }
                     if (e.X > im.rect.X + im.rect.Width - 8 & e.Y > im.rect.Y)
@@ -893,6 +878,10 @@ namespace WindowsFormsApp66
                         if (e.X <= im.rect.X + im.rect.Width + 8 & e.Y <= im.rect.Y + im.rect.Height)
                         {
                             im.rect.Width += e.X - (im.rect.X + im.rect.Width);
+                            Func2(true);
+                            redact = false;
+                            button2.Text = "preview";
+                            pictureBox1.Image = null;
                             PageNow.page.Clear(Color.Transparent);
                             foreach (var image in imagess)
                             {
@@ -948,12 +937,24 @@ namespace WindowsFormsApp66
                     TextClick = true;
                 }
             }
-            if (/*TextClick && imageClick*//* &&*/ e.Button == MouseButtons.Left)
+            if (TextClick && imageClick && e.Button == MouseButtons.Left)
             {
                 if (LastDrawPoint.X == 0&&LastDrawPoint.Y ==0)
                 {
                     LastDrawPoint = e.Location;
                 }
+                DialogResult res = DialogResult.None;
+                if(brushColl.A == 0)
+                {
+                    res = MessageBox.Show(this,"Chose brush collor!","Error",MessageBoxButtons.YesNoCancel,MessageBoxIcon.Error);
+                }
+                if (res == DialogResult.Yes)
+                {
+                    Form2 f = new Form2(false);
+                    f.Show();
+                    BrushColor = true;
+                }               
+
                 DrawLine(LastDrawPoint, e.Location, 10);                               
                 pictureBox1.Image = PageNow.imageOfPage;
                 LastDrawPoint = e.Location;
@@ -1056,7 +1057,7 @@ namespace WindowsFormsApp66
 
         private void button7_Click_1(object sender, EventArgs e)
         {
-            Form2 f = new Form2();
+            Form2 f = new Form2(false);
             f.Show();
             BrushColor = true;
         }

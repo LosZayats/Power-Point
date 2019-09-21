@@ -160,7 +160,7 @@ namespace WindowsFormsApp66
 
         private void button3_Click(object sender, EventArgs e)
         {
-            Form2 f = new Form2();
+            Form2 f = new Form2(true);
             f.Show();
             this.Visible = false;
         }

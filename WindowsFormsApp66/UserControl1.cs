@@ -27,6 +27,7 @@ namespace WindowsFormsApp66
             }
             this.BackgroundImage = bmp;
             bmp2 = bmp;
+            panel2.BackColor = Form1.allColor;
         }
 
         private void UserControl1_Load(object sender, EventArgs e)
@@ -67,10 +68,13 @@ namespace WindowsFormsApp66
                 if(!Form1.BrushColor)
                 {
                     Form1.allColor = bmp2.GetPixel(e.X, e.Y);
+                    panel2.BackColor = Form1.allColor;
                 }
                 else
                 {
                     Form1.BrushColor = false;
+                    Form1.brushColl = bmp2.GetPixel(e.X, e.Y);
+                    panel2.BackColor = Form1.brushColl;
                 }                
             }
         }
