@@ -49,7 +49,7 @@ namespace WindowsFormsApp66
                 Form1.workTextBox.Font = fontDialog1.Font;
                 Form1.texts[Form1.richTextBoxes.IndexOf(Form1.workTextBox)].myFont = fontDialog1.Font;
             }            
-            Form1.workTextBox.Size =new Size(new Point((int)Form1.PageNow.page.MeasureString(Form1.workTextBox.Text, fontDialog1.Font).Width+20, (int)Form1.PageNow.page.MeasureString(Form1.workTextBox.Text, fontDialog1.Font).Height));
+            Form1.workTextBox.Size =new Size(new Point((int)Form1.PageNow.page.MeasureString(Form1.workTextBox.Text, fontDialog1.Font).Width+40, (int)Form1.PageNow.page.MeasureString(Form1.workTextBox.Text, fontDialog1.Font).Height+20));
             
         }
 

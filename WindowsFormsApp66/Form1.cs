@@ -70,31 +70,8 @@ namespace WindowsFormsApp66
                 {
                     pictureBox1.BackgroundImage = LoadSettings().pages[pageNum].BackGround;
                 }
-                foreach (var text in texts)
-                {
-                    var textBox = new RichTextBox()
-                    {
-                        Text = text.text2
-                    };
-                    textBox.Location = text.drawPoint;
-                    richTextBoxes.Add(textBox);
-                    textBox.Parent = this;
-                    textBox.BringToFront();
-                    workTextBox = textBox;
-                    textBox.MouseDown += textBox2_MouseDown;
-                    textBox.TextChanged += textBox2_TextChanged;
-                    textBox.MouseMove += textBox2_MouseMove;
-                    textBox.MouseUp += textBox2_MouseUp;
-                    textBox.Height = 20;
-                    textBox.BorderStyle = BorderStyle.None;
-                    var ind = texts.IndexOf(text);
-                    richTextBoxes[ind].Font = text.myFont;
-                    richTextBoxes[ind].Size = new Size(new Point((int)PageNow.page.MeasureString(workTextBox.Text, text.myFont).Width + 20, (int)PageNow.page.MeasureString(workTextBox.Text, text.myFont).Height));
-                }
-                foreach (var image in imagess)
-                {
-                    PageNow.page.DrawImage(image.image, image.rect);
-                }
+                RichTextBoxVisualize();
+                ImageVisualize();
             }
             label2.Text = pageNum.ToString();
             font = label1.Font;
@@ -864,7 +841,7 @@ namespace WindowsFormsApp66
                     }
                     else
                     {
-                        pictureBox1.Cursor = Cursors.Default;
+                        pictureBox1.Cursor = new Cursor(Properties.Resources.pen2.Handle);
                     }
                 }
                 else
@@ -877,12 +854,12 @@ namespace WindowsFormsApp66
                         }
                         else
                         {
-                            pictureBox1.Cursor = Cursors.Default;
+                            pictureBox1.Cursor = new Cursor(Properties.Resources.pen2.Handle);
                         }
                     }
                     else
                     {
-                        pictureBox1.Cursor = Cursors.Default;
+                        pictureBox1.Cursor = new Cursor(Properties.Resources.pen2.Handle);
                     }
                 }               
 
@@ -994,6 +971,8 @@ namespace WindowsFormsApp66
                 DialogResult res = DialogResult.None;
                 if(brushColl.A == 0)
                 {
+                    LastDrawPoint.X = 0;
+                    LastDrawPoint.Y = 0;
                     res = MessageBox.Show(this,"Chose brush collor!","Error",MessageBoxButtons.YesNoCancel,MessageBoxIcon.Error);
                 }
                 if (res == DialogResult.Yes)
@@ -1023,6 +1002,7 @@ namespace WindowsFormsApp66
                 var loadSett = LoadSettings();
                 loadSett.pages[pageNum].images.Add(image);
                 SaveSettings(loadSett);
+                DrawStroke(4, image.rect);
             }
             PageNow.page.Clear(Color.Transparent);
             foreach (var image2 in imagess)
