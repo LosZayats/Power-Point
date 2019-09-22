@@ -36,13 +36,13 @@
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.button2 = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.button7 = new System.Windows.Forms.Button();
             this.panel2 = new System.Windows.Forms.Panel();
             this.label3 = new System.Windows.Forms.Label();
             this.button6 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
             this.panel3 = new System.Windows.Forms.Panel();
             this.button8 = new System.Windows.Forms.Button();
-            this.button7 = new System.Windows.Forms.Button();
             this.panel4 = new System.Windows.Forms.Panel();
             this.button10 = new System.Windows.Forms.Button();
             this.button9 = new System.Windows.Forms.Button();
@@ -55,6 +55,7 @@
             this.panel8 = new System.Windows.Forms.Panel();
             this.userControl21 = new WindowsFormsApp66.UserControl2();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
             this.panel4.SuspendLayout();
@@ -128,10 +129,26 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.button7);
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(255, 100);
             this.panel1.TabIndex = 11;
+            // 
+            // button7
+            // 
+            this.button7.BackColor = System.Drawing.Color.Transparent;
+            this.button7.BackgroundImage = global::WindowsFormsApp66.Properties.Resources.palitra;
+            this.button7.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button7.FlatAppearance.BorderSize = 0;
+            this.button7.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button7.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.button7.Location = new System.Drawing.Point(3, 12);
+            this.button7.Name = "button7";
+            this.button7.Size = new System.Drawing.Size(104, 77);
+            this.button7.TabIndex = 21;
+            this.button7.UseVisualStyleBackColor = false;
+            this.button7.Click += new System.EventHandler(this.button7_Click_1);
             // 
             // panel2
             // 
@@ -193,33 +210,18 @@
             // button8
             // 
             this.button8.BackColor = System.Drawing.Color.Transparent;
-            this.button8.BackgroundImage = global::WindowsFormsApp66.Properties.Resources.pen1;
-            this.button8.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.button8.BackgroundImage = global::WindowsFormsApp66.Properties.Resources.penn3;
+            this.button8.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.button8.FlatAppearance.BorderSize = 0;
             this.button8.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.button8.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button8.Location = new System.Drawing.Point(162, 5);
+            this.button8.Location = new System.Drawing.Point(130, 12);
             this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(87, 77);
+            this.button8.Size = new System.Drawing.Size(83, 77);
             this.button8.TabIndex = 0;
             this.button8.Text = "Brush";
             this.button8.UseVisualStyleBackColor = false;
             this.button8.Click += new System.EventHandler(this.button8_Click);
-            // 
-            // button7
-            // 
-            this.button7.BackColor = System.Drawing.Color.Transparent;
-            this.button7.BackgroundImage = global::WindowsFormsApp66.Properties.Resources.palitra;
-            this.button7.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.button7.FlatAppearance.BorderSize = 0;
-            this.button7.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.button7.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.button7.Location = new System.Drawing.Point(5, 5);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(104, 77);
-            this.button7.TabIndex = 21;
-            this.button7.UseVisualStyleBackColor = false;
-            this.button7.Click += new System.EventHandler(this.button7_Click_1);
             // 
             // panel4
             // 
@@ -232,22 +234,30 @@
             // 
             // button10
             // 
-            this.button10.Location = new System.Drawing.Point(7, 35);
+            this.button10.BackColor = System.Drawing.Color.Transparent;
+            this.button10.BackgroundImage = global::WindowsFormsApp66.Properties.Resources.minus;
+            this.button10.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button10.FlatAppearance.BorderSize = 0;
+            this.button10.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button10.Location = new System.Drawing.Point(6, 3);
             this.button10.Name = "button10";
             this.button10.Size = new System.Drawing.Size(37, 34);
             this.button10.TabIndex = 1;
-            this.button10.Text = "button10";
-            this.button10.UseVisualStyleBackColor = true;
+            this.button10.UseVisualStyleBackColor = false;
             this.button10.Click += new System.EventHandler(this.button10_Click);
             // 
             // button9
             // 
-            this.button9.Location = new System.Drawing.Point(50, 35);
+            this.button9.BackColor = System.Drawing.Color.Transparent;
+            this.button9.BackgroundImage = global::WindowsFormsApp66.Properties.Resources.plus1;
+            this.button9.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.button9.FlatAppearance.BorderSize = 0;
+            this.button9.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.button9.Location = new System.Drawing.Point(50, 5);
             this.button9.Name = "button9";
             this.button9.Size = new System.Drawing.Size(36, 34);
             this.button9.TabIndex = 0;
-            this.button9.Text = "button9";
-            this.button9.UseVisualStyleBackColor = true;
+            this.button9.UseVisualStyleBackColor = false;
             this.button9.Click += new System.EventHandler(this.button9_Click);
             // 
             // panel5
@@ -335,7 +345,6 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(863, 453);
-            this.Controls.Add(this.button7);
             this.Controls.Add(this.userControl21);
             this.Controls.Add(this.panel4);
             this.Controls.Add(this.panel3);
@@ -357,6 +366,7 @@
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
             this.Resize += new System.EventHandler(this.Form1_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            this.panel1.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             this.panel3.ResumeLayout(false);

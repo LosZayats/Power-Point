@@ -97,14 +97,11 @@ namespace WindowsFormsApp66
             panels.Add(panel4);
             panels2.Add(panel5);
             panels2.Add(panel6);
-            pictureBox1.Cursor = new Cursor(Properties.Resources.pen2.Handle);
+            pictureBox1.Cursor = new Cursor(Properties.Resources.pen1.Handle);
             panels2.Add(panel7);
             panels2.Add(panel8);
             panel2.Controls.Add(label3);
-            font = label1.Font;
-            var bmp = new Bitmap(18 * 4, 18 * 4);
-            var gr = Graphics.FromImage(bmp);
-            gr.DrawImage(Properties.Resources.pen1, new Rectangle(0, 0, 18 * 4, 18 * 4));
+            font = label1.Font;           
             allColor = Color.Black;
         }
         bool b;
@@ -797,7 +794,7 @@ namespace WindowsFormsApp66
 
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
         {
-            pictureBox1.Cursor = new Cursor(Properties.Resources.pen2.Handle);
+            pictureBox1.Cursor = new Cursor(Properties.Resources.pen1.Handle);
             if (redact)
             {
                 foreach (var text in texts)
@@ -850,7 +847,7 @@ namespace WindowsFormsApp66
                     }
                     else
                     {
-                        pictureBox1.Cursor = new Cursor(Properties.Resources.pen2.Handle);
+                        pictureBox1.Cursor = new Cursor(Properties.Resources.pen1.Handle);
                     }
                 }
                 else
@@ -863,12 +860,12 @@ namespace WindowsFormsApp66
                         }
                         else
                         {
-                            pictureBox1.Cursor = new Cursor(Properties.Resources.pen2.Handle);
+                            pictureBox1.Cursor = new Cursor(Properties.Resources.pen1.Handle);
                         }
                     }
                     else
                     {
-                        pictureBox1.Cursor = new Cursor(Properties.Resources.pen2.Handle);
+                        pictureBox1.Cursor = new Cursor(Properties.Resources.pen1.Handle);
                     }
                 }
 

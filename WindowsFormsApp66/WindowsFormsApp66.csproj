@@ -274,6 +274,30 @@
     <None Include="Resources\pen1.png" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\plus.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\plus1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\minus.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\penn.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\penn1.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pen2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\penn2.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\penn.png" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="Resources\pen.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
