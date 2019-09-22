@@ -151,7 +151,7 @@
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(65, 25);
             this.label3.TabIndex = 19;
-            this.label3.Text = "2.1.4";
+            this.label3.Text = "2.1.5";
             // 
             // button6
             // 
