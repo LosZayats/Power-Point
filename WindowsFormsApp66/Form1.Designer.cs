@@ -44,6 +44,8 @@
             this.button8 = new System.Windows.Forms.Button();
             this.button7 = new System.Windows.Forms.Button();
             this.panel4 = new System.Windows.Forms.Panel();
+            this.button10 = new System.Windows.Forms.Button();
+            this.button9 = new System.Windows.Forms.Button();
             this.panel5 = new System.Windows.Forms.Panel();
             this.panel6 = new System.Windows.Forms.Panel();
             this.button4 = new System.Windows.Forms.Button();
@@ -55,6 +57,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
+            this.panel4.SuspendLayout();
             this.panel6.SuspendLayout();
             this.panel7.SuspendLayout();
             this.panel8.SuspendLayout();
@@ -219,10 +222,32 @@
             // 
             // panel4
             // 
+            this.panel4.Controls.Add(this.button10);
+            this.panel4.Controls.Add(this.button9);
             this.panel4.Location = new System.Drawing.Point(765, 0);
             this.panel4.Name = "panel4";
             this.panel4.Size = new System.Drawing.Size(255, 100);
             this.panel4.TabIndex = 14;
+            // 
+            // button10
+            // 
+            this.button10.Location = new System.Drawing.Point(7, 35);
+            this.button10.Name = "button10";
+            this.button10.Size = new System.Drawing.Size(37, 34);
+            this.button10.TabIndex = 1;
+            this.button10.Text = "button10";
+            this.button10.UseVisualStyleBackColor = true;
+            this.button10.Click += new System.EventHandler(this.button10_Click);
+            // 
+            // button9
+            // 
+            this.button9.Location = new System.Drawing.Point(50, 35);
+            this.button9.Name = "button9";
+            this.button9.Size = new System.Drawing.Size(36, 34);
+            this.button9.TabIndex = 0;
+            this.button9.Text = "button9";
+            this.button9.UseVisualStyleBackColor = true;
+            this.button9.Click += new System.EventHandler(this.button9_Click);
             // 
             // panel5
             // 
@@ -334,6 +359,7 @@
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
             this.panel3.ResumeLayout(false);
+            this.panel4.ResumeLayout(false);
             this.panel6.ResumeLayout(false);
             this.panel7.ResumeLayout(false);
             this.panel7.PerformLayout();
@@ -367,6 +393,8 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button button7;
         private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.Button button9;
+        private System.Windows.Forms.Button button10;
     }
 }
 

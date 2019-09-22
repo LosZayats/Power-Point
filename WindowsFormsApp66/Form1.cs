@@ -109,7 +109,7 @@ namespace WindowsFormsApp66
         bool b;
         Bitmap header;
         bool loading = false;
-        bool redact;
+        bool redact = true;
         bool draw;
         public static RichTextBox workTextBox;
         Point DownPoint;
@@ -206,6 +206,7 @@ namespace WindowsFormsApp66
                 PageNow.page.FillRectangle(new SolidBrush(brushColl), new Rectangle((int)((int)top * (int)XPlus + (int)start.X), (int)((int)top * (int)YPlus)+ (int)start.Y, (int)ThickNess, (int)ThickNess));
             }
         }
+        Rectangle scale = new Rectangle();
         List<Panel> panels = new List<Panel>();
         List<Panel> panels2 = new List<Panel>();
         public static List<Text1> texts = new List<Text1>();
@@ -838,7 +839,7 @@ namespace WindowsFormsApp66
             {
                 if (e.X > im.rect.X + im.rect.Width - 4 & e.Y > im.rect.Y)
                 {
-                    if (e.X <= im.rect.X + im.rect.Width + 4 & e.Y <= im.rect.Y + im.rect.Height)
+                    if (e.X <= im.rect.X + im.rect.Width + 4 & e.Y <= im.rect.Y + im.rect.Height && button2.Text == "preview")
                     {
                         pictureBox1.Cursor = Cursors.SizeWE;
                     }
@@ -881,15 +882,12 @@ namespace WindowsFormsApp66
                     }
                     if (e.X > im.rect.X + im.rect.Width - 8 & e.Y > im.rect.Y)
                     {
-                        if (e.X <= im.rect.X + im.rect.Width + 8 & e.Y <= im.rect.Y + im.rect.Height)
+                        if (e.X <= im.rect.X + im.rect.Width + 8 & e.Y <= im.rect.Y + im.rect.Height&&button2.Text == "preview")
                         {
-                            im.rect.Width += e.X - (im.rect.X + im.rect.Width);
-                            Func2(true);
-                            redact = false;
-                            resize = true;
-                            button2.Text = "preview";
+                            im.rect.Width += e.X - (im.rect.X + im.rect.Width);                            
                             pictureBox1.Image = null;
                             PageNow.page.Clear(Color.Transparent);
+                            resize = true;
                             foreach (var image in imagess)
                             {
                                 PageNow.page.DrawImage(image.image, image.rect);
@@ -907,7 +905,7 @@ namespace WindowsFormsApp66
                     }
                     if (e.X > im.rect.X & e.X < im.rect.X + im.rect.Width - 8)
                     {
-                        if (e.Y > im.rect.Y && e.Y < im.rect.Y + im.rect.Height - 8)
+                        if (e.Y > im.rect.Y && e.Y < im.rect.Y + im.rect.Height - 8 && button2.Text == "preview")
                         {
                             im.rect.X += 1;
                             PageNow.page.Clear(Color.Transparent);
@@ -915,14 +913,7 @@ namespace WindowsFormsApp66
                             {
                                 PageNow.page.DrawImage(image.image, image.rect);
                                 pictureBox1.Image = PageNow.imageOfPage;
-                            }
-                            if (!redact)
-                            {
-                                RichTextBoxVisualize();
-                                Func2(true);
-                                redact = false;
-                                button2.Text = "preview";
-                            }
+                            }                           
                             move = true;
                         }
                     }
@@ -996,6 +987,11 @@ namespace WindowsFormsApp66
             var image = new Image2();
             OpenFileDialog open = new OpenFileDialog();
             open.Filter = "Image files (*.png) | *.png";
+            if(redact)
+            {
+                RichTextBoxVisualize();
+                redact = false;
+            }                     
             if (open.ShowDialog() == DialogResult.OK)
             {
                 image.image = new Bitmap(open.FileName);
@@ -1100,8 +1096,34 @@ namespace WindowsFormsApp66
 
         private void button8_Click(object sender, EventArgs e)
         {
-            PageNow.page.ScaleTransform(1.0F, 2.0F);
-            pictureBox1.Image = PageNow.imageOfPage;
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            if (scale.Width == 0)
+            {
+                scale.Width = PageNow.imageOfPage.Width;
+                scale.Height = PageNow.imageOfPage.Height;
+            }
+            var bmp = new Bitmap((int)((double)scale.Width * 1.25), (int)((double)scale.Height * 1.25));
+            var grph = Graphics.FromImage(bmp);
+            grph.DrawImage(PageNow.imageOfPage, new Rectangle(0, 0, (int)((double)scale.Width * 1.25), (int)((double)scale.Height * 1.25)));            
+            scale.Size = new Size((int)((double)scale.Width * 1.25), (int)((double)scale.Height * 1.25));            
+            pictureBox1.Image = bmp;
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            if(scale.Width == 0)
+            {
+                scale.Width = PageNow.imageOfPage.Width;
+                scale.Height = PageNow.imageOfPage.Height;
+            }
+            var bmp = new Bitmap((int)((double)scale.Width * 0.75), (int)((double)scale.Height * 0.75));
+            var grph = Graphics.FromImage(bmp);
+            grph.DrawImage(PageNow.imageOfPage, new Rectangle(0, 0, (int)((double)scale.Width * 0.75), (int)((double)scale.Height * 0.75)));
+            scale.Size = new Size((int)((double)scale.Width * 0.75), (int)((double)scale.Height * 0.75));
+            pictureBox1.Image = bmp;
         }
     }
 }
