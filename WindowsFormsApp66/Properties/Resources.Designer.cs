@@ -543,6 +543,16 @@ namespace WindowsFormsApp66.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
+        internal static System.Drawing.Icon cursor {
+            get {
+                object obj = ResourceManager.GetObject("cursor", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
         internal static System.Drawing.Icon editor1 {
             get {
                 object obj = ResourceManager.GetObject("editor1", resourceCulture);
@@ -643,6 +653,16 @@ namespace WindowsFormsApp66.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap penn4 {
+            get {
+                object obj = ResourceManager.GetObject("penn4", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap plus {
             get {
                 object obj = ResourceManager.GetObject("plus", resourceCulture);
@@ -667,6 +687,16 @@ namespace WindowsFormsApp66.Properties {
             get {
                 object obj = ResourceManager.GetObject("курсор", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ластик {
+            get {
+                object obj = ResourceManager.GetObject("ластик", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

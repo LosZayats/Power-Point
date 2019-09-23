@@ -39,7 +39,7 @@ namespace WindowsFormsApp66
             }
         }
         bool anim;
-
+        public static int Thikness = 1;
         public Form1()
         {
             InitializeComponent();
@@ -48,6 +48,8 @@ namespace WindowsFormsApp66
             {
                 load.pages = new List<Page2>();
             }
+            var f = new Form3();
+            f.Show();
             load.pages.Add(new Page2());
             SaveSettings(load);
             Func2(true);
@@ -101,7 +103,7 @@ namespace WindowsFormsApp66
             panels2.Add(panel7);
             panels2.Add(panel8);
             panel2.Controls.Add(label3);
-            font = label1.Font;           
+            font = label1.Font;
             allColor = Color.Black;
         }
         bool b;
@@ -201,7 +203,14 @@ namespace WindowsFormsApp66
             XPlus = ((double)end.X - (double)start.X) / count;
             for (int top = 0; top/* * YPlus*/ < count/* (y2 - y1)*/; top++)
             {
-                PageNow.page.FillRectangle(new SolidBrush(brushColl), new Rectangle((int)((int)top * (int)XPlus + (int)start.X), (int)((int)top * (int)YPlus) + (int)start.Y, (int)ThickNess, (int)ThickNess));
+                if(Circle)
+                {
+                    PageNow.page.FillEllipse(new SolidBrush(brushColl), new Rectangle((int)((int)top * (int)XPlus + (int)start.X), (int)((int)top * (int)YPlus) + (int)start.Y, (int)ThickNess, (int)ThickNess));
+                }
+                else
+                {
+                    PageNow.page.FillRectangle(new SolidBrush(brushColl), new Rectangle((int)((int)top * (int)XPlus + (int)start.X), (int)((int)top * (int)YPlus) + (int)start.Y, (int)ThickNess, (int)ThickNess));
+                }              
             }
         }
         static Rectangle scale = new Rectangle(0, 0, 1920, 1080);
@@ -250,6 +259,7 @@ namespace WindowsFormsApp66
             }
         }
         Point drawLoc = new Point();
+        public static bool Circle;
         public void DrawStroke(int strokeThickness, Rectangle rect2)
         {
             for (int left = 0; left < strokeThickness; left++)
@@ -983,8 +993,8 @@ namespace WindowsFormsApp66
                 }
                 scale.Width = 1920;
                 scale.Height = 1080;
-                DrawLine(LastDrawPoint, e.Location, 2);                
-                LastDrawPoint = e.Location;                              
+                DrawLine(LastDrawPoint, e.Location, Thikness);
+                LastDrawPoint = e.Location;
                 pictureBox1.Image = PageNow.imageOfPage;
             }
         }
@@ -1103,6 +1113,8 @@ namespace WindowsFormsApp66
 
         private void button8_Click(object sender, EventArgs e)
         {
+            var f = new Form3();
+            f.Show();
         }
 
         private void button9_Click(object sender, EventArgs e)
