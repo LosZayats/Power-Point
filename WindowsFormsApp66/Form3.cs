@@ -20,6 +20,16 @@ namespace WindowsFormsApp66
             InitializeComponent();
             var bmp = UserControl2.Gradient.MakeGradient(Color.BlueViolet, UserControl2.Direction.down, this);
             this.BackgroundImage = bmp;
+            if (Form1.Circle)
+            {
+                button2.Text = "Не сглаживать";
+            }
+            else
+            {
+                button2.Text = "Сгладить";
+            }
+            panel3.Left += Form1.Thikness*2;
+            label1.Text = Form1.Thikness.ToString();
         }
 
         private void Form3_MouseEnter(object sender, EventArgs e)

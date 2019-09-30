@@ -85,6 +85,12 @@
     <Compile Include="UserControl2.Designer.cs">
       <DependentUpon>UserControl2.cs</DependentUpon>
     </Compile>
+    <Compile Include="UserControl3.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserControl3.Designer.cs">
+      <DependentUpon>UserControl3.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -112,6 +118,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UserControl2.resx">
       <DependentUpon>UserControl2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserControl3.resx">
+      <DependentUpon>UserControl3.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -326,6 +335,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\cursor.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\f9d4a24d-724d-4e09-9382-691399ce9fcc_200x200.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\19b535db8c0facd80002b4562b65fae6.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\depositphotos_125308086-stock-photo-halftone-background-cyan-and-lilac.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\32324ae8c4a7f02.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

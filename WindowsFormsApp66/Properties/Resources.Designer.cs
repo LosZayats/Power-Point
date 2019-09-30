@@ -183,6 +183,16 @@ namespace WindowsFormsApp66.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap _19b535db8c0facd80002b4562b65fae6 {
+            get {
+                object obj = ResourceManager.GetObject("19b535db8c0facd80002b4562b65fae6", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap _2 {
             get {
                 object obj = ResourceManager.GetObject("_2", resourceCulture);
@@ -326,6 +336,16 @@ namespace WindowsFormsApp66.Properties {
         internal static System.Drawing.Bitmap _32 {
             get {
                 object obj = ResourceManager.GetObject("_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap _32324ae8c4a7f02 {
+            get {
+                object obj = ResourceManager.GetObject("32324ae8c4a7f02", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -551,12 +571,32 @@ namespace WindowsFormsApp66.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap depositphotos_125308086_stock_photo_halftone_background_cyan_and_lilac {
+            get {
+                object obj = ResourceManager.GetObject("depositphotos_125308086-stock-photo-halftone-background-cyan-and-lilac", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon editor1 {
             get {
                 object obj = ResourceManager.GetObject("editor1", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap f9d4a24d_724d_4e09_9382_691399ce9fcc_200x200 {
+            get {
+                object obj = ResourceManager.GetObject("f9d4a24d-724d-4e09-9382-691399ce9fcc_200x200", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         

@@ -103,7 +103,7 @@
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(94, 32);
             this.button1.TabIndex = 8;
-            this.button1.Text = "+ text";
+            this.button1.Text = "text";
             this.button1.UseVisualStyleBackColor = false;
             this.button1.Click += new System.EventHandler(this.button1_Click_1);
             // 
@@ -181,7 +181,7 @@
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(104, 32);
             this.button6.TabIndex = 20;
-            this.button6.Text = "+ link";
+            this.button6.Text = "link";
             this.button6.UseVisualStyleBackColor = false;
             this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
@@ -195,7 +195,7 @@
             this.button5.Name = "button5";
             this.button5.Size = new System.Drawing.Size(104, 32);
             this.button5.TabIndex = 19;
-            this.button5.Text = "+ image";
+            this.button5.Text = "image";
             this.button5.UseVisualStyleBackColor = false;
             this.button5.Click += new System.EventHandler(this.button5_Click);
             // 
