@@ -26,7 +26,22 @@ namespace WindowsFormsApp66
         {
             public enum Shapes
             {
-                Circle, Rectangle,
+                Circle, Rectangle, None
+            }
+            public Shapes myShape = Shapes.None;
+        }
+        [Shape]
+        public class VectorGraphics
+        {
+            Rectangle drawRect = new Rectangle();
+            Graphics graphics = Graphics.FromImage(new Bitmap(1920, 1080));
+            public void VisMe()
+            {
+                graphics.Clear(Color.Transparent);
+                var type = typeof(VectorGraphics);
+                var attrs = type.GetCustomAttributes(false);
+                var attrCust = (Shape)attrs[0];
+                attrCust.myShape = Shape.Shapes.Circle;
             }
         }
         double Frame;
@@ -47,9 +62,7 @@ namespace WindowsFormsApp66
             if (load.pages == null)
             {
                 load.pages = new List<Page2>();
-            }
-            var f = new Form3();
-            f.Show();
+            }            
             load.pages.Add(new Page2());
             SaveSettings(load);
             Func2(true);
@@ -74,6 +87,11 @@ namespace WindowsFormsApp66
                 }
                 RichTextBoxVisualize();
                 ImageVisualize();
+            }
+            foreach (var con in this.Controls)
+            {
+                var con2 = (Control)con;
+                con2.MouseDown += panel3_MouseDown;
             }
             label2.Text = pageNum.ToString();
             font = label1.Font;
@@ -103,14 +121,16 @@ namespace WindowsFormsApp66
             panels2.Add(panel7);
             panels2.Add(panel8);
             panel2.Controls.Add(label3);
-            font = label1.Font;
-            allColor = Color.Black;
+            font = label1.Font;           
+            Form4 f3 = new Form4();
+            f3.Show();
         }
-        bool b;
         bool draw;
         Bitmap header;
         bool loading = false;
         bool redact = true;
+        Point ClickOnImagePoint;
+        bool ImageMove;
         public static RichTextBox workTextBox;
         Point DownPoint;
         public static Color brushColl;
@@ -203,14 +223,14 @@ namespace WindowsFormsApp66
             XPlus = ((double)end.X - (double)start.X) / count;
             for (int top = 0; top/* * YPlus*/ < count/* (y2 - y1)*/; top++)
             {
-                if(Circle)
+                if (Circle)
                 {
                     PageNow.page.FillEllipse(new SolidBrush(brushColl), new Rectangle((int)((int)top * (int)XPlus + (int)start.X), (int)((int)top * (int)YPlus) + (int)start.Y, (int)ThickNess, (int)ThickNess));
                 }
                 else
                 {
                     PageNow.page.FillRectangle(new SolidBrush(brushColl), new Rectangle((int)((int)top * (int)XPlus + (int)start.X), (int)((int)top * (int)YPlus) + (int)start.Y, (int)ThickNess, (int)ThickNess));
-                }              
+                }
             }
         }
         static Rectangle scale = new Rectangle(0, 0, 1920, 1080);
@@ -359,13 +379,18 @@ namespace WindowsFormsApp66
             public List<Image2> images = new List<Image2>();
             public int counter;
         }
-        public List<Image2> imagess = new List<Image2>();
+        public static List<Image2> imagess = new List<Image2>();
         [Serializable]
         public class Text1
         {
             public bool Link;
             public Font myFont = Form1.font;
-            public Color myColor = Color.Black;
+            public Color myColor
+            {
+                get;
+                set;
+            }
+
             public Bitmap image;
             public System.Drawing.Point drawPoint = new System.Drawing.Point();
             public string text2;
@@ -377,11 +402,7 @@ namespace WindowsFormsApp66
                 if (myFont == null)
                 {
                     myFont = Form1.font;
-                }
-                if (myColor == null)
-                {
-                    myColor = Color.Black;
-                }
+                }                
                 graph.DrawString(text.Text, myFont, new SolidBrush(myColor), drawPoint);
                 text2 = text.Text;
             }
@@ -488,24 +509,24 @@ namespace WindowsFormsApp66
             if (ableToMove)
             {
                 var send = (RichTextBox)sender;
-                if (send.Top <= 100)
+                if (send.Top <= 100 && e.Y < DownPoint.Y)
                 {
                     send.Top = 100;
                 }
-                else if (send.Top + send.Height >= this.Height - 60)
+                else if (send.Top + send.Height >= this.Height - 125 + send.Height && e.Y > DownPoint.Y)
                 {
-                    send.Top = this.Height - 60;
+                    send.Top = this.Height - (125);
                 }
                 else
                 {
                     send.Top += e.Y - DownPoint.Y;
                     send.BringToFront();
                 }
-                if (send.Left + send.Width >= this.Width - 20)
+                if (send.Left + send.Width >= this.Width - 20 && e.X > DownPoint.X)
                 {
                     send.Left = this.Width - 14 - send.Width;
                 }
-                else if (send.Left <= 0)
+                else if (send.Left <= 0 && e.X < DownPoint.X)
                 {
                     send.Left = 0;
                 }
@@ -797,6 +818,11 @@ namespace WindowsFormsApp66
                     }
                 }
             }
+            if (ImageMove)
+            {
+
+
+            }
         }
         private void OnFrameChange2d(object o, EventArgs e) { }
 
@@ -804,7 +830,10 @@ namespace WindowsFormsApp66
 
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
         {
-            pictureBox1.Cursor = new Cursor(Properties.Resources.pen1.Handle);
+            if (button2.Text == "redact")
+            {
+                pictureBox1.Cursor = new Cursor(Properties.Resources.pen1.Handle);
+            }
             if (redact)
             {
                 foreach (var text in texts)
@@ -825,7 +854,7 @@ namespace WindowsFormsApp66
                         {
                             if (e.Button == MouseButtons.None)
                             {
-                                if (text.Link & !redact)
+                                if (text.Link &button2.Text=="redact")
                                 {
                                     // PageNow.page.Clear(Color.Transparent);                                                                    
                                     text.myColor = Color.Blue;
@@ -857,25 +886,25 @@ namespace WindowsFormsApp66
                     }
                     else
                     {
-                        pictureBox1.Cursor = new Cursor(Properties.Resources.pen1.Handle);
+
                     }
                 }
                 else
                 {
-                    if (e.X < im.rect.X + im.rect.Width & e.X > im.rect.X)
+                    if (e.X < im.rect.X + im.rect.Width - 16 & e.X > im.rect.X + 16)
                     {
-                        if (e.Y > im.rect.Y & e.Y < im.rect.Y + im.rect.Height)
+                        if (e.Y > im.rect.Y + 16 & e.Y < im.rect.Y + im.rect.Height - 16)
                         {
                             pictureBox1.Cursor = Cursors.Hand;
                         }
                         else
                         {
-                            pictureBox1.Cursor = new Cursor(Properties.Resources.pen1.Handle);
+                            //pictureBox1.Cursor = new Cursor(Properties.Resources.pen1.Handle);
                         }
                     }
                     else
                     {
-                        pictureBox1.Cursor = new Cursor(Properties.Resources.pen1.Handle);
+                        //pictureBox1.Cursor = new Cursor(Properties.Resources.pen1.Handle);
                     }
                 }
 
@@ -917,15 +946,18 @@ namespace WindowsFormsApp66
                     }
                     if (e.X > im.rect.X & e.X < im.rect.X + im.rect.Width - 8)
                     {
-                        if (e.Y > im.rect.Y && e.Y < im.rect.Y + im.rect.Height - 8 && button2.Text == "preview")
+                        if (e.Y > im.rect.Y && e.Y < im.rect.Y + im.rect.Height - 8 && button2.Text == "preview" && !resize)
                         {
-                            im.rect.X += 1;
+                            im.rect.Y += e.Y - ClickOnImagePoint.Y;
+                            im.rect.X += e.X - ClickOnImagePoint.X;
+                            ClickOnImagePoint = e.Location;
                             PageNow.page.Clear(Color.Transparent);
                             foreach (var image in imagess)
                             {
                                 PageNow.page.DrawImage(image.image, image.rect);
-                                pictureBox1.Image = PageNow.imageOfPage;
+                                DrawStroke(4, image.rect);
                             }
+                            pictureBox1.Image = PageNow.imageOfPage;
                             move = true;
                         }
                     }
@@ -968,11 +1000,10 @@ namespace WindowsFormsApp66
                     TextClick = true;
                 }
             }
-            if (e.Button == MouseButtons.Left & !resize & !move)
+            if (e.Button == MouseButtons.Left & !resize & !move && button2.Text == "redact")
             {
                 draw = true;
                 drawLoc = e.Location;
-                //
                 pictureBox1.Refresh();
                 if (LastDrawPoint.X == 0 && LastDrawPoint.Y == 0)
                 {
@@ -1006,7 +1037,10 @@ namespace WindowsFormsApp66
             open.Filter = "Image files (*.png) | *.png";
             if (redact)
             {
-                RichTextBoxVisualize();
+                if (!redact)
+                {
+                    RichTextBoxVisualize();
+                }
                 redact = false;
             }
             if (open.ShowDialog() == DialogResult.OK)
@@ -1091,6 +1125,16 @@ namespace WindowsFormsApp66
                     }
                 }
             }
+            foreach (var t in imagess)
+            {
+                if (e.X > t.rect.X && e.Y > t.rect.Y)
+                {
+                    if (e.X < t.rect.X + t.rect.Width && e.Y < t.rect.Y + t.rect.Height)
+                    {
+                        ClickOnImagePoint = e.Location;
+                    }
+                }
+            }
         }
 
         private void pictureBox1_MouseUp(object sender, MouseEventArgs e)
@@ -1143,6 +1187,12 @@ namespace WindowsFormsApp66
             grph.DrawImage(PageNow.imageOfPage, new Rectangle(0, 0, (int)((double)scale.Width * 0.75), (int)((double)scale.Height * 0.75)));
             scale.Size = new Size((int)((double)scale.Width * 0.75), (int)((double)scale.Height * 0.75));
             pictureBox1.Image = bmp;
+        }
+
+        private void panel3_MouseDown(object sender, MouseEventArgs e)
+        {
+            //var sender2 = (Control)sender;
+            //sender2.BackColor = Color.Beige;
         }
     }
 }

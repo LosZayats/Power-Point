@@ -14,6 +14,7 @@ namespace WindowsFormsApp66
     {
         Point clickPoint;
         bool ableToMove;
+        Color BK;
         public Form3()
         {
             InitializeComponent();
@@ -23,7 +24,7 @@ namespace WindowsFormsApp66
 
         private void Form3_MouseEnter(object sender, EventArgs e)
         {
-            //this.Cursor = new Cursor(Properties.Resources.cursor.Handle);
+            this.Cursor = new Cursor(Properties.Resources.cursor.Handle);
         }
 
         private void panel3_MouseMove(object sender, MouseEventArgs e)
@@ -81,6 +82,22 @@ namespace WindowsFormsApp66
                 Form1.Circle = false;
                 button2.Text = "Сгладить";
             }            
+        }
+
+        private void panel3_MouseEnter(object sender, EventArgs e)
+        {
+            BK = panel3.BackColor;
+            panel3.BackColor = Color.FromArgb(panel3.BackColor.A, panel3.BackColor.R, panel3.BackColor.G, 255);
+        }
+
+        private void panel3_MouseLeave(object sender, EventArgs e)
+        {
+            panel3.BackColor = BK;
+        }
+
+        private void Form3_MouseDown(object sender, MouseEventArgs e)
+        {
+
         }
     }
 }
