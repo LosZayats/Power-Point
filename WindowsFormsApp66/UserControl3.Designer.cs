@@ -54,6 +54,7 @@
             this.hScrollBar1.Name = "hScrollBar1";
             this.hScrollBar1.Size = new System.Drawing.Size(235, 17);
             this.hScrollBar1.TabIndex = 1;
+            this.hScrollBar1.Value = 25;
             // 
             // button2
             // 

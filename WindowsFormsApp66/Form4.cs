@@ -15,10 +15,18 @@ namespace WindowsFormsApp66
         double height = 100;
         Point downPoint = new Point();
         List<int> ims = new List<int>();
-        bool move;
+        bool pickColor;
+        Point cursorPoint = new Point();
         public static bool act;
         public static bool Action;               
         public static Form1.Image2 SelectedImage ;
+        Graphics gr;
+        Bitmap im;
+        enum tools
+        {
+            selection,pipetka,brush
+        }
+        tools tool = tools.pipetka;
         public void VisualizeImage(Graphics grph)
         {
             grph.Clear(Color.White);
@@ -46,6 +54,7 @@ namespace WindowsFormsApp66
             label1.Left = pictureBox1.Width;
             panel1.Left = pictureBox1.Width;
             pictureBox2.Left = panel1.Left + panel1.Width;
+            button3.Left = pictureBox1.Width;
         }
         public Form4()
         {
@@ -61,7 +70,9 @@ namespace WindowsFormsApp66
             if(Form1.imagess.Count >= 1)
             {
                 SelectedImage = Form1.imagess[0];
-            }            
+            }
+            im = new Bitmap(1920,1080);
+            gr = Graphics.FromImage(im);
         }
 
         private void pictureBox1_MouseHover(object sender, EventArgs e)
@@ -133,7 +144,7 @@ namespace WindowsFormsApp66
             if (panel2.Left > panel1.Left+1|e.X>downPoint.X && panel2.Left + panel2.Width < panel1.Left + panel1.Width-1 | e.X < downPoint.X&&e.Button == MouseButtons.Left)
             {
                 panel2.Left += e.X - downPoint.X;
-            }
+            }            
         }
 
         private void panel2_MouseDown(object sender, MouseEventArgs e)
@@ -153,22 +164,32 @@ namespace WindowsFormsApp66
 
         private void button3_Click(object sender, EventArgs e)
         {
-            var us =new UserControl3();
+            var us =new UserControl3();            
             us.Parent = this;
             us.BringToFront();
-            us.Left = 400;
+            us.Left = pictureBox2.Left;
         }
 
         private void pictureBox2_Click(object sender, EventArgs e)
         {
-
+            if (tool == tools.pipetka)
+            {
+                Form1.brushColl = im.GetPixel(cursorPoint.X, cursorPoint.Y);
+            }
         }
 
         private void pictureBox2_Paint(object sender, PaintEventArgs e)
         {
             if (SelectedImage != null)
             {
+                gr.DrawImage(SelectedImage.image, pictureBox2.Width / 2 - SelectedImage.image.Width / 2, pictureBox2.Height / 2 - SelectedImage.image.Height / 2);
                 e.Graphics.DrawImage(SelectedImage.image, pictureBox2.Width / 2 - SelectedImage.image.Width / 2, pictureBox2.Height / 2 - SelectedImage.image.Height / 2);
+            }
+            if(pickColor)
+            {
+                var pixel = im.GetPixel(cursorPoint.X, cursorPoint.Y);
+                e.Graphics.FillRectangle(new SolidBrush(im.GetPixel(cursorPoint.X, cursorPoint.Y)), new Rectangle(cursorPoint.X, cursorPoint.Y-11,10,10));
+                e.Graphics.DrawRectangle(new Pen(new SolidBrush(Color.FromArgb(255,255-pixel.R,255-pixel.G,255-pixel.B))), new Rectangle(cursorPoint.X, cursorPoint.Y - 12, 11, 11));
             }
         }
 
@@ -182,6 +203,21 @@ namespace WindowsFormsApp66
                     pictureBox2.Refresh();
                 }
             }
+        }
+
+        private void pictureBox2_MouseMove_1(object sender, MouseEventArgs e)
+        {
+            if (tool == tools.pipetka)
+            {
+                pickColor = true;
+                cursorPoint = e.Location;
+                pictureBox2.Refresh();
+            }
+        }
+
+        private void pictureBox2_ClientSizeChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
