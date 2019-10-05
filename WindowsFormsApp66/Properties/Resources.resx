@@ -139,6 +139,12 @@
   <data name="_29" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\29.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="пипекта" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\пипекта.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="19b535db8c0facd80002b4562b65fae6" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\19b535db8c0facd80002b4562b65fae6.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="_7" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\7.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -168,6 +174,9 @@
   </data>
   <data name="_14" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\14.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\16.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="editor1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\editor.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -250,8 +259,11 @@
   <data name="_35" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\35.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="19b535db8c0facd80002b4562b65fae6" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\19b535db8c0facd80002b4562b65fae6.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="trsparent1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\trsparent.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="_38" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\38.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="курсор" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\курсор.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -262,8 +274,8 @@
   <data name="penn1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\penn1.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="_38" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\38.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="trsparent" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\trsparent.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="cursor" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\cursor.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -301,9 +313,6 @@
   <data name="_37" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\37.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="trsparent" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\trsparent.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="f9d4a24d-724d-4e09-9382-691399ce9fcc_200x200" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\f9d4a24d-724d-4e09-9382-691399ce9fcc_200x200.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -313,8 +322,8 @@
   <data name="penn" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\penn.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="_16" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\16.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="игеещт" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\игеещт.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="_15" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\15.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -325,7 +334,7 @@
   <data name="_18" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\18.gif;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="trsparent1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\trsparent.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="400_F_31289295_lKwZHKypgkr3tJEoOwO2zU0mS6ptlXUM" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\400_F_31289295_lKwZHKypgkr3tJEoOwO2zU0mS6ptlXUM.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

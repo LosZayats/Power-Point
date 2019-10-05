@@ -354,5 +354,14 @@
   <ItemGroup>
     <None Include="Resources\trsparent.png" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\игеещт.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\пипекта.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\400_F_31289295_lKwZHKypgkr3tJEoOwO2zU0mS6ptlXUM.jpg" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
