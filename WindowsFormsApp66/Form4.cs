@@ -12,7 +12,7 @@ namespace WindowsFormsApp66
 {
     public partial class Form4 : Form
     {
-        double height = 100;
+        double height = 20;
         Point downPoint = new Point();
         List<int> ims = new List<int>();
         bool pickColor;
@@ -22,6 +22,11 @@ namespace WindowsFormsApp66
         public static bool Action;
         public static Form1.Image2 SelectedImage;
         Graphics gr;
+        void Clear()
+        {
+
+        }
+        bool clear;
         Rectangle selectedRect = new Rectangle();
         Bitmap im;
         Point e = new Point();
@@ -44,8 +49,6 @@ namespace WindowsFormsApp66
                 {
                     drawGr.DrawLine(new Pen(new SolidBrush(Color.Blue), 2), new Point(startPoint.X, startPoint.Y + thickness * i), new Point(startPoint.X, startPoint.Y + i * thickness + 5));
                 }
-
-
                 if (direction == direction.left)
                 {
                     drawGr.DrawLine(new Pen(new SolidBrush(Color.Blue), 2), new Point(startPoint.X + thickness * i, startPoint.Y), new Point(startPoint.X + i * thickness + 5, startPoint.Y));
@@ -77,7 +80,7 @@ namespace WindowsFormsApp66
             pictureBox1.Width = maxwidth;
             panel2.Left = pictureBox1.Width + plus;
             label1.Left = pictureBox1.Width;
-            panel1.Left = pictureBox1.Width;            
+            panel1.Left = pictureBox1.Width;
             button3.Left = pictureBox1.Width;
             pictureBox2.Left = button3.Left + button3.Width;
         }
@@ -206,21 +209,22 @@ namespace WindowsFormsApp66
 
         private void pictureBox2_Paint(object sender, PaintEventArgs ee)
         {
-            if (SelectedImage != null)
+            if (SelectedImage != null & !clear)
             {
                 gr.DrawImage(SelectedImage.image, pictureBox2.Width / 2 - SelectedImage.image.Width / 2, pictureBox2.Height / 2 - SelectedImage.image.Height / 2);
                 ee.Graphics.DrawImage(SelectedImage.image, pictureBox2.Width / 2 - SelectedImage.image.Width / 2, pictureBox2.Height / 2 - SelectedImage.image.Height / 2);
             }
-            if (pickColor)
+            if (pickColor & !clear)
             {
                 var pixel = im.GetPixel(cursorPoint.X, cursorPoint.Y);
                 ee.Graphics.FillRectangle(new SolidBrush(im.GetPixel(cursorPoint.X, cursorPoint.Y)), new Rectangle(cursorPoint.X, cursorPoint.Y - 11, 10, 10));
                 ee.Graphics.DrawRectangle(new Pen(new SolidBrush(Color.FromArgb(255, 255 - pixel.R, 255 - pixel.G, 255 - pixel.B))), new Rectangle(cursorPoint.X, cursorPoint.Y - 12, 11, 11));
             }
-            if (tool == tools.selection && select)
+            if (tool == tools.selection && select & !clear)
             {
+                clear = false;
                 var start = new Point();
-                var end = new Point();                
+                var end = new Point();
                 if (e.X < downPoint.X)
                 {
                     start.X = e.X;
@@ -260,9 +264,17 @@ namespace WindowsFormsApp66
                 selectedRect.Width = end.X - start.X;
                 selectedRect.Height = end.Y - start.Y;
                 button6.Left = downPoint.X + pictureBox2.Left;
-                button6.Top = downPoint.Y - button6.Height-4;
+                button6.Top = downPoint.Y - button6.Height - 4;
                 button6.Visible = true;
+            }            
+            if (clear)
+            {
+                gr.Clear(Color.Transparent);
+                pictureBox2.Image = im;
+                gr.DrawImage(SelectedImage.image, pictureBox2.Width / 2 - SelectedImage.image.Width / 2, pictureBox2.Height / 2 - SelectedImage.image.Height / 2);
+                ee.Graphics.DrawImage(SelectedImage.image, pictureBox2.Width / 2 - SelectedImage.image.Width / 2, pictureBox2.Height / 2 - SelectedImage.image.Height / 2);                             
             }
+
         }
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
@@ -282,12 +294,13 @@ namespace WindowsFormsApp66
             if (tool == tools.pipetka)
             {
                 pickColor = true;
+                clear = false;
                 cursorPoint = e.Location;
                 pictureBox2.Refresh();
             }
-            if (tool == tools.selection && e.Button == MouseButtons.Left)
+            if (tool == tools.selection && e.Button == MouseButtons.Left&&!clear)
             {
-                select = true;
+                select = true;                
                 pictureBox2.Refresh();
                 this.e = e.Location;
             }
@@ -300,9 +313,19 @@ namespace WindowsFormsApp66
 
         private void pictureBox2_MouseDown(object sender, MouseEventArgs e)
         {
-            if (tool == tools.selection)
+            if (tool == tools.selection && !select)
             {
+                button6.Parent = this;
+                clear = false;
+                button6.BringToFront();
                 downPoint = e.Location;
+            }
+            else
+            {
+                select = false;
+                clear = true;
+                pictureBox2.Refresh();
+                button6.Parent = null;
             }
         }
 
@@ -321,8 +344,11 @@ namespace WindowsFormsApp66
             var bmp = new Bitmap(selectedRect.Width, selectedRect.Height);
             var grph = Graphics.FromImage(bmp);
             var rect = new Rectangle(downPoint.X, downPoint.Y, selectedRect.Width, selectedRect.Height);
-            grph.DrawImage(im, new Rectangle(0,0, selectedRect.Width, selectedRect.Height), rect, GraphicsUnit.Pixel);
-            pictureBox3.Image = bmp;
+            grph.DrawImage(im, new Rectangle(0, 0, selectedRect.Width, selectedRect.Height), rect, GraphicsUnit.Pixel);
+            SelectedImage.image = bmp;
+            SelectedImage.rect = selectedRect;
+            button6.Parent = null;
+            pictureBox2.Refresh();
         }
     }
 }
