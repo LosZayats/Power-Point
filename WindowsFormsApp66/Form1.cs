@@ -22,6 +22,83 @@ namespace WindowsFormsApp66
         {
             public List<Page2> pages;
         }
+        [Serializable]
+        class Item
+        {
+            public Rectangle myRect;
+            public Text1 Text;
+            Graphics myGraphics = Graphics.FromImage(new Bitmap(1, 1));
+            public Item()
+            {
+                if (myRect == null)
+                {
+                    myRect = new Rectangle();
+                }
+            }
+            public void Resize()
+            {
+                myRect.Width = (int)myGraphics.MeasureString(Text.text2, Text.myFont).Width + 10;
+                myRect.Height = (int)myGraphics.MeasureString(Text.text2, Text.myFont).Height + 10;
+            }
+        }
+        [Serializable]
+        class Table
+        {
+            public List<Item> items = new List<Item>();
+            public int Column;
+            public int Row;
+            public void Vis()
+            {
+                int col = 0;
+                int row = 0;
+                int y = 150;
+                int x = 100;
+                int max = 0;
+                foreach (var text in items)
+                {
+                    text.Resize();
+                }
+                int max2 = 0;
+                foreach (var text in items)
+                {
+                    if (text.myRect.Width > max)
+                    {
+                        max = text.myRect.Width;
+                    }
+                    if (text.myRect.Height > max2)
+                    {
+                        max2 = text.myRect.Height;
+                    }
+                }
+                foreach(var t in items)
+                {
+                    t.myRect.Width = max;
+                    t.myRect.Height = max2;
+                }
+                foreach (var t in items)
+                {
+                    col++;
+                    t.myRect.Y += y;
+                    t.myRect.X += x;
+                    x = t.myRect.X + t.myRect.Width;
+                    y = t.myRect.Y;
+                    t.Text.VisMe(new RichTextBox() { Text = t.Text.text2 }, new Point(t.myRect.X + 5, t.myRect.Y + 5), t.Text.myColor);
+                    Form1.PageNow.page.DrawImage(t.Text.image, new Point(0, 0));
+                    Form1.PageNow.page.DrawRectangle(new Pen(new SolidBrush(Color.Black), 3), t.myRect);
+                    if (col == Column)
+                    {
+                        col = 0;
+                        row++;
+                        y += t.myRect.Height;
+                        x = 100;
+                    }
+                    if (row == Row)
+                    {
+                        return;
+                    }
+                }
+            }
+        }
         class Shape : Attribute
         {
             public enum Shapes
@@ -62,7 +139,7 @@ namespace WindowsFormsApp66
             if (load.pages == null)
             {
                 load.pages = new List<Page2>();
-            }            
+            }
             load.pages.Add(new Page2());
             SaveSettings(load);
             Func2(true);
@@ -121,9 +198,30 @@ namespace WindowsFormsApp66
             panels2.Add(panel7);
             panels2.Add(panel8);
             panel2.Controls.Add(label3);
-            font = label1.Font;           
+            font = label1.Font;
             Form4 f3 = new Form4();
-            f3.Show();
+            var t1 = new Text1();
+            var t2 = new Text1();
+            t1.myColor = Color.Black;
+            t1.text2 = "hdghfghfghf \n fgdfgdfg";
+            t2.myColor = Color.Black;
+            t2.text2 = "hdghfghfghf \n fdgdgdfgd";
+            var table = new Table();
+            table.Column = 2;
+            table.Row = 2;
+            table.items.Add(new Item() { Text = t1 });
+            table.items.Add(new Item() { Text = t2 });
+            var t3 = new Text1();
+            var t4 = new Text1();
+            t4.myColor = Color.Black;
+            t4.text2 = "hdghfghfghf \n fgdfgdfghfghgfhfghfghfghfghfghfhfghfgh";
+            t3.myColor = Color.Black;
+            t3.text2 = "hdghfghfghf \n fdgdgdfgd\ntgdh\n";
+            table.items.Add(new Item() { Text = t3 });
+            table.items.Add(new Item() { Text = t4 });
+            table.Vis();
+            pictureBox1.Image = PageNow.imageOfPage;
+            //f3.Show();
         }
         bool draw;
         Bitmap header;
@@ -369,7 +467,7 @@ namespace WindowsFormsApp66
             }
         }
         static Bitmap bmp = new Bitmap(scale.Width, scale.Height);
-        Graphics grph = Graphics.FromImage(bmp);
+        public static Graphics grph = Graphics.FromImage(bmp);
         [Serializable]
         public class Page2
         {
@@ -402,7 +500,7 @@ namespace WindowsFormsApp66
                 if (myFont == null)
                 {
                     myFont = Form1.font;
-                }                
+                }
                 graph.DrawString(text.Text, myFont, new SolidBrush(myColor), drawPoint);
                 text2 = text.Text;
             }
@@ -854,7 +952,7 @@ namespace WindowsFormsApp66
                         {
                             if (e.Button == MouseButtons.None)
                             {
-                                if (text.Link &button2.Text=="redact")
+                                if (text.Link & button2.Text == "redact")
                                 {
                                     // PageNow.page.Clear(Color.Transparent);                                                                    
                                     text.myColor = Color.Blue;
