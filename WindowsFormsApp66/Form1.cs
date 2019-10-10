@@ -42,6 +42,10 @@ namespace WindowsFormsApp66
             }
         }
         [Serializable]
+        public struct ProgrammSettings2
+        {
+            public List<Table> pages;
+        }
         class Table
         {
             public List<Item> items = new List<Item>();
