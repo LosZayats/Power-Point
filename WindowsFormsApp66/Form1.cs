@@ -71,7 +71,7 @@ namespace WindowsFormsApp66
         [Serializable]
         public class Table
         {
-            int myPage;
+            public int myPage;
             public List<Item> items = new List<Item>();
             public int Column;
             public int Row;
@@ -83,6 +83,7 @@ namespace WindowsFormsApp66
                 {
                     var text = new Text1() { myColor = Color.Black };
                     text.myFont = new Font(new FontFamily("Arial"),20.0F ,FontStyle.Bold);
+                    text.text2 = "sgdfg";
                     items.Add(new Item() { Text = text});
                 }
                 myPage = PageNumber;
@@ -256,13 +257,21 @@ namespace WindowsFormsApp66
             panel2.Controls.Add(label3);
             font = label1.Font;
             Form4 f3 = new Form4();
-            //var table = new Table(2, 2, pagenum);
-            int ind= 0;
-            foreach(var table in LoadSettings2().tables)
+            //var table = new Table(2, 2, pagenum);          
+            TableVis();          
+        }
+        public void TableVis()
+        {
+            int ind = 0;
+            foreach (var table2 in LoadSettings2().tables)
             {
-                table.Vis(ind);
-                ind++;
-            }            
+                if(table2.myPage == pageNum)
+                {
+                    table2.Vis(ind);
+                    ind++;
+                }                
+            }
+            pictureBox1.Image = PageNow.imageOfPage;
         }
         bool draw;
         Bitmap header;
@@ -337,6 +346,7 @@ namespace WindowsFormsApp66
                         pictureBox1.BackgroundImage = null;
                     }
                 }
+                TableVis();
                 pictureBox1.Image = PageNow.imageOfPage;
             }
         }
@@ -700,7 +710,7 @@ namespace WindowsFormsApp66
         private void button2_Click(object sender, EventArgs e)
         {
             anim = true;
-            loading = true;
+            loading = true;            
             if (redact)
             {
                 Func2(true);
@@ -778,6 +788,8 @@ namespace WindowsFormsApp66
                 redact = true;
                 button2.Text = "redact";
             }
+            TableVis();
+            pictureBox1.Image = PageNow.imageOfPage;
             loading = false;
         }
 
