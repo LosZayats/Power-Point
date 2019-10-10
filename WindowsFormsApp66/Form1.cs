@@ -16,18 +16,18 @@ namespace WindowsFormsApp66
 {
     public partial class Form1 : Form
     {
-        const string SettingsFileName = "презентация.pttx";
+        const string SettingsFileName = "презентация.ptx";
+        const string SettingsFileName2 = "table.ptx";
         [Serializable] //Это атрибут, который позволяет автоматически сериализовать и десериализовать 
         public struct ProgrammSettings
         {
             public List<Page2> pages;
         }
         [Serializable]
-        class Item
+        public class Item
         {
             public Rectangle myRect;
-            public Text1 Text;
-            Graphics myGraphics = Graphics.FromImage(new Bitmap(1, 1));
+            public Text1 Text;            
             public Item()
             {
                 if (myRect == null)
@@ -37,6 +37,7 @@ namespace WindowsFormsApp66
             }
             public void Resize()
             {
+                Graphics myGraphics = Graphics.FromImage(new Bitmap(1, 1));
                 myRect.Width = (int)myGraphics.MeasureString(Text.text2, Text.myFont).Width + 10;
                 myRect.Height = (int)myGraphics.MeasureString(Text.text2, Text.myFont).Height + 10;
             }
@@ -44,14 +45,56 @@ namespace WindowsFormsApp66
         [Serializable]
         public struct ProgrammSettings2
         {
-            public List<Table> pages;
+            public List<Table> tables;
         }
-        class Table
+        public static ProgrammSettings2 LoadSettings2()
         {
+            if (File.Exists(SettingsFileName2))
+            {
+                using (Stream stream = File.Open(SettingsFileName2, FileMode.Open))
+                {
+                    var formatter = new BinaryFormatter();
+                    return (ProgrammSettings2)formatter.Deserialize(stream);
+                }
+            }
+            return
+        default(ProgrammSettings2);
+        }
+        public static void SaveSettings2(ProgrammSettings2 settings)
+        {
+            using (Stream stream = File.Open(SettingsFileName2, FileMode.Create))
+            {
+                var formatter = new BinaryFormatter();
+                formatter.Serialize(stream, settings);
+            }
+        }
+        [Serializable]
+        public class Table
+        {
+            int myPage;
             public List<Item> items = new List<Item>();
             public int Column;
             public int Row;
-            public void Vis()
+            public Table(int columns,int rows,int PageNumber)
+            {
+                Column = columns;
+                Row = rows;
+                for(int ind = 0;ind<Row*columns;ind++)
+                {
+                    var text = new Text1() { myColor = Color.Black };
+                    text.myFont = new Font(new FontFamily("Arial"),20.0F ,FontStyle.Bold);
+                    items.Add(new Item() { Text = text});
+                }
+                myPage = PageNumber;
+                var loadSettings = Form1.LoadSettings2();
+                if(loadSettings.tables == null)
+                {
+                    loadSettings.tables = new List<Table>();
+                }
+                loadSettings.tables.Add(this);
+                SaveSettings2(loadSettings);
+            }
+            public void Vis(int myInd)
             {
                 int col = 0;
                 int row = 0;
@@ -78,17 +121,25 @@ namespace WindowsFormsApp66
                 {
                     t.myRect.Width = max;
                     t.myRect.Height = max2;
+                    t.myRect.X = 0;
+                    t.myRect.Y = 0;
                 }
                 foreach (var t in items)
                 {
                     col++;
+                    var loadSettings = Form1.LoadSettings2();
+                    if (loadSettings.tables == null)
+                    {
+                        loadSettings.tables = new List<Table>();
+                    }                    
                     t.myRect.Y += y;
                     t.myRect.X += x;
                     x = t.myRect.X + t.myRect.Width;
                     y = t.myRect.Y;
                     t.Text.VisMe(new RichTextBox() { Text = t.Text.text2 }, new Point(t.myRect.X + 5, t.myRect.Y + 5), t.Text.myColor);
                     Form1.PageNow.page.DrawImage(t.Text.image, new Point(0, 0));
-                    Form1.PageNow.page.DrawRectangle(new Pen(new SolidBrush(Color.Black), 3), t.myRect);
+                    Form1.PageNow.page.DrawRectangle(new Pen(new SolidBrush(Color.Black), 3), t.myRect);                    
+                    loadSettings.tables[myInd] = this;                    
                     if (col == Column)
                     {
                         col = 0;
@@ -98,7 +149,8 @@ namespace WindowsFormsApp66
                     }
                     if (row == Row)
                     {
-                        return;
+                        SaveSettings2(loadSettings);
+                        return;                        
                     }
                 }
             }
@@ -204,28 +256,13 @@ namespace WindowsFormsApp66
             panel2.Controls.Add(label3);
             font = label1.Font;
             Form4 f3 = new Form4();
-            var t1 = new Text1();
-            var t2 = new Text1();
-            t1.myColor = Color.Black;
-            t1.text2 = "hdghfghfghf \n fgdfgdfg";
-            t2.myColor = Color.Black;
-            t2.text2 = "hdghfghfghf \n fdgdgdfgd";
-            var table = new Table();
-            table.Column = 2;
-            table.Row = 2;
-            table.items.Add(new Item() { Text = t1 });
-            table.items.Add(new Item() { Text = t2 });
-            var t3 = new Text1();
-            var t4 = new Text1();
-            t4.myColor = Color.Black;
-            t4.text2 = "hdghfghfghf \n fgdfgdfghfghgfhfghfghfghfghfghfhfghfgh";
-            t3.myColor = Color.Black;
-            t3.text2 = "hdghfghfghf \n fdgdgdfgd\ntgdh\n";
-            table.items.Add(new Item() { Text = t3 });
-            table.items.Add(new Item() { Text = t4 });
-            table.Vis();
-            pictureBox1.Image = PageNow.imageOfPage;
-            //f3.Show();
+            //var table = new Table(2, 2, pagenum);
+            int ind= 0;
+            foreach(var table in LoadSettings2().tables)
+            {
+                table.Vis(ind);
+                ind++;
+            }            
         }
         bool draw;
         Bitmap header;
