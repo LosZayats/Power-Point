@@ -6,6 +6,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
@@ -41,6 +42,8 @@ namespace WindowsFormsApp66
                 myRect.Width = (int)myGraphics.MeasureString(Text.text2, Text.myFont).Width + 10;
                 myRect.Height = (int)myGraphics.MeasureString(Text.text2, Text.myFont).Height + 10;
             }
+            [NonSerialized]
+            public RichTextBox richTextBox;
         }
         [Serializable]
         public struct ProgrammSettings2
@@ -81,10 +84,12 @@ namespace WindowsFormsApp66
                 Row = rows;
                 for(int ind = 0;ind<Row*columns;ind++)
                 {
+                    Count++;
                     var text = new Text1() { myColor = Color.Black };
                     text.myFont = new Font(new FontFamily("Arial"),20.0F ,FontStyle.Bold);
-                    text.text2 = "sgdfg";
+                    text.text2 = "ждлdgdfgdgh\ngdflg;dfg;lfdg\nhgfhfgh";
                     items.Add(new Item() { Text = text});
+                    myInd = Count;
                 }
                 myPage = PageNumber;
                 var loadSettings = Form1.LoadSettings2();
@@ -95,6 +100,8 @@ namespace WindowsFormsApp66
                 loadSettings.tables.Add(this);
                 SaveSettings2(loadSettings);
             }
+            static int Count;
+            int myInd;
             public void Vis(int myInd)
             {
                 int col = 0;
@@ -128,17 +135,31 @@ namespace WindowsFormsApp66
                 foreach (var t in items)
                 {
                     col++;
+                    RichTextBox textbox = null;
+                    foreach(var text in Form1.richTextBoxes2)
+                    {
+                        var str = myInd.ToString() + items.IndexOf(t).ToString();
+                        if (text.Name  ==str )
+                        {
+                            textbox = text;
+                            break;
+                        }
+                    }
+                    t.Text.text2 = textbox.Text;
                     var loadSettings = Form1.LoadSettings2();
                     if (loadSettings.tables == null)
                     {
                         loadSettings.tables = new List<Table>();
-                    }                    
+                    }
                     t.myRect.Y += y;
                     t.myRect.X += x;
                     x = t.myRect.X + t.myRect.Width;
                     y = t.myRect.Y;
-                    t.Text.VisMe(new RichTextBox() { Text = t.Text.text2 }, new Point(t.myRect.X + 5, t.myRect.Y + 5), t.Text.myColor);
-                    Form1.PageNow.page.DrawImage(t.Text.image, new Point(0, 0));
+                    //t.Text.VisMe(new RichTextBox() { Text = t.Text.text2 }, new Point(t.myRect.X + 5, t.myRect.Y + 5), t.Text.myColor);
+                    void oper() => Form1.PageNow.page.DrawString(t.Text.text2, t.Text.myFont, new SolidBrush(t.Text.myColor), new Point(t.myRect.X + 5, t.myRect.Y + 5));
+                    //var thread = new Thread(oper);
+                    //thread.Start();
+                    oper();
                     Form1.PageNow.page.DrawRectangle(new Pen(new SolidBrush(Color.Black), 3), t.myRect);                    
                     loadSettings.tables[myInd] = this;                    
                     if (col == Column)
@@ -153,6 +174,7 @@ namespace WindowsFormsApp66
                         SaveSettings2(loadSettings);
                         return;                        
                     }
+                    GC.Collect();
                 }
             }
         }
@@ -257,12 +279,65 @@ namespace WindowsFormsApp66
             panel2.Controls.Add(label3);
             font = label1.Font;
             Form4 f3 = new Form4();
-            //var table = new Table(2, 2, pagenum);          
-            TableVis();          
+            var table = new Table(1, 2, pagenum);                   
+            var load2 = LoadSettings2();
+            var ind1 = -1;
+            var ind2 = -1;            
+            foreach (var table2 in load2.tables)
+            {
+                ind1++;
+                ind2 = -1;
+                var row = 0;
+                var column = 0;
+                var y = 150;
+                var x = 100;
+                foreach(var item in table.items)
+                {
+                    column++;
+                    ind2++;
+                    item.Resize();
+                    var rich = new RichTextBox();
+                    rich.BackColor = Color.LightBlue;
+                    rich.Text = item.Text.text2;
+                    item.Resize();
+                    rich.Size = new Size(item.myRect.Width,item.myRect.Height);
+                    item.richTextBox = rich;
+                    richTextBoxes2.Add(rich);
+                    rich.Parent = this;
+                    rich.BorderStyle = BorderStyle.None;
+                    rich.BringToFront();
+                    rich.Name = ind1.ToString() + ind2.ToString();                                     
+                    rich.Top = y;
+                    rich.Left = x;
+                    rich.Font = item.Text.myFont;
+                    if(row == table.Row&&column == table.Column)
+                    {
+                        break;
+                    }
+                    if(column == table.Column)
+                    {
+                        column = 0;
+                        row++;
+                        y += item.myRect.Height;
+                        x = 100;
+                    }
+                    else
+                    {
+                        x += item.myRect.Width;
+                    }
+                }                
+            }            
+            TableVis();
         }
         public void TableVis()
         {
             int ind = 0;
+            if(LoadSettings2().tables == null)
+            {
+                var load = LoadSettings2();
+                load.tables = new List<Table>();
+                SaveSettings2(load);
+            }
             foreach (var table2 in LoadSettings2().tables)
             {
                 if(table2.myPage == pageNum)
@@ -387,6 +462,7 @@ namespace WindowsFormsApp66
         List<Panel> panels2 = new List<Panel>();
         public static List<Text1> texts = new List<Text1>();
         public static List<RichTextBox> richTextBoxes = new List<RichTextBox>();
+        public static List<RichTextBox> richTextBoxes2 = new List<RichTextBox>();
         public static List<int> layers = new List<int>();
         public static Page PageNow = new Page();
         public static ProgrammSettings LoadSettings()
@@ -540,12 +616,11 @@ namespace WindowsFormsApp66
                 set;
             }
 
-            public Bitmap image;
+            public Bitmap image = new Bitmap(1920, 1080);
             public System.Drawing.Point drawPoint = new System.Drawing.Point();
             public string text2;
             public void VisMe(RichTextBox text, System.Drawing.Point drawPoint, Color c)
             {
-                image = new Bitmap(1920, 1080);
                 var graph = Graphics.FromImage(image);
                 this.drawPoint = drawPoint;
                 if (myFont == null)
@@ -554,6 +629,8 @@ namespace WindowsFormsApp66
                 }
                 graph.DrawString(text.Text, myFont, new SolidBrush(myColor), drawPoint);
                 text2 = text.Text;
+                graph.Dispose();
+                GC.Collect();
             }
         }
         [Serializable]
@@ -1344,6 +1421,11 @@ namespace WindowsFormsApp66
         {
             //var sender2 = (Control)sender;
             //sender2.BackColor = Color.Beige;
+        }
+
+        private void textBox1_TextChanged_1(object sender, EventArgs e)
+        {
+
         }
     }
 }
