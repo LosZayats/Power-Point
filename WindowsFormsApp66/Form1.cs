@@ -102,7 +102,7 @@ namespace WindowsFormsApp66
             }
             static int Count;
             int myInd;
-            public void Vis(int myInd)
+            public Size Vis(int myInd)
             {
                 int col = 0;
                 int row = 0;
@@ -136,9 +136,9 @@ namespace WindowsFormsApp66
                 {
                     col++;
                     RichTextBox textbox = null;
-                    foreach(var text in Form1.richTextBoxes2)
-                    {
-                        var str = myInd.ToString() + items.IndexOf(t).ToString();
+                    var str = myInd.ToString() + items.IndexOf(t).ToString();
+                    foreach (var text in Form1.richTextBoxes2)
+                    {                        
                         if (text.Name  ==str )
                         {
                             textbox = text;
@@ -154,14 +154,20 @@ namespace WindowsFormsApp66
                     t.myRect.Y += y;
                     t.myRect.X += x;
                     x = t.myRect.X + t.myRect.Width;
-                    y = t.myRect.Y;
-                    //t.Text.VisMe(new RichTextBox() { Text = t.Text.text2 }, new Point(t.myRect.X + 5, t.myRect.Y + 5), t.Text.myColor);
-                    void oper() => Form1.PageNow.page.DrawString(t.Text.text2, t.Text.myFont, new SolidBrush(t.Text.myColor), new Point(t.myRect.X + 5, t.myRect.Y + 5));
-                    //var thread = new Thread(oper);
-                    //thread.Start();
+                    y = t.myRect.Y;                    
+                    void oper() => Form1.PageNow.page.DrawString(t.Text.text2, t.Text.myFont, new SolidBrush(t.Text.myColor), new Point(t.myRect.X + 5, t.myRect.Y + 5));                    
                     oper();
                     Form1.PageNow.page.DrawRectangle(new Pen(new SolidBrush(Color.Black), 3), t.myRect);                    
-                    loadSettings.tables[myInd] = this;                    
+                    loadSettings.tables[myInd] = this;
+                    var ind = -1;
+                    foreach (var textBox in Form1.richTextBoxes2)
+                    {
+                        if (textBox.Name == str)
+                        {
+                            textBox.Top = t.myRect.Y;
+                            textBox.Left = t.myRect.X;                            
+                        }
+                    }
                     if (col == Column)
                     {
                         col = 0;
@@ -172,10 +178,15 @@ namespace WindowsFormsApp66
                     if (row == Row)
                     {
                         SaveSettings2(loadSettings);
-                        return;                        
+                        return items[0].myRect.Size;                       
                     }
                     GC.Collect();
                 }
+                return items[0].myRect.Size;
+            }           
+            public Size RetSize()
+            {
+                return items[0].myRect.Size;
             }
         }
         class Shape : Attribute
@@ -279,10 +290,14 @@ namespace WindowsFormsApp66
             panel2.Controls.Add(label3);
             font = label1.Font;
             Form4 f3 = new Form4();
-            var table = new Table(1, 2, pagenum);                   
+            var table = new Table(4, 4, pagenum);                   
             var load2 = LoadSettings2();
             var ind1 = -1;
-            var ind2 = -1;            
+            var ind2 = -1;   
+            if(load2.tables == null)
+            {
+                load2.tables = new List<Table>();
+            }
             foreach (var table2 in load2.tables)
             {
                 ind1++;
@@ -291,7 +306,7 @@ namespace WindowsFormsApp66
                 var column = 0;
                 var y = 150;
                 var x = 100;
-                foreach(var item in table.items)
+                foreach(var item in table2.items)
                 {
                     column++;
                     ind2++;
@@ -310,11 +325,12 @@ namespace WindowsFormsApp66
                     rich.Top = y;
                     rich.Left = x;
                     rich.Font = item.Text.myFont;
-                    if(row == table.Row&&column == table.Column)
+                    rich.TextChanged += textBox1_TextChanged_1;
+                    if(row == table2.Row&&column == table2.Column)
                     {
                         break;
                     }
-                    if(column == table.Column)
+                    if(column == table2.Column)
                     {
                         column = 0;
                         row++;
@@ -346,7 +362,7 @@ namespace WindowsFormsApp66
                     ind++;
                 }                
             }
-            pictureBox1.Image = PageNow.imageOfPage;
+            pictureBox1.Image = PageNow.imageOfPage;          
         }
         bool draw;
         Bitmap header;
@@ -622,6 +638,7 @@ namespace WindowsFormsApp66
             public void VisMe(RichTextBox text, System.Drawing.Point drawPoint, Color c)
             {
                 var graph = Graphics.FromImage(image);
+                graph.Clear(Color.Transparent);
                 this.drawPoint = drawPoint;
                 if (myFont == null)
                 {
@@ -629,8 +646,7 @@ namespace WindowsFormsApp66
                 }
                 graph.DrawString(text.Text, myFont, new SolidBrush(myColor), drawPoint);
                 text2 = text.Text;
-                graph.Dispose();
-                GC.Collect();
+                graph.Dispose();                
             }
         }
         [Serializable]
@@ -1425,7 +1441,13 @@ namespace WindowsFormsApp66
 
         private void textBox1_TextChanged_1(object sender, EventArgs e)
         {
-
+            PageNow.page.Clear(Color.Transparent);
+            ImageVisualize();
+            TableVis();
+            var send = (RichTextBox)sender;
+            var size = PageNow.page.MeasureString(send.Text, send.Font);
+            send.Size = new Size((int)size.Width+30, (int)size.Height+30);
+            pictureBox1.Image = PageNow.imageOfPage;
         }
     }
 }
