@@ -74,22 +74,26 @@ namespace WindowsFormsApp66
         [Serializable]
         public class Table
         {
-            public int myPage;
+            public int myPage
+            {
+                get;
+                private set;                
+            }
             public List<Item> items = new List<Item>();
             public int Column;
             public int Row;
             public Table(int columns,int rows,int PageNumber)
             {
                 Column = columns;
-                Row = rows;
-                for(int ind = 0;ind<Row*columns;ind++)
-                {
-                    Count++;
+                Row = rows;                             
+                myInd = LoadSettings2().tables.Count;                
+                for (int ind = 0;ind<Row*columns;ind++)
+                {                    
                     var text = new Text1() { myColor = Color.Black };
                     text.myFont = new Font(new FontFamily("Arial"),20.0F ,FontStyle.Bold);
-                    text.text2 = "ждлdgdfgdgh\ngdflg;dfg;lfdg\nhgfhfgh";
-                    items.Add(new Item() { Text = text});
-                    myInd = Count;
+                    text.text2 = "item";
+                    myPage = PageNumber;
+                    items.Add(new Item() { Text = text});                    
                 }
                 myPage = PageNumber;
                 var loadSettings = Form1.LoadSettings2();
@@ -100,9 +104,12 @@ namespace WindowsFormsApp66
                 loadSettings.tables.Add(this);
                 SaveSettings2(loadSettings);
             }
-            static int Count;
-            int myInd;
-            public Size Vis(int myInd)
+            public int myInd
+            {
+                get;
+                private set;
+            }
+            public Size Vis()
             {
                 int col = 0;
                 int row = 0;
@@ -131,12 +138,12 @@ namespace WindowsFormsApp66
                     t.myRect.Height = max2;
                     t.myRect.X = 0;
                     t.myRect.Y = 0;
-                }
+                }                
                 foreach (var t in items)
                 {
                     col++;
                     RichTextBox textbox = null;
-                    var str = myInd.ToString() + items.IndexOf(t).ToString();
+                    var str = this.myInd.ToString() + items.IndexOf(t).ToString();
                     foreach (var text in Form1.richTextBoxes2)
                     {                        
                         if (text.Name  ==str )
@@ -155,8 +162,11 @@ namespace WindowsFormsApp66
                     t.myRect.X += x;
                     x = t.myRect.X + t.myRect.Width;
                     y = t.myRect.Y;                    
-                    void oper() => Form1.PageNow.page.DrawString(t.Text.text2, t.Text.myFont, new SolidBrush(t.Text.myColor), new Point(t.myRect.X + 5, t.myRect.Y + 5));                    
-                    oper();
+                    void oper() => Form1.PageNow.page.DrawString(t.Text.text2, t.Text.myFont, new SolidBrush(t.Text.myColor), new Point(t.myRect.X + 5, t.myRect.Y + 5));              
+                    if(Form1.redact == true)
+                    {
+                        oper();
+                    }                    
                     Form1.PageNow.page.DrawRectangle(new Pen(new SolidBrush(Color.Black), 3), t.myRect);                    
                     loadSettings.tables[myInd] = this;
                     var ind = -1;
@@ -189,6 +199,7 @@ namespace WindowsFormsApp66
                 return items[0].myRect.Size;
             }
         }
+        public static int PageNumForOut;
         class Shape : Attribute
         {
             public enum Shapes
@@ -222,6 +233,74 @@ namespace WindowsFormsApp66
         }
         bool anim;
         public static int Thikness = 1;
+        public void Parentness()
+        {
+            foreach (var t in richTextBoxes2)
+            {
+                var ff = LoadSettings2().tables[int.Parse(t.Name[0].ToString())];
+                var gg = LoadSettings2().tables[int.Parse(t.Name[0].ToString())].myPage;
+                if (LoadSettings2().tables[int.Parse(t.Name[0].ToString())].myPage == pageNum)
+                {
+                    t.Parent = this;
+                    t.BringToFront();
+                }
+            }
+        }
+        public void Reffresh()
+        {
+            richTextBoxes2.Clear();
+            var load2 = LoadSettings2();
+            var ind1 = -1;
+            var ind2 = -1;
+            if (load2.tables == null)
+            {
+                load2.tables = new List<Table>();
+            }
+            foreach (var table2 in load2.tables)
+            {
+                ind1++;
+                ind2 = -1;
+                var row = 0;
+                var column = 0;
+                var y = 150;
+                var x = 100;
+                foreach (var item in table2.items)
+                {
+                    column++;
+                    ind2++;
+                    item.Resize();
+                    var rich = new RichTextBox();
+                    rich.BackColor = Color.LightBlue;
+                    rich.Text = item.Text.text2;
+                    item.Resize();
+                    rich.Size = new Size(item.myRect.Width, item.myRect.Height);
+                    item.richTextBox = rich;
+                    richTextBoxes2.Add(rich);                    
+                    rich.BorderStyle = BorderStyle.None;
+                    rich.BringToFront();
+                    rich.Name = ind1.ToString() + ind2.ToString();
+                    rich.Top = y;
+                    rich.Left = x;
+                    rich.Font = item.Text.myFont;
+                    rich.TextChanged += textBox1_TextChanged_1;
+                    if (row == table2.Row && column == table2.Column)
+                    {
+                        break;
+                    }
+                    if (column == table2.Column)
+                    {
+                        column = 0;
+                        row++;
+                        y += item.myRect.Height;
+                        x = 100;
+                    }
+                    else
+                    {
+                        x += item.myRect.Width;
+                    }
+                }
+            }
+        }
         public Form1()
         {
             InitializeComponent();
@@ -290,59 +369,9 @@ namespace WindowsFormsApp66
             panel2.Controls.Add(label3);
             font = label1.Font;
             Form4 f3 = new Form4();
-            var table = new Table(4, 4, pagenum);                   
-            var load2 = LoadSettings2();
-            var ind1 = -1;
-            var ind2 = -1;   
-            if(load2.tables == null)
-            {
-                load2.tables = new List<Table>();
-            }
-            foreach (var table2 in load2.tables)
-            {
-                ind1++;
-                ind2 = -1;
-                var row = 0;
-                var column = 0;
-                var y = 150;
-                var x = 100;
-                foreach(var item in table2.items)
-                {
-                    column++;
-                    ind2++;
-                    item.Resize();
-                    var rich = new RichTextBox();
-                    rich.BackColor = Color.LightBlue;
-                    rich.Text = item.Text.text2;
-                    item.Resize();
-                    rich.Size = new Size(item.myRect.Width,item.myRect.Height);
-                    item.richTextBox = rich;
-                    richTextBoxes2.Add(rich);
-                    rich.Parent = this;
-                    rich.BorderStyle = BorderStyle.None;
-                    rich.BringToFront();
-                    rich.Name = ind1.ToString() + ind2.ToString();                                     
-                    rich.Top = y;
-                    rich.Left = x;
-                    rich.Font = item.Text.myFont;
-                    rich.TextChanged += textBox1_TextChanged_1;
-                    if(row == table2.Row&&column == table2.Column)
-                    {
-                        break;
-                    }
-                    if(column == table2.Column)
-                    {
-                        column = 0;
-                        row++;
-                        y += item.myRect.Height;
-                        x = 100;
-                    }
-                    else
-                    {
-                        x += item.myRect.Width;
-                    }
-                }                
-            }            
+            // var table = new Table(2, 2, pagenum);                   
+            Reffresh();
+            Parentness();
             TableVis();
         }
         public void TableVis()
@@ -358,7 +387,7 @@ namespace WindowsFormsApp66
             {
                 if(table2.myPage == pageNum)
                 {
-                    table2.Vis(ind);
+                    table2.Vis();
                     ind++;
                 }                
             }
@@ -367,7 +396,7 @@ namespace WindowsFormsApp66
         bool draw;
         Bitmap header;
         bool loading = false;
-        bool redact = true;
+        public static bool redact = false;
         Point ClickOnImagePoint;
         bool ImageMove;
         public static RichTextBox workTextBox;
@@ -436,9 +465,9 @@ namespace WindowsFormsApp66
                     {
                         pictureBox1.BackgroundImage = null;
                     }
-                }
-                TableVis();
+                }                
                 pictureBox1.Image = PageNow.imageOfPage;
+                PageNumForOut = value;
             }
         }
         public void DrawLine(Point start, Point end, double ThickNess)
@@ -887,7 +916,7 @@ namespace WindowsFormsApp66
         }
 
         private void button3_Click(object sender, EventArgs e)
-        {
+        {       
             pictureBox1.Image = null;
             redact = true;
             var loadSettings = LoadSettings();
@@ -901,6 +930,15 @@ namespace WindowsFormsApp66
             PageNow = new Page();
             label2.Text = pageNum.ToString();
             SaveSettings(loadSettings);
+            foreach (var table in LoadSettings2().tables)
+            {
+                if (table.myPage == pageNum)
+                {
+                    Reffresh();                    
+                    Parentness();
+                }
+            }
+            TableVis();
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -949,6 +987,15 @@ namespace WindowsFormsApp66
                     pictureBox1.Image = PageNow.imageOfPage;
                 }
             }
+            foreach (var table in LoadSettings2().tables)
+            {
+                if (table.myPage == pageNum)
+                {
+                    Reffresh();
+                    Parentness();
+                }
+            }
+            TableVis();
             label2.Text = pageNum.ToString();
         }
 
@@ -1440,14 +1487,37 @@ namespace WindowsFormsApp66
         }
 
         private void textBox1_TextChanged_1(object sender, EventArgs e)
-        {
-            PageNow.page.Clear(Color.Transparent);
-            ImageVisualize();
-            TableVis();
+        {         
             var send = (RichTextBox)sender;
             var size = PageNow.page.MeasureString(send.Text, send.Font);
+            var LastSize = send.Size;
             send.Size = new Size((int)size.Width+30, (int)size.Height+30);
+            var max = 0;
+            var max2 = 0;
+            foreach (var t in richTextBoxes2)
+            {
+                if (t.Width > max)
+                {
+                    max = t.Width;
+                }
+                if (t.Height > max2)
+                {
+                    max2 = t.Height;
+                }
+            }
+            if (LastSize.Height != max2|LastSize.Width != max)
+            {
+                PageNow.page.Clear(Color.Transparent);
+                ImageVisualize();                
+                TableVis();
+            }
             pictureBox1.Image = PageNow.imageOfPage;
+        }
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+            Form5 f = new Form5();
+            f.Show();
         }
     }
 }
