@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Windows.Input;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Drawing.Printing;
 
 namespace WindowsFormsApp66
 {
@@ -28,7 +29,7 @@ namespace WindowsFormsApp66
         public class Item
         {
             public Rectangle myRect;
-            public Text1 Text;            
+            public Text1 Text;
             public Item()
             {
                 if (myRect == null)
@@ -77,27 +78,27 @@ namespace WindowsFormsApp66
             public int myPage
             {
                 get;
-                private set;                
+                private set;
             }
             public List<Item> items = new List<Item>();
             public int Column;
             public int Row;
-            public Table(int columns,int rows,int PageNumber)
+            public Table(int columns, int rows, int PageNumber)
             {
                 Column = columns;
-                Row = rows;                             
-                myInd = LoadSettings2().tables.Count;                
-                for (int ind = 0;ind<Row*columns;ind++)
-                {                    
+                Row = rows;
+                myInd = LoadSettings2().tables.Count;
+                for (int ind = 0; ind < Row * columns; ind++)
+                {
                     var text = new Text1() { myColor = Color.Black };
-                    text.myFont = new Font(new FontFamily("Arial"),20.0F ,FontStyle.Bold);
+                    text.myFont = new Font(new FontFamily("Arial"), 20.0F, FontStyle.Bold);
                     text.text2 = "item";
                     myPage = PageNumber;
-                    items.Add(new Item() { Text = text});                    
+                    items.Add(new Item() { Text = text });
                 }
                 myPage = PageNumber;
                 var loadSettings = Form1.LoadSettings2();
-                if(loadSettings.tables == null)
+                if (loadSettings.tables == null)
                 {
                     loadSettings.tables = new List<Table>();
                 }
@@ -132,21 +133,21 @@ namespace WindowsFormsApp66
                         max2 = text.myRect.Height;
                     }
                 }
-                foreach(var t in items)
+                foreach (var t in items)
                 {
                     t.myRect.Width = max;
                     t.myRect.Height = max2;
                     t.myRect.X = 0;
                     t.myRect.Y = 0;
-                }                
+                }
                 foreach (var t in items)
                 {
                     col++;
                     RichTextBox textbox = null;
                     var str = this.myInd.ToString() + items.IndexOf(t).ToString();
                     foreach (var text in Form1.richTextBoxes2)
-                    {                        
-                        if (text.Name  ==str )
+                    {
+                        if (text.Name == str)
                         {
                             textbox = text;
                             break;
@@ -161,13 +162,13 @@ namespace WindowsFormsApp66
                     t.myRect.Y += y;
                     t.myRect.X += x;
                     x = t.myRect.X + t.myRect.Width;
-                    y = t.myRect.Y;                    
-                    void oper() => Form1.PageNow.page.DrawString(t.Text.text2, t.Text.myFont, new SolidBrush(t.Text.myColor), new Point(t.myRect.X + 5, t.myRect.Y + 5));              
-                    if(Form1.redact == true)
+                    y = t.myRect.Y;
+                    void oper() => Form1.PageNow.page.DrawString(t.Text.text2, t.Text.myFont, new SolidBrush(t.Text.myColor), new Point(t.myRect.X + 5, t.myRect.Y + 5));
+                    if (Form1.redact == true)
                     {
                         oper();
-                    }                    
-                    Form1.PageNow.page.DrawRectangle(new Pen(new SolidBrush(Color.Black), 3), t.myRect);                    
+                    }
+                    Form1.PageNow.page.DrawRectangle(new Pen(new SolidBrush(Color.Black), 3), t.myRect);
                     loadSettings.tables[myInd] = this;
                     var ind = -1;
                     foreach (var textBox in Form1.richTextBoxes2)
@@ -175,7 +176,7 @@ namespace WindowsFormsApp66
                         if (textBox.Name == str)
                         {
                             textBox.Top = t.myRect.Y;
-                            textBox.Left = t.myRect.X;                            
+                            textBox.Left = t.myRect.X;
                         }
                     }
                     if (col == Column)
@@ -188,12 +189,12 @@ namespace WindowsFormsApp66
                     if (row == Row)
                     {
                         SaveSettings2(loadSettings);
-                        return items[0].myRect.Size;                       
+                        return items[0].myRect.Size;
                     }
                     GC.Collect();
                 }
                 return items[0].myRect.Size;
-            }           
+            }
             public Size RetSize()
             {
                 return items[0].myRect.Size;
@@ -219,7 +220,7 @@ namespace WindowsFormsApp66
                 var type = typeof(VectorGraphics);
                 var attrs = type.GetCustomAttributes(false);
                 var attrCust = (Shape)attrs[0];
-                attrCust.myShape = Shape.Shapes.Circle;
+                attrCust.myShape = Shape.Shapes.Circle;                
             }
         }
         double Frame;
@@ -275,7 +276,7 @@ namespace WindowsFormsApp66
                     item.Resize();
                     rich.Size = new Size(item.myRect.Width, item.myRect.Height);
                     item.richTextBox = rich;
-                    richTextBoxes2.Add(rich);                    
+                    richTextBoxes2.Add(rich);
                     rich.BorderStyle = BorderStyle.None;
                     rich.BringToFront();
                     rich.Name = ind1.ToString() + ind2.ToString();
@@ -301,6 +302,7 @@ namespace WindowsFormsApp66
                 }
             }
         }
+        bool print2;
         public Form1()
         {
             InitializeComponent();
@@ -369,7 +371,9 @@ namespace WindowsFormsApp66
             panel2.Controls.Add(label3);
             font = label1.Font;
             Form4 f3 = new Form4();
-            // var table = new Table(2, 2, pagenum);                   
+            // var table = new Table(2, 2, pagenum); 
+            var form4 = new Form4();
+            form4.Show();
             Reffresh();
             Parentness();
             TableVis();
@@ -377,7 +381,7 @@ namespace WindowsFormsApp66
         public void TableVis()
         {
             int ind = 0;
-            if(LoadSettings2().tables == null)
+            if (LoadSettings2().tables == null)
             {
                 var load = LoadSettings2();
                 load.tables = new List<Table>();
@@ -385,13 +389,13 @@ namespace WindowsFormsApp66
             }
             foreach (var table2 in LoadSettings2().tables)
             {
-                if(table2.myPage == pageNum)
+                if (table2.myPage == pageNum)
                 {
                     table2.Vis();
                     ind++;
-                }                
+                }
             }
-            pictureBox1.Image = PageNow.imageOfPage;          
+            pictureBox1.Image = PageNow.imageOfPage;
         }
         bool draw;
         Bitmap header;
@@ -465,40 +469,34 @@ namespace WindowsFormsApp66
                     {
                         pictureBox1.BackgroundImage = null;
                     }
-                }                
+                }
                 pictureBox1.Image = PageNow.imageOfPage;
                 PageNumForOut = value;
             }
         }
-        public void DrawLine(Point start, Point end, double ThickNess)
+        public void DrawLine(Graphics gr, Point Point1, Point Point2, Color col, int size)
         {
-            double count = 0;
-            var y1 = (double)start.Y;
-            var y2 = (double)end.Y;
-            var hei = (y2 - y1) / ThickNess;
-            var wid = ((double)end.X - (double)start.X) / ThickNess;
-            if (Math.Abs(y2 - y1) > Math.Abs(end.X - start.X))
+            var fun = (double)(Point2.Y - Point1.Y) / (double)(Point2.X - Point1.X);
+            for (double x = 0; x < (Point2.X - Point1.X); x += 0.005)
             {
-                count = hei;
+                gr.FillRectangle(new SolidBrush(col), new Rectangle((int)(x + Point1.X), (int)(x * fun) + Point1.Y, size, size));
             }
-            else
+            if ((Point2.X - Point1.X) < 0)
             {
-                count = wid;
-            }
-            count = Math.Abs(count);
-            double YPlus = 0;
-            double XPlus = 0;
-            YPlus = ((double)end.Y - (double)start.Y) / count;
-            XPlus = ((double)end.X - (double)start.X) / count;
-            for (int top = 0; top/* * YPlus*/ < count/* (y2 - y1)*/; top++)
-            {
-                if (Circle)
+                for (double x = 0; x > (Point2.X - Point1.X); x -= 0.005)
                 {
-                    PageNow.page.FillEllipse(new SolidBrush(brushColl), new Rectangle((int)((int)top * (int)XPlus + (int)start.X), (int)((int)top * (int)YPlus) + (int)start.Y, (int)ThickNess, (int)ThickNess));
+                    gr.FillRectangle(new SolidBrush(col), new Rectangle((int)(x + Point1.X), (int)(x * fun) + Point1.Y, size, size));
+                }
+            }
+            if ((Point2.X - Point1.X) == 0)
+            {
+                if (Point2.Y - Point1.Y > 0)
+                {
+                    gr.FillRectangle(new SolidBrush(col), new Rectangle(Point1.X, Point1.Y, size, Point2.Y - Point1.Y));
                 }
                 else
                 {
-                    PageNow.page.FillRectangle(new SolidBrush(brushColl), new Rectangle((int)((int)top * (int)XPlus + (int)start.X), (int)((int)top * (int)YPlus) + (int)start.Y, (int)ThickNess, (int)ThickNess));
+                    gr.FillRectangle(new SolidBrush(col), new Rectangle(Point1.X, Point2.Y, size, Math.Abs(Point2.Y - Point1.Y)));
                 }
             }
         }
@@ -675,7 +673,7 @@ namespace WindowsFormsApp66
                 }
                 graph.DrawString(text.Text, myFont, new SolidBrush(myColor), drawPoint);
                 text2 = text.Text;
-                graph.Dispose();                
+                graph.Dispose();
             }
         }
         [Serializable]
@@ -828,11 +826,81 @@ namespace WindowsFormsApp66
                 pictureBox1.Refresh();
             }
         }
+        public void vis(Rectangle margin)
+        {
 
+            Func2(false);
+            PageNow.page.Clear(Color.Transparent);
+            bool ex = false;
+            foreach (var text in Controls)
+            {
+                if (text as RichTextBox != null | imagess.Count != 0)
+                {
+                    ex = true;
+                }
+            }
+            if (ex)
+            {
+                var loadSettings = LoadSettings();
+                var page2 = new Page2();
+                page2.layers2 = layers;
+                page2.counter = counter;
+                page2.texts2 = texts;
+                page2.images = imagess;
+                page2.BackGround = LoadSettings().pages[pageNum].BackGround;
+                loadSettings.pages[pageNum] = page2;
+                SaveSettings(loadSettings);
+                var g = LoadSettings();
+                PageNow.page.Clear(Color.Transparent);
+                if (loadSettings.pages[pageNum].BackGround != null)
+                {
+                    var prop2 = (double)LoadSettings().pages[pageNum].BackGround.Height / (double)LoadSettings().pages[pageNum].BackGround.Width;
+                    pictureBox1.BackgroundImage = null;
+                    PageNow.page.DrawImage(LoadSettings().pages[pageNum].BackGround, 0, 0, margin.Width, (float)(margin.Width * prop2));
+                }                
+                foreach (var image in imagess)
+                {
+                    PageNow.page.DrawImage(image.image, image.rect);
+                }
+                foreach (var text in texts)
+                {
+                    if (text.drawPoint.Y == 0) { }
+                    else
+                    {
+                        text.drawPoint.X = richTextBoxes[texts.IndexOf(text)].Left;
+                        text.drawPoint.Y = richTextBoxes[texts.IndexOf(text)].Top;
+                        text.VisMe(richTextBoxes[texts.IndexOf(text)], text.drawPoint, text.myColor);
+                        PageNow.VisualizeOnPage(text, layers[texts.IndexOf(text)]);
+                    }
+                }
+                pictureBox1.Image = PageNow.imageOfPage;
+                SaveSettings(loadSettings);
+                PageNow.layers.Clear();
+                PageNow.visComponents.Clear();
+            }
+            var loadSettings2 = LoadSettings();
+            var page22 = new Page2();
+            page22.layers2 = layers;
+            page22.counter = counter;
+            page22.texts2 = texts;
+            page22.images = imagess;
+            page22.BackGround = LoadSettings().pages[pageNum].BackGround;
+            loadSettings2.pages[pageNum] = page22;
+            SaveSettings(loadSettings2);
+            pictureBox1.Image = PageNow.imageOfPage;
+            redact = true;
+            button2.Text = "redact";
+            TableVis();
+            pictureBox1.Image = PageNow.imageOfPage;
+            loading = false;
+        }
         private void button2_Click(object sender, EventArgs e)
         {
-            anim = true;
-            loading = true;            
+            if(!print2)
+            {
+                anim = true;
+                loading = true;
+            }            
             if (redact)
             {
                 Func2(true);
@@ -876,6 +944,10 @@ namespace WindowsFormsApp66
                     {
                         pictureBox1.BackgroundImage = LoadSettings().pages[pageNum].BackGround;
                         //PageNow.page.DrawImage(LoadSettings().pages[pageNum].BackGround, 0, 0);
+                    }                    
+                    foreach (var image in imagess)
+                    {
+                        PageNow.page.DrawImage(image.image, image.rect);
                     }
                     foreach (var text in texts)
                     {
@@ -887,10 +959,6 @@ namespace WindowsFormsApp66
                             text.VisMe(richTextBoxes[texts.IndexOf(text)], text.drawPoint, text.myColor);
                             PageNow.VisualizeOnPage(text, layers[texts.IndexOf(text)]);
                         }
-                    }
-                    foreach (var image in imagess)
-                    {
-                        PageNow.page.DrawImage(image.image, image.rect);
                     }
                     pictureBox1.Image = PageNow.imageOfPage;
                     SaveSettings(loadSettings);
@@ -916,7 +984,7 @@ namespace WindowsFormsApp66
         }
 
         private void button3_Click(object sender, EventArgs e)
-        {       
+        {
             pictureBox1.Image = null;
             redact = true;
             var loadSettings = LoadSettings();
@@ -934,7 +1002,7 @@ namespace WindowsFormsApp66
             {
                 if (table.myPage == pageNum)
                 {
-                    Reffresh();                    
+                    Reffresh();
                     Parentness();
                 }
             }
@@ -1315,7 +1383,7 @@ namespace WindowsFormsApp66
                 }
                 scale.Width = 1920;
                 scale.Height = 1080;
-                DrawLine(LastDrawPoint, e.Location, Thikness);
+                DrawLine(PageNow.page,LastDrawPoint, e.Location, brushColl, Thikness);
                 LastDrawPoint = e.Location;
                 pictureBox1.Image = PageNow.imageOfPage;
             }
@@ -1487,11 +1555,11 @@ namespace WindowsFormsApp66
         }
 
         private void textBox1_TextChanged_1(object sender, EventArgs e)
-        {         
+        {
             var send = (RichTextBox)sender;
             var size = PageNow.page.MeasureString(send.Text, send.Font);
             var LastSize = send.Size;
-            send.Size = new Size((int)size.Width+30, (int)size.Height+30);
+            send.Size = new Size((int)size.Width + 30, (int)size.Height + 30);
             var max = 0;
             var max2 = 0;
             foreach (var t in richTextBoxes2)
@@ -1505,10 +1573,10 @@ namespace WindowsFormsApp66
                     max2 = t.Height;
                 }
             }
-            if (LastSize.Height != max2|LastSize.Width != max)
+            if (LastSize.Height != max2 | LastSize.Width != max)
             {
                 PageNow.page.Clear(Color.Transparent);
-                ImageVisualize();                
+                ImageVisualize();
                 TableVis();
             }
             pictureBox1.Image = PageNow.imageOfPage;
@@ -1518,6 +1586,25 @@ namespace WindowsFormsApp66
         {
             Form5 f = new Form5();
             f.Show();
+        }
+
+        private void button12_Click(object sender, EventArgs e)
+        {
+            print2 = true;
+            var print = new PrintDocument();            
+            print.PrintPage += PrintPageEventHandler;
+            print.DefaultPageSettings.Landscape = true;
+            print.Print();
+            print2 = true;
+
+        }
+        public void PrintPageEventHandler(object sender, PrintPageEventArgs e)
+        {
+            vis(e.MarginBounds);
+            var prop = (double)PageNow.imageOfPage.Height / (double)PageNow.imageOfPage.Width;
+            var prop2 = (double)pictureBox1.BackgroundImage.Height / (double)pictureBox1.BackgroundImage.Width;
+            e.Graphics.DrawImage(pictureBox1.BackgroundImage,0,0,e.MarginBounds.Width, (float)(e.MarginBounds.Width* prop2));
+            //e.Graphics.DrawImage(PageNow.imageOfPage, 0, 0, e.MarginBounds.Width, (float)(e.MarginBounds.Width* prop));
         }
     }
 }
