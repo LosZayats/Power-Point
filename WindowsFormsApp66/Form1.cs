@@ -25,6 +25,7 @@ namespace WindowsFormsApp66
         {
             public List<Page2> pages;
         }
+        int offset;
         [Serializable]
         public class Item
         {
@@ -220,7 +221,7 @@ namespace WindowsFormsApp66
                 var type = typeof(VectorGraphics);
                 var attrs = type.GetCustomAttributes(false);
                 var attrCust = (Shape)attrs[0];
-                attrCust.myShape = Shape.Shapes.Circle;                
+                attrCust.myShape = Shape.Shapes.Circle;
             }
         }
         double Frame;
@@ -648,6 +649,7 @@ namespace WindowsFormsApp66
             public int counter;
         }
         public static List<Image2> imagess = new List<Image2>();
+        Image2 selectedImage;
         [Serializable]
         public class Text1
         {
@@ -658,7 +660,6 @@ namespace WindowsFormsApp66
                 get;
                 set;
             }
-
             public Bitmap image = new Bitmap(1920, 1080);
             public System.Drawing.Point drawPoint = new System.Drawing.Point();
             public string text2;
@@ -682,6 +683,7 @@ namespace WindowsFormsApp66
             public bool Back;
             public Rectangle rect;
             public Bitmap image;
+            public Bitmap imageOriginal;
             public int layer;
             public System.Drawing.Point drawPoint = new System.Drawing.Point();
         }
@@ -857,7 +859,7 @@ namespace WindowsFormsApp66
                     var prop2 = (double)LoadSettings().pages[pageNum].BackGround.Height / (double)LoadSettings().pages[pageNum].BackGround.Width;
                     pictureBox1.BackgroundImage = null;
                     PageNow.page.DrawImage(LoadSettings().pages[pageNum].BackGround, 0, 0, margin.Width, (float)(margin.Width * prop2));
-                }                
+                }
                 foreach (var image in imagess)
                 {
                     PageNow.page.DrawImage(image.image, image.rect);
@@ -896,11 +898,11 @@ namespace WindowsFormsApp66
         }
         private void button2_Click(object sender, EventArgs e)
         {
-            if(!print2)
+            if (!print2)
             {
                 anim = true;
                 loading = true;
-            }            
+            }
             if (redact)
             {
                 Func2(true);
@@ -944,7 +946,7 @@ namespace WindowsFormsApp66
                     {
                         pictureBox1.BackgroundImage = LoadSettings().pages[pageNum].BackGround;
                         //PageNow.page.DrawImage(LoadSettings().pages[pageNum].BackGround, 0, 0);
-                    }                    
+                    }
                     foreach (var image in imagess)
                     {
                         PageNow.page.DrawImage(image.image, image.rect);
@@ -1245,12 +1247,15 @@ namespace WindowsFormsApp66
                     }
                     else
                     {
-
+                        if (button2.Text == "preview")
+                        {
+                            pictureBox1.Cursor = Cursors.Default;
+                        }
                     }
                 }
                 else
                 {
-                    if (e.X < im.rect.X + im.rect.Width - 16 & e.X > im.rect.X + 16)
+                    if (e.X < im.rect.X + im.rect.Width - 16 & e.X > im.rect.X + 16 && button2.Text == "preview")
                     {
                         if (e.Y > im.rect.Y + 16 & e.Y < im.rect.Y + im.rect.Height - 16)
                         {
@@ -1258,12 +1263,19 @@ namespace WindowsFormsApp66
                         }
                         else
                         {
-                            //pictureBox1.Cursor = new Cursor(Properties.Resources.pen1.Handle);
+                            pictureBox1.Cursor = Cursors.Default;
                         }
                     }
                     else
                     {
-                        //pictureBox1.Cursor = new Cursor(Properties.Resources.pen1.Handle);
+                        if (button2.Text == "preview")
+                        {
+                            pictureBox1.Cursor = Cursors.Default;
+                        }
+                        else
+                        {
+                            pictureBox1.Cursor = new Cursor(Properties.Resources.pen1.Handle);
+                        }
                     }
                 }
 
@@ -1383,7 +1395,7 @@ namespace WindowsFormsApp66
                 }
                 scale.Width = 1920;
                 scale.Height = 1080;
-                DrawLine(PageNow.page,LastDrawPoint, e.Location, brushColl, Thikness);
+                DrawLine(PageNow.page, LastDrawPoint, e.Location, brushColl, Thikness);
                 LastDrawPoint = e.Location;
                 pictureBox1.Image = PageNow.imageOfPage;
             }
@@ -1412,6 +1424,7 @@ namespace WindowsFormsApp66
                 loadSett.pages[pageNum].images.Add(image);
                 SaveSettings(loadSett);
                 DrawStroke(4, image.rect);
+                Form4.RefreshMe();
             }
             PageNow.page.Clear(Color.Transparent);
             foreach (var image2 in imagess)
@@ -1491,6 +1504,7 @@ namespace WindowsFormsApp66
                     if (e.X < t.rect.X + t.rect.Width && e.Y < t.rect.Y + t.rect.Height)
                     {
                         ClickOnImagePoint = e.Location;
+                        selectedImage = t;
                     }
                 }
             }
@@ -1591,7 +1605,7 @@ namespace WindowsFormsApp66
         private void button12_Click(object sender, EventArgs e)
         {
             print2 = true;
-            var print = new PrintDocument();            
+            var print = new PrintDocument();
             print.PrintPage += PrintPageEventHandler;
             print.DefaultPageSettings.Landscape = true;
             print.Print();
@@ -1603,8 +1617,91 @@ namespace WindowsFormsApp66
             vis(e.MarginBounds);
             var prop = (double)PageNow.imageOfPage.Height / (double)PageNow.imageOfPage.Width;
             var prop2 = (double)pictureBox1.BackgroundImage.Height / (double)pictureBox1.BackgroundImage.Width;
-            e.Graphics.DrawImage(pictureBox1.BackgroundImage,0,0,e.MarginBounds.Width, (float)(e.MarginBounds.Width* prop2));
+            e.Graphics.DrawImage(pictureBox1.BackgroundImage, 0, 0, e.MarginBounds.Width, (float)(e.MarginBounds.Width * prop2));
             //e.Graphics.DrawImage(PageNow.imageOfPage, 0, 0, e.MarginBounds.Width, (float)(e.MarginBounds.Width* prop));
+        }
+
+        private void pictureBox2_MouseHover(object sender, EventArgs e)
+        {
+
+        }
+        public Rectangle BoundingBox(Point p1, Point p2, Point p3, Point p4)
+        {
+            var height = 0;
+            var min2 = 0;
+            var min = 0;
+            if (p1.X < p2.X)
+            {
+                min = p1.X;
+            }
+            else
+            {
+                min = p2.X;
+            }
+            var width = 0;
+            if (p3.X > p4.X)
+            {
+                width = p3.X - min;
+            }
+            else
+            {
+                width = p4.X - min;
+            }
+            if (p1.Y < p2.Y)
+            {
+                min2 = p1.Y;
+            }
+            else
+            {
+                min2 = p2.Y;
+            }
+            if (p3.Y > p4.Y)
+            {
+                height = p3.Y - min2;
+            }
+            else
+            {
+                height = p4.Y - min2;
+            }
+            return new Rectangle(min, min2, width, height);
+        }
+        public Bitmap ResizeY(Bitmap original, Point p1, Point p2, Point p3, Point p4)
+        {
+            var rect = BoundingBox(p1, p2, p3, p4);
+            var bitmap = new Bitmap(original.Width + rect.X, rect.Height + rect.Y);
+            var gr = Graphics.FromImage(bitmap);
+            gr.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+            for (int x = 0; x < original.Width - 1; x++)
+            {
+                var y1 = (double)(p2.Y - p1.Y) / rect.Width;
+                var y2 = (double)(p4.Y - p3.Y) / rect.Width;
+                var Y1 = y1 * x + p1.Y;
+                var Y2 = y2 * x + p3.Y;
+                var bmp2 = new Bitmap(2, original.Height);
+                //for (int y = 0; y < original.Height - 1; y++)
+                //{
+                //    var color = original.GetPixel(x, y);
+                //    bmp2.SetPixel(0, y, Color.FromArgb(255,color));
+                //}
+                var destRect = new Rectangle(x, 0, 1, original.Height);
+                var srcRect = new Rectangle(0, 0, 1, original.Height);
+                var graph = Graphics.FromImage(bmp2);
+                graph.DrawImage(original, srcRect, destRect,GraphicsUnit.Pixel);
+                gr.DrawImage(bmp2, new Rectangle(x + rect.X, (int)Y1, 1, (int)Y2 - (int)Y1));
+            }
+            return bitmap;
+        }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+           // offset = (int)numericUpDown1.Value;
+           // var p1 = new Point(selectedImage.rect.X, selectedImage.rect.Y);
+           // var p2 = new Point(selectedImage.rect.X + selectedImage.rect.Width, selectedImage.rect.Y+offset);
+           // var p3 = new Point(selectedImage.rect.X, selectedImage.rect.Y + selectedImage.rect.Height);
+           // var p4 = new Point(selectedImage.rect.X + selectedImage.rect.Width, selectedImage.rect.Y + selectedImage.rect.Height);
+           // selectedImage.image = ResizeY(selectedImage.image, p1, p2, p3, p4);
+           // ImageVisualize();
+           // pictureBox1.Image = selectedImage.image;
         }
     }
 }
