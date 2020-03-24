@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using MATH_2;
 using System.Drawing.Drawing2D;
 
 namespace WindowsFormsApp66
@@ -167,36 +168,60 @@ namespace WindowsFormsApp66
             //Properties
             SolidBrush Color { get; set; }
             Graphics Graphics { get; set; }
-            double Thickness { get; set; }            
-            List<Point> points;
-            public List<Point> Points
-            {
-                get
-                {
-                    return points;
-                }
-                set
-                {
-                    points = value;
-                    Visualize();
-                }
-            }
-            //Methods
-            public Shape(SolidBrush color, Graphics gr ,double thikness = 0)
+            double Thickness { get; set; }
+            public List<Point> Points { get; set; }
+            //Methods            
+            public Shape(SolidBrush color, double thikness = 0)
             {
                 Color = color;
-                Graphics = gr;
                 Thickness = thikness;
+                Points = new List<Point>();
             }
-            public void Visualize()
+            public Rectangle GetBounds()
             {
-                for (int index = 0; index < points.Count - 1; index++)
+                var listX = new List<double>();
+                var listY = new List<double>();
+                foreach (var point in Points)
                 {
-                    var point1 = points[index];
-                    var point2 = points[index + 1];
-                    Graphics.DrawLine(new Pen(Color, (int)Thickness), point1, point2);
-                    Graphics.FillEllipse(Color, new Rectangle((int)(point1.X - Thickness / 2), (int)(point1.Y - Thickness / 2), (int)Thickness, (int)Thickness));
-                    Graphics.FillEllipse(Color, new Rectangle((int)(point2.X - Thickness / 2), (int)(point2.Y - Thickness / 2), (int)Thickness, (int)Thickness));
+                    listX.Add(point.X);
+                    listY.Add(point.X);
+                }
+                var maxX = Math2.GetBiggestNumber(listX.ToArray());
+                var maxY = Math2.GetBiggestNumber(listY.ToArray());
+                var minX = Math2.GetLowestNumber(listX.ToArray());
+                var minY = Math2.GetLowestNumber(listY.ToArray());
+                var rect = new Rectangle((int)minX, (int)minY, (int)maxX - (int)minX, (int)maxY - (int)minY);
+                return rect;
+            }
+            public void Scale(double percent)
+            {
+                var bounds = GetBounds();
+                for(int i =0;i<Points.Count;i++)
+                {
+                    var point = Points[i];
+                    
+                    Points[i] = new Point((int)(point.X* percent), (int)(point.Y * percent));
+                }
+            }
+            public void Visualize(Graphics gr,Rectangle bounds)
+            {
+                Graphics = gr;
+                for (int index = 0; index < Points.Count - 1; index++)
+                {
+                    var point1 = Points[index];
+                    var point2 = Points[index + 1];
+                    if (point1.X+bounds.X>0&&point1.X + bounds.X < bounds.Width&&point1.Y + bounds.Y> 0&&point1.Y + bounds.Y < bounds.Height)
+                    {
+                        if (point2.X + bounds.X > 0 && point2.X + bounds.X < bounds.Width && point2.Y + bounds.Y > 0 && point2.Y + bounds.Y < bounds.Height)
+                        {
+                            //point1 = new Point(point1.X + bounds.X, point1.Y + bounds.Y);
+                            //point2 = new Point(point2.X + bounds.X, point2.Y + bounds.Y);
+                            Graphics.DrawLine(new Pen(Color, (int)Thickness), point1, point2);
+                            Graphics.FillEllipse(Color, new Rectangle((int)(point1.X - Thickness / 2), (int)(point1.Y - Thickness / 2), (int)Thickness, (int)Thickness));
+                            Graphics.FillEllipse(Color, new Rectangle((int)(point2.X - Thickness / 2), (int)(point2.Y - Thickness / 2), (int)Thickness, (int)Thickness));
+                        }
+                    }                   
+                  
                 }
             }
         }
@@ -565,13 +590,20 @@ namespace WindowsFormsApp66
         public delegate void refresh();
         public static refresh RefreshMe;
         int ScrollDelta = 0;
-        public void DrawLines(Graphics gr)
+        Shape SelectedShape;
+        public void DrawShapes()
         {
-            for (int index = 0; index < drawingPoints.Count - 1; index++)
+            painting.Clear(Color.Transparent);
+            foreach(var shape in shapes)
             {
-                var point1 = drawingPoints[index];
-                var point2 = drawingPoints[index + 1];
-                gr.DrawLine(new Pen(Selected, 3), point1, point2);
+                shape.Visualize(painting, new Rectangle(drawingSpace.X, drawingSpace.Y, pictureBox1.Width, pictureBox1.Height));
+            }
+        }
+        public void ScaleShapes(double percent)
+        {           
+            foreach (var shape in shapes)
+            {
+                shape.Scale(percent);
             }
         }
         public void VisualCoolDown(Graphics gr)
@@ -589,8 +621,7 @@ namespace WindowsFormsApp66
         {
             pictureBox2.Refresh();
         }
-        Point lastclick;
-        List<Point> drawingPoints = new List<Point>();
+        Point lastclick;        
         public Form4()
         {
             InitializeComponent();
@@ -608,6 +639,7 @@ namespace WindowsFormsApp66
             pictureBox2.MouseWheel += new MouseEventHandler(PictureBox_MouseWheel);
             pictureBox1.MouseWheel += new MouseEventHandler(PictureBox2_MouseWheel);
             point2 = new Point(picker.Width / 2 - rainball.Width / 2 + rainballHeight / 2, 2152);
+            painting = Graphics.FromImage(picture);
         }
 
         private void Form4_Load(object sender, EventArgs e)
@@ -622,13 +654,15 @@ namespace WindowsFormsApp66
 
         private void pictureBox1_Paint(object sender, PaintEventArgs e)
         {
+            painting.SmoothingMode = SmoothingMode.AntiAlias;
             PlaceByX();
             PlaceByY();
             e.Graphics.DrawImage(selectedImage, drawingSpace);
             xCord.Visualize(e.Graphics);
             yCord.Visualize(e.Graphics);
             VisualCoolDown(e.Graphics);
-            DrawLines(e.Graphics);
+            DrawShapes();
+            e.Graphics.DrawImage(picture, 0, 0);
         }
 
         private void pictureBox1_MouseMove(object sender, MouseEventArgs e)
@@ -641,7 +675,7 @@ namespace WindowsFormsApp66
                 if (tool == tools.brush)
                 {
                     var gr = Graphics.FromImage(selectedImage);
-                    drawingPoints.Add(e.Location);
+                    SelectedShape.Points.Add(e.Location);
                     pictureBox1.Refresh();
                 }
             }
@@ -724,14 +758,17 @@ namespace WindowsFormsApp66
             if (e.Delta < 0)
             {
                 scale *= 0.9;
+                ScaleShapes(0.9);
             }
             else
             {
                 scale *= 1.1;
+                ScaleShapes(1.1);
             }
             ResizeWorkingSpace();
             second = coolDown;
             cool = true;
+            pictureBox1.Refresh();
         }
         private void pictureBox2_MouseDown(object sender, MouseEventArgs e)
         {
@@ -770,7 +807,9 @@ namespace WindowsFormsApp66
 
         private void pictureBox1_MouseDown(object sender, MouseEventArgs e)
         {
-
+            var shape = new Shape(new SolidBrush(Selected), 3);
+            SelectedShape = shape;
+            shapes.Add(SelectedShape);
         }
 
         private void pictureBox3_MouseDown(object sender, MouseEventArgs e)
