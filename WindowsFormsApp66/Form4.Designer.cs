@@ -96,6 +96,7 @@
             this.Name = "Form4";
             this.Text = " ";
             this.Load += new System.EventHandler(this.Form4_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form4_KeyDown);
             this.Resize += new System.EventHandler(this.Form4_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).EndInit();

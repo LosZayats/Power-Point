@@ -374,5 +374,26 @@
   <ItemGroup>
     <None Include="Resources\400_F_31289295_lKwZHKypgkr3tJEoOwO2zU0mS6ptlXUM.jpg" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\select-none.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\paint-brush.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\color-dropper.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\selection.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\looool.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\hsb.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\hue-small.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
