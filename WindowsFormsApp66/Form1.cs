@@ -378,6 +378,7 @@ namespace WindowsFormsApp66
             Reffresh();
             Parentness();
             TableVis();
+            refresh += RefreshMe;
         }
         public void TableVis()
         {
@@ -639,6 +640,15 @@ namespace WindowsFormsApp66
         }
         static Bitmap bmp = new Bitmap(scale.Width, scale.Height);
         public static Graphics grph = Graphics.FromImage(bmp);
+        public delegate void Ref();
+        public static Ref refresh;
+        public void RefreshMe()
+        {
+            Reffresh();
+            Parentness();
+            TableVis();
+            ImageVisualize();
+        }
         [Serializable]
         public class Page2
         {

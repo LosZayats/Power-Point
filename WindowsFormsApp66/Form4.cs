@@ -307,6 +307,10 @@ namespace WindowsFormsApp66
                 Height = height;
                 X = x;
             }
+            public RectangleD()
+            {
+
+            }
             public RectangleD(double x, double y, double width, double height)
             {
                 Y = y;
@@ -532,6 +536,23 @@ namespace WindowsFormsApp66
                 {
                     selectedRectangle = null;
                     startSelection = null;
+                    needValue = false;
+                }
+                if(tool == tools.brush)
+                {
+                    needValue = true;
+                }
+                if(tool == tools.selection)
+                {
+                    needValue = false;
+                }
+                if (tool == tools.colorpick)
+                {
+                    needValue = false;
+                }
+                if (tool == tools.transparent)
+                {
+                    needValue = true;
                 }
             }
         }
@@ -579,8 +600,11 @@ namespace WindowsFormsApp66
             selection = new MenuButton(Properties.Resources.selection, "lol", buttonWidth);
             selection.X = brush.X + selection.Width;
             selection.Y = picker.Height + rainball.Height + 3;
+            unselection = new MenuButton(Properties.Resources.unselect, "lol", buttonWidth);
+            unselection.X = selection.X + selection.Width;
+            unselection.Y = picker.Height + rainball.Height + 3;
         }
-        Bitmap selectedImage = Properties.Resources.f9d4a24d_724d_4e09_9382_691399ce9fcc_200x200;
+        Bitmap selectedImage = (Bitmap)Properties.Resources.f9d4a24d_724d_4e09_9382_691399ce9fcc_200x200.Clone();
         public Bitmap CreateColorPicker(Color Base)
         {
             var bmp = new Bitmap(255, 255);
@@ -705,7 +729,7 @@ namespace WindowsFormsApp66
         {
             if (tool == tools.brush)
             {
-                var pensize = 4;
+                var pensize = (int)value;
                 var gr = Graphics.FromImage(selectedImage);
                 gr.SmoothingMode = SmoothingMode.AntiAlias;
                 var point1 = new Point((int)((e.X - drawingSpace.X) / scale), (int)((e.Y - drawingSpace.Y) / scale));
@@ -975,10 +999,10 @@ namespace WindowsFormsApp66
             if (cool)
             {
                 var transparency = second / coolDown * 255;
-                var mes = gr.MeasureString(scale.ToString(), new Font(new FontFamily("Comic Sans MS"), 20F));
+                var mes = gr.MeasureString(scale.ToString(), new Font(new FontFamily("Ink Free"), 20F));
                 var rect = new Rectangle(pictureBox1.Width / 2 - (int)mes.Width / 2, pictureBox1.Height / (int)mes.Height / 2, (int)mes.Width, (int)mes.Height);
-                gr.FillRectangle(new SolidBrush(Color.FromArgb((int)transparency, Color.Blue)), rect);
-                gr.DrawString(scale.ToString(), new Font(new FontFamily("Comic Sans MS"), 20F), new SolidBrush(Color.FromArgb((int)transparency, Color.Black)), new Point(pictureBox1.Width / 2 - (int)mes.Width / 2, pictureBox1.Height / (int)mes.Height / 2));
+                gr.FillRectangle(new SolidBrush(Color.FromArgb((int)transparency, Color.IndianRed)), rect);
+                gr.DrawString(scale.ToString(), new Font(new FontFamily("Ink Free"), 20F), new SolidBrush(Color.FromArgb((int)transparency, Color.Black)), new Point(pictureBox1.Width / 2 - (int)mes.Width / 2, pictureBox1.Height / (int)mes.Height / 2));
             }
         }
         public void Replace(int deltaX, int deltaY)
@@ -1048,9 +1072,102 @@ namespace WindowsFormsApp66
         Point? startSelection;
         RectangleD selectedRectangle = null;
         const int a = 50;
+        void SelectButton(MenuButton selected)
+        {
+            foreach (var butt in menu)
+            {
+                butt.Selection = false;
+            }
+            if(selected!=null)
+            {
+                selected.Selection = true;
+            }            
+        }
         MenuButton selection;
         MenuButton brush;
         MenuButton colorpick;
+        MenuButton unselection;
+        public void Add()
+        {
+            menu.Add(selection);
+            menu.Add(unselection);
+            menu.Add(brush);
+            menu.Add(colorpick);
+        }
+        List<MenuButton> menu = new List<MenuButton>();
+        double value = 1;
+        public void Clicked(MouseEventArgs e)
+        {
+            var sel = selection.ClickOnMe(e.Location);
+            var bru = brush.ClickOnMe(e.Location);
+            var pick = colorpick.ClickOnMe(e.Location);
+            var un = unselection.ClickOnMe(e.Location);
+            if (sel)
+            {
+                if (tool == tools.selection)
+                {
+                    tool = tools.none;
+                    SelectButton(null);
+                }
+                else
+                {
+                    tool = tools.selection;
+                    SelectButton(selection);
+                }
+            }
+            if (bru)
+            {
+                if (tool == tools.brush)
+                {
+                    tool = tools.none;
+                    SelectButton(null);
+                }
+                else
+                {
+                    tool = tools.brush;
+                    SelectButton(brush);
+                }
+            }
+            if (pick)
+            {
+                if (tool == tools.colorpick)
+                {
+                    tool = tools.none;
+                    SelectButton(null);
+                }
+                else
+                {
+                    tool = tools.colorpick;
+                    SelectButton(colorpick);
+                }
+            }
+            if (un)
+            {
+                tool = tools.unselection;
+                SelectButton(unselection);
+                selectedRectangle = null;
+            }
+        }
+        RectangleD valueRect;
+        Form1.Image2 selectedImg = null;
+        public void Save()
+        {
+            if (selectedImg == null)
+            {
+                new Form6().Show();
+                return;
+            }
+            else
+            {
+                var load = Form1.LoadSettings();
+                var ind = load.pages[Form1.PageNumForOut].images.IndexOf(selectedImg);
+                selectedImg.image = selectedImage;
+                load.pages[Form1.PageNumForOut].images[ind] = selectedImg;
+                Form1.SaveSettings(load);
+                Form1.refresh();
+            }
+        }
+        bool needValue;
         public Form4()
         {
             InitializeComponent();
@@ -1066,11 +1183,14 @@ namespace WindowsFormsApp66
             RefreshMe += RefreshImages;
             pictureBox2.MouseWheel += new MouseEventHandler(PictureBox_MouseWheel);
             pictureBox1.MouseWheel += new MouseEventHandler(PictureBox2_MouseWheel);
+            pictureBox3.MouseWheel += new MouseEventHandler(PictureBox3_MouseWheel);
             point2 = new Point(picker.Width / 2 - rainball.Width / 2 + rainballHeight / 2, 2152);
             painting = Graphics.FromImage(picture);
             CreateMenu();
             Selected = Color.Black;
             GetPosition();
+            Add();
+            //new Form6().Show();
         }
 
         private void Form4_Load(object sender, EventArgs e)
@@ -1145,6 +1265,18 @@ namespace WindowsFormsApp66
             brush.VisalImage(e.Graphics);
             selection.VisalImage(e.Graphics);
             colorpick.VisalImage(e.Graphics);
+            unselection.VisalImage(e.Graphics);
+            if(needValue)
+            {
+                if(valueRect == null)
+                {
+                    valueRect = new RectangleD();
+                }
+                valueRect.Y = picker.Height + border + rainballHeight + buttonWidth;
+                valueRect.Width = (double)e.Graphics.MeasureString(value.ToString(), new Font(new FontFamily("Ink Free"), 20.0F)).Width;
+                valueRect.Height = (double)e.Graphics.MeasureString(value.ToString(), new Font(new FontFamily("Ink Free"), 20.0F)).Width;
+                e.Graphics.DrawString(value.ToString(), new Font(new FontFamily("Ink Free"), 20.0F), new SolidBrush(Color.Black), new Point(valueRect.ConvertToRectangle().X, valueRect.ConvertToRectangle().Y));
+            }
             //e.Graphics.DrawImage(Properties.Resources.select_none, 0, 0);
         }
 
@@ -1222,6 +1354,17 @@ namespace WindowsFormsApp66
             cool = true;
             pictureBox1.Refresh();
         }
+        private void PictureBox3_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if(e.X>valueRect.X&&e.X<valueRect.Width+valueRect.X)
+            {
+                if (e.Y > valueRect.Y && e.Y < valueRect.Height + valueRect.Y)
+                {
+                    value += Math.Sign(e.Delta);
+                    pictureBox3.Refresh();
+                }
+            }
+        }
         private void pictureBox2_MouseDown(object sender, MouseEventArgs e)
         {
             var y = 0.0;
@@ -1234,7 +1377,10 @@ namespace WindowsFormsApp66
                 {
                     if (e.Y > y && e.Y < height + y)
                     {
-                        selectedImage = image.image;
+                        selectedImage = (Bitmap)image.image.Clone();
+                        selectedImg = image;
+                        selectedRectangle = null;
+                        scale = 1;
                         ResizeMe();
                         ResizeWorkingSpace();
                         pictureBox1.Refresh();
@@ -1290,64 +1436,9 @@ namespace WindowsFormsApp66
                 }
             }
             pictureBox3.Refresh();
-            var sel = selection.ClickOnMe(e.Location);
-            var bru = brush.ClickOnMe(e.Location);
-            var pick = colorpick.ClickOnMe(e.Location);
-            if (sel)
-            {
-                if (tool == tools.selection)
-                {
-                    tool = tools.none;
-                    brush.Selection = false;
-                    colorpick.Selection = false;
-                    selection.Selection = false;
-                }
-                else
-                {
-                    tool = tools.selection;
-                    brush.Selection = false;
-                    colorpick.Selection = false;
-                    selection.Selection = false;
-                    selection.Selection = true;
-                }
-            }
-            if (bru)
-            {
-                if (tool == tools.brush)
-                {
-                    tool = tools.none;
-                    brush.Selection = false;
-                    colorpick.Selection = false;
-                    selection.Selection = false;
-                }
-                else
-                {
-                    tool = tools.brush;
-                    brush.Selection = false;
-                    colorpick.Selection = false;
-                    selection.Selection = false;
-                    brush.Selection = true;
-                }
-            }
-            if (pick)
-            {
-                if (tool == tools.colorpick)
-                {
-                    tool = tools.none;
-                    brush.Selection = false;
-                    colorpick.Selection = false;
-                    selection.Selection = false;
-                }
-                else
-                {
-                    tool = tools.colorpick;
-                    brush.Selection = false;
-                    colorpick.Selection = false;
-                    selection.Selection = false;
-                    colorpick.Selection = true;
-                }
-            }
+            Clicked(e);
             pictureBox3.Refresh();
+            pictureBox1.Refresh();
         }
 
         private void Form4_KeyDown(object sender, KeyEventArgs e)
@@ -1356,6 +1447,10 @@ namespace WindowsFormsApp66
             {
                 Delete();
                 pictureBox1.Refresh();
+            }
+            if(e.KeyCode == Keys.S&&e.Control)
+            {
+                Save();
             }
         }
     }

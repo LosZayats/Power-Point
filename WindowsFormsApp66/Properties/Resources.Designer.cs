@@ -803,6 +803,26 @@ namespace WindowsFormsApp66.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap ty_chevo_nadelal_9 {
+            get {
+                object obj = ResourceManager.GetObject("ty_chevo_nadelal_9", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap unselect {
+            get {
+                object obj = ResourceManager.GetObject("unselect", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap игеещт {
             get {
                 object obj = ResourceManager.GetObject("игеещт", resourceCulture);
