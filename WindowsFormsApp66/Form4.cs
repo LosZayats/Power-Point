@@ -314,6 +314,10 @@ namespace WindowsFormsApp66
                 Height = height;
                 X = x;
             }
+            public Rectangle ConvertToRectangle()
+            {
+                return new Rectangle((int)X, (int)Y, (int)Width, (int)Height);
+            }
             public static implicit operator Rectangle(RectangleD d)
             {
                 return new Rectangle((int)d.X, (int)d.Y, (int)d.Width, (int)d.Height);
@@ -918,22 +922,33 @@ namespace WindowsFormsApp66
         {
             if (tool == tools.selection)
             {
-                var rect = new Rectangle(0, 0, 0, 0);
+                var rect = new RectangleD(0, 0, 0, 0);
                 if (selectedRectangle!=null)
                 {
                     rect = selectedRectangle;
                 }
-                for (int x = rect.X; x < rect.X + rect.Width; x++)
+                var width1 = selectedImage.Width;
+                var height1 = selectedImage.Height;
+                var width2 = drawingSpace.Width;
+                var height2 = drawingSpace.Height;
+                var scale1 = (double)width2 / width1;
+                var scale2 = (double)height2 / height1;
+                var x1 = ((rect.X - drawingSpace.X) / scale1);
+                var y1 = ((rect.Y - drawingSpace.Y) / scale2);
+                var width3 = (rect.Width / scale1) / selectedImage.Width;
+                var height3 = (rect.Height / scale2) / selectedImage.Height;
+                var rectNew = new RectangleD(x1, y1, width3 * selectedImage.Width, height3 * selectedImage.Height).ConvertToRectangle();
+                for (int x = rectNew.X; x < rectNew.X + rectNew.Width; x++)
                 {
-                    for (int y = rect.Y; y < rect.Y + rect.Height; y++)
-                    {
-                        var x1 = (int)((x - drawingSpace.X) / scale);
-                        var y1 = (int)((y - drawingSpace.Y) / scale);
-                        if (x1 > 0 && x1 < selectedImage.Width)
+                    for (int y = rectNew.Y; y < rectNew.Y + rectNew.Height; y++)
+                    {                        
+                        if (x > 0 && x < selectedImage.Width)
                         {
-                            if (y1 > 0 && y1 < selectedImage.Height)
+                            if (y > 0 && y < selectedImage.Height)
                             {
-                                selectedImage.SetPixel(x1, y1, Color.Transparent);
+                                selectedImage.SetPixel((int)x, (int)y, Color.Transparent);
+                                var p = new Point((int)x1, (int)y1);
+                                Console.WriteLine(p.ToString());
                             }
                         }
                     }
