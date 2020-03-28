@@ -20,6 +20,7 @@ namespace WindowsFormsApp66
             void VisalText(Graphics gr);
             bool ClickOnMe(Point location);
         }
+        Point resizePoint = new Point(-10, -10);
         class MenuButton : IClickAble
         {
             Bitmap myImage
@@ -291,6 +292,7 @@ namespace WindowsFormsApp66
                 }
             }
         }
+        const int ControlsHeihgt = 30;
         static class Effector
         {
             static Color Invert(Color inverted)
@@ -799,6 +801,8 @@ namespace WindowsFormsApp66
         Point point;
         Point point2;
         int Thickness;
+        bool resizeWidth = false;
+        bool resizeHeight = false;
         public void DrawSelection(Graphics gr)
         {
             var pen = new Pen(new SolidBrush(Color.MediumAquamarine), 3);
@@ -857,23 +861,28 @@ namespace WindowsFormsApp66
         public void ResizeMe()
         {
             pictureBox3.Width = 255;
-            pictureBox3.Height = this.Height;
+            pictureBox3.Height = this.Height - ControlsHeihgt - FormBorder;
             pictureBox2.Width = (int)(0.2 * (this.Width - 255));
-            pictureBox2.Height = this.Height;
+            pictureBox2.Height = this.Height - ControlsHeihgt - FormBorder;
             pictureBox2.Left = 0;
-            pictureBox2.Top = 0;
-            pictureBox1.Width = (int)(0.8 * (this.Width - 255));
+            pictureBox2.Top = ControlsHeihgt;
+            pictureBox1.Width = (int)(0.8 * (this.Width - 255)) - FormBorder;
             pictureBox1.Left = pictureBox2.Width;
-            pictureBox1.Top = 0;
-            pictureBox1.Height = this.Height;
+            pictureBox1.Top = ControlsHeihgt;
+            pictureBox1.Height = this.Height - ControlsHeihgt - FormBorder;
             pictureBox3.Left = pictureBox1.Left + pictureBox1.Width;
-            pictureBox3.Top = 0;
-            xCord = new ScrollBar(new Rectangle(0, pictureBox1.Height - 59, pictureBox1.Width - 20, 20), new SolidBrush(Color.LightGray), new SolidBrush(Color.DarkGray), 0.5);
+            pictureBox3.Top = ControlsHeihgt;
+            pictureBox4.Height = ControlsHeihgt;
+            pictureBox4.Top = 0;
+            pictureBox4.Width = this.Width;
+            pictureBox4.Left = 0;
+            xCord = new ScrollBar(new Rectangle(0, pictureBox1.Height - 20, pictureBox1.Width - 20, 20), new SolidBrush(Color.LightGray), new SolidBrush(Color.DarkGray), 0.5);
             yCord = new HScrollBar(new Rectangle(pictureBox1.Width - 20, 0, 20, pictureBox1.Height), new SolidBrush(Color.LightGray), new SolidBrush(Color.DarkGray), 0.5);
             ResizeSelection();
             pictureBox1.Refresh();
             pictureBox2.Refresh();
             pictureBox3.Refresh();
+            pictureBox4.Refresh();
         }
         public delegate void refresh();
         public static refresh RefreshMe;
@@ -1011,7 +1020,7 @@ namespace WindowsFormsApp66
             var maxR = Selected.R + value;
             var maxG = Selected.G + value;
             var maxB = Selected.B + value;
-            var maxAverage = (maxG + maxR + maxB) / 3;                       
+            var maxAverage = (maxG + maxR + maxB) / 3;
             for (int x = 0; x < selectedImage.Width - 1; x++)
             {
                 for (int y = 0; y < selectedImage.Height - 1; y++)
@@ -1195,6 +1204,7 @@ namespace WindowsFormsApp66
             }
         }
         MenuButton selection;
+        const int FormBorder = 3;
         MenuButton brush;
         MenuButton colorpick;
         MenuButton unselection;
@@ -1365,7 +1375,7 @@ namespace WindowsFormsApp66
         private void pictureBox1_Paint(object sender, PaintEventArgs e)
         {
             FillTransparecy(e.Graphics);
-            // painting.SmoothingMode = SmoothingMode.AntiAlias;
+            painting.SmoothingMode = SmoothingMode.AntiAlias;
             PlaceByX();
             PlaceByY();
             e.Graphics.FillRectangle(new SolidBrush(Color.White), drawingSpace);
@@ -1374,7 +1384,7 @@ namespace WindowsFormsApp66
             yCord.Visualize(e.Graphics);
             VisualCoolDown(e.Graphics);
             DrawShapes();
-            if (selectedRectangle!=null)
+            if (selectedRectangle != null)
             {
                 DrawSelection(e.Graphics);
             }
@@ -1442,6 +1452,18 @@ namespace WindowsFormsApp66
 
         private void pictureBox3_MouseMove(object sender, MouseEventArgs e)
         {
+            if (e.Y < picker.Height)
+            {
+                pictureBox3.Cursor = Cursors.Cross;
+            }
+            else if (e.Y > picker.Height + border && e.Y < picker.Height + border + rainball.Height)
+            {
+                pictureBox3.Cursor = Cursors.Hand;
+            }
+            else
+            {
+                pictureBox3.Cursor = Cursors.Default;
+            }
             if (e.Button == MouseButtons.Left)
             {
                 if (e.Y < picker.Height)
@@ -1628,6 +1650,127 @@ namespace WindowsFormsApp66
             {
                 Transparent();
                 pictureBox1.Refresh();
+            }
+        }
+
+        private void pictureBox4_Paint(object sender, PaintEventArgs e)
+        {
+            var min = Properties.Resources.minimize;
+            var max = Properties.Resources.maximize;
+            var exit = Properties.Resources.close;
+            var minimizeWidth = (double)min.Width / min.Height * ControlsHeihgt;
+            var maximizeWidth = (double)max.Width / max.Height * ControlsHeihgt;
+            var closeWidth = (double)exit.Width / exit.Height * ControlsHeihgt;
+            e.Graphics.DrawImage(exit, new Rectangle(Width - (int)closeWidth, 0, (int)minimizeWidth, ControlsHeihgt));
+            e.Graphics.DrawImage(max, new Rectangle(Width - (int)closeWidth - (int)maximizeWidth, 0, (int)maximizeWidth, ControlsHeihgt));
+            e.Graphics.DrawImage(min, new Rectangle(Width - (int)closeWidth - (int)maximizeWidth - (int)minimizeWidth, 0, (int)minimizeWidth, ControlsHeihgt));
+        }
+
+        private void pictureBox4_MouseDown(object sender, MouseEventArgs e)
+        {
+            var min = Properties.Resources.minimize;
+            var max = Properties.Resources.maximize;
+            var exit = Properties.Resources.close;
+            var minimizeWidth = (double)min.Width / min.Height * ControlsHeihgt;
+            var maximizeWidth = (double)max.Width / max.Height * ControlsHeihgt;
+            var closeWidth = (double)exit.Width / exit.Height * ControlsHeihgt;
+            if (e.X > this.Width - closeWidth)
+            {
+                this.Close();
+            }
+            if (e.X > this.Width - closeWidth - maximizeWidth && e.X < this.Width - closeWidth)
+            {
+                if (this.WindowState == FormWindowState.Maximized)
+                {
+                    this.WindowState = FormWindowState.Normal;
+                }
+                else
+                {
+                    this.WindowState = FormWindowState.Maximized;
+                }
+            }
+            if (e.X > this.Width - closeWidth - maximizeWidth - minimizeWidth && e.X < this.Width - closeWidth - maximizeWidth)
+            {
+                this.WindowState = FormWindowState.Minimized;
+            }
+            resizePoint = e.Location;
+        }
+
+        private void pictureBox4_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pictureBox4_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                var min = Properties.Resources.minimize;
+                var max = Properties.Resources.maximize;
+                var exit = Properties.Resources.close;
+                var minimizeWidth = (double)min.Width / min.Height * ControlsHeihgt;
+                var maximizeWidth = (double)max.Width / max.Height * ControlsHeihgt;
+                var closeWidth = (double)exit.Width / exit.Height * ControlsHeihgt;
+                if (resizePoint.X < 0)
+                {
+                    resizePoint = e.Location;
+                }
+                var deltaX = e.X - resizePoint.X;
+                var deltaY = e.Y - resizePoint.Y;
+                if (e.X < this.Width - closeWidth - maximizeWidth - minimizeWidth)
+                {
+                    this.Left = Cursor.Position.X - resizePoint.X;
+                    Console.WriteLine(deltaX);
+                    this.Top += deltaY;
+                }
+                //resizePoint = new Point(e.Location.X, e.Location.Y);  
+
+            }
+        }
+
+        private void Form4_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.Y < this.Height - FormBorder && e.X > this.Width - FormBorder || resizeWidth)
+            {
+                this.Cursor = Cursors.SizeWE;
+            }
+            else if (e.Y > this.Height - FormBorder || resizeHeight)
+            {
+                this.Cursor = Cursors.SizeNS;
+            }
+            else
+            {
+                this.Cursor = Cursors.Default;
+            }
+            pictureBox4.Cursor = Cursors.Default;
+            if (e.Button == MouseButtons.Left)
+            {
+                if (resizeWidth)
+                {
+                    this.Width = e.X;
+                }
+                if (resizeHeight)
+                {
+                    this.Height = e.Y;
+                }
+            }
+        }
+
+        private void Form4_MouseUp(object sender, MouseEventArgs e)
+        {
+            resizeWidth = false;
+            resizeHeight = false;
+        }
+
+        private void Form4_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (e.Y < this.Height - FormBorder && e.X > this.Width - FormBorder)
+            {
+                resizeWidth = true;
+            }
+            if (e.Y > this.Height - FormBorder)
+            {
+                resizeHeight = true;
             }
         }
     }
