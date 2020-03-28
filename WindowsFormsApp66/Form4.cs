@@ -302,11 +302,23 @@ namespace WindowsFormsApp66
                 var average = (inverted.R + inverted.G + inverted.B) / 3;
                 return Color.FromArgb(inverted.A, average, average, average);
             }
+            static Color Red(Color red)
+            {
+                return Color.FromArgb(red.A, red.R, 0, 0);
+            }
+            static Color Blue(Color red)
+            {
+                return Color.FromArgb(red.A, 0, 0, red.B);
+            }
+            static Color Green(Color red)
+            {
+                return Color.FromArgb(red.A, 0, red.G, 0);
+            }
             public enum EffectType
             {
-                gray,invert
+                gray, invert, red, blue, green
             }
-            public static Bitmap Effect(Bitmap selectedImg,EffectType type,RectangleD selectedRectangle, Rectangle drawingSpace)
+            public static Bitmap Effect(Bitmap selectedImg, EffectType type, RectangleD selectedRectangle, Rectangle drawingSpace)
             {
                 var selectedImage = (Bitmap)selectedImg.Clone();
                 var rect = new RectangleD(0, 0, 0, 0);
@@ -317,7 +329,7 @@ namespace WindowsFormsApp66
                 else
                 {
                     rect = new RectangleD(0, 0, selectedImage.Width, selectedImage.Height);
-                }                
+                }
                 var width1 = selectedImage.Width;
                 var height1 = selectedImage.Height;
                 var width2 = drawingSpace.Width;
@@ -339,7 +351,7 @@ namespace WindowsFormsApp66
                             {
                                 var color = selectedImage.GetPixel((int)x, (int)y);
                                 Color colorNew = Color.Transparent;
-                                if(type == EffectType.gray)
+                                if (type == EffectType.gray)
                                 {
                                     colorNew = Grayscale(color);
                                 }
@@ -347,7 +359,19 @@ namespace WindowsFormsApp66
                                 {
                                     colorNew = Invert(color);
                                 }
-                                selectedImage.SetPixel((int)x, (int)y, colorNew);                                
+                                if (type == EffectType.red)
+                                {
+                                    colorNew = Red(color);
+                                }
+                                if (type == EffectType.blue)
+                                {
+                                    colorNew = Blue(color);
+                                }
+                                if (type == EffectType.green)
+                                {
+                                    colorNew = Green(color);
+                                }
+                                selectedImage.SetPixel((int)x, (int)y, colorNew);
                             }
                         }
                     }
@@ -361,7 +385,7 @@ namespace WindowsFormsApp66
             public double Y;
             public double Width;
             public double Height;
-            public RectangleD(int x,int y, int width,int height)
+            public RectangleD(int x, int y, int width, int height)
             {
                 Y = y;
                 Width = width;
@@ -599,11 +623,11 @@ namespace WindowsFormsApp66
                     startSelection = null;
                     needValue = false;
                 }
-                if(tool == tools.brush)
+                if (tool == tools.brush)
                 {
                     needValue = true;
                 }
-                if(tool == tools.selection)
+                if (tool == tools.selection)
                 {
                     needValue = false;
                 }
@@ -780,7 +804,7 @@ namespace WindowsFormsApp66
             var pen = new Pen(new SolidBrush(Color.MediumAquamarine), 3);
             pen.DashStyle = DashStyle.Dash;
             var rect = new Rectangle(0, 0, 0, 0);
-            if (selectedRectangle!=null)
+            if (selectedRectangle != null)
             {
                 rect = selectedRectangle;
             }
@@ -797,7 +821,7 @@ namespace WindowsFormsApp66
                 var point2 = new Point((int)((lastclick2.X - drawingSpace.X) / scale), (int)((lastclick2.Y - drawingSpace.Y) / scale));
                 var pen = new Pen(new SolidBrush(Selected), pensize);
                 pen.StartCap = LineCap.Round;
-                pen.EndCap = LineCap.Round;                
+                pen.EndCap = LineCap.Round;
                 //gr.FillEllipse(new SolidBrush(Selected), new RectangleF((float)(point1.X - (double)pensize / 2), (float)(point1.Y - (double)pensize / 2), pensize, pensize));
                 //gr.FillEllipse(new SolidBrush(Selected), new RectangleF((float)(point2.X - (double)pensize / 2), (float)(point2.Y - (double)pensize / 2), pensize, pensize));
                 gr.DrawLine(pen, point1, point2);
@@ -977,6 +1001,30 @@ namespace WindowsFormsApp66
             }
             selectedRectangle = new RectangleD(x, y, width, height);
         }
+        public void Transparent()
+        {
+            var scope = value;
+            var minR = Selected.R - value;
+            var minG = Selected.G - value;
+            var minB = Selected.B - value;
+            var minAverage = (minB + minR + minG) / 3;
+            var maxR = Selected.R + value;
+            var maxG = Selected.G + value;
+            var maxB = Selected.B + value;
+            var maxAverage = (maxG + maxR + maxB) / 3;                       
+            for (int x = 0; x < selectedImage.Width - 1; x++)
+            {
+                for (int y = 0; y < selectedImage.Height - 1; y++)
+                {
+                    var color = selectedImage.GetPixel(x, y);
+                    var nowAverage = (color.R + color.G + color.B) / 3;
+                    if (nowAverage > minAverage && nowAverage < maxAverage)
+                    {
+                        selectedImage.SetPixel(x, y, Color.Transparent);
+                    }
+                }
+            }
+        }
         Shape SelectedShape;
         public void ResizeSelection()
         {
@@ -1010,7 +1058,7 @@ namespace WindowsFormsApp66
             if (tool == tools.selection)
             {
                 var rect = new RectangleD(0, 0, 0, 0);
-                if (selectedRectangle!=null)
+                if (selectedRectangle != null)
                 {
                     rect = selectedRectangle;
                 }
@@ -1028,7 +1076,7 @@ namespace WindowsFormsApp66
                 for (int x = rectNew.X; x < rectNew.X + rectNew.Width; x++)
                 {
                     for (int y = rectNew.Y; y < rectNew.Y + rectNew.Height; y++)
-                    {                        
+                    {
                         if (x > 0 && x < selectedImage.Width)
                         {
                             if (y > 0 && y < selectedImage.Height)
@@ -1141,10 +1189,10 @@ namespace WindowsFormsApp66
             {
                 butt.Selection = false;
             }
-            if(selected!=null)
+            if (selected != null)
             {
                 selected.Selection = true;
-            }            
+            }
         }
         MenuButton selection;
         MenuButton brush;
@@ -1262,17 +1310,17 @@ namespace WindowsFormsApp66
                 }
             }
         }
-        int index =-1;
+        int index = -1;
         public void Save()
         {
-            if (index <0)
+            if (index < 0)
             {
                 new Form6().Show();
                 return;
             }
             else
             {
-                var load = Form1.LoadSettings();                              
+                var load = Form1.LoadSettings();
                 load.pages[Form1.PageNumForOut].images[index].image = selectedImage;
                 Form1.imagess[index].image = selectedImage;
                 Form1.SaveSettings(load);
@@ -1317,7 +1365,7 @@ namespace WindowsFormsApp66
         private void pictureBox1_Paint(object sender, PaintEventArgs e)
         {
             FillTransparecy(e.Graphics);
-           // painting.SmoothingMode = SmoothingMode.AntiAlias;
+            // painting.SmoothingMode = SmoothingMode.AntiAlias;
             PlaceByX();
             PlaceByY();
             e.Graphics.FillRectangle(new SolidBrush(Color.White), drawingSpace);
@@ -1326,7 +1374,7 @@ namespace WindowsFormsApp66
             yCord.Visualize(e.Graphics);
             VisualCoolDown(e.Graphics);
             DrawShapes();
-            if (tool == tools.selection)
+            if (selectedRectangle!=null)
             {
                 DrawSelection(e.Graphics);
             }
@@ -1351,7 +1399,7 @@ namespace WindowsFormsApp66
                         }
                     }
                 }
-                if(click1||click2)
+                if (click1 || click2)
                 {
                     ResizeSelection();
                 }
@@ -1378,9 +1426,9 @@ namespace WindowsFormsApp66
             selection.VisalImage(e.Graphics);
             colorpick.VisalImage(e.Graphics);
             unselection.VisalImage(e.Graphics);
-            if(needValue)
+            if (needValue)
             {
-                if(valueRect == null)
+                if (valueRect == null)
                 {
                     valueRect = new RectangleD();
                 }
@@ -1434,7 +1482,7 @@ namespace WindowsFormsApp66
                 var width = pictureBox2.Width;
                 var height = (double)image.image.Height / (double)image.image.Width * width;
                 e.Graphics.DrawImage(image.image, new Rectangle(0, (int)y + ScrollDelta, width, (int)height));
-                y += height+5;               
+                y += height + 5;
             }
         }
         private void PictureBox_MouseWheel(object sender, MouseEventArgs e)
@@ -1454,7 +1502,7 @@ namespace WindowsFormsApp66
                 scale *= 1.5;
                 ScaleShapes(1.5);
             }
-            if(selectedRectangle!=null)
+            if (selectedRectangle != null)
             {
                 ResizeSelection();
             }
@@ -1468,7 +1516,7 @@ namespace WindowsFormsApp66
         }
         private void PictureBox3_MouseWheel(object sender, MouseEventArgs e)
         {
-            if(valueRect!=null)
+            if (valueRect != null)
             {
                 if (e.X > valueRect.X && e.X < valueRect.Width + valueRect.X)
                 {
@@ -1481,7 +1529,7 @@ namespace WindowsFormsApp66
                         }
                     }
                 }
-            }           
+            }
         }
         private void pictureBox2_MouseDown(object sender, MouseEventArgs e)
         {
@@ -1547,18 +1595,38 @@ namespace WindowsFormsApp66
                 Delete();
                 pictureBox1.Refresh();
             }
-            if(e.KeyCode == Keys.S&&e.Control)
+            if (e.KeyCode == Keys.S && e.Control)
             {
                 Save();
             }
-            if (e.KeyCode == Keys.G)
+            if (e.KeyCode == Keys.G && e.Control)
             {
                 selectedImage = Effector.Effect(selectedImage, Effector.EffectType.gray, selectedRectangle, drawingSpace);
                 pictureBox1.Refresh();
             }
-            if (e.KeyCode == Keys.I)
+            if (e.KeyCode == Keys.I && e.Control)
             {
                 selectedImage = Effector.Effect(selectedImage, Effector.EffectType.invert, selectedRectangle, drawingSpace);
+                pictureBox1.Refresh();
+            }
+            if (e.KeyCode == Keys.R && e.Shift)
+            {
+                selectedImage = Effector.Effect(selectedImage, Effector.EffectType.red, selectedRectangle, drawingSpace);
+                pictureBox1.Refresh();
+            }
+            if (e.KeyCode == Keys.G && e.Shift)
+            {
+                selectedImage = Effector.Effect(selectedImage, Effector.EffectType.green, selectedRectangle, drawingSpace);
+                pictureBox1.Refresh();
+            }
+            if (e.KeyCode == Keys.B && e.Shift)
+            {
+                selectedImage = Effector.Effect(selectedImage, Effector.EffectType.blue, selectedRectangle, drawingSpace);
+                pictureBox1.Refresh();
+            }
+            if (e.KeyCode == Keys.T)
+            {
+                Transparent();
                 pictureBox1.Refresh();
             }
         }
