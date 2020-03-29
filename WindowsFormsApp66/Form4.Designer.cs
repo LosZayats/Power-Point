@@ -36,6 +36,7 @@
             this.pictureBox3 = new System.Windows.Forms.PictureBox();
             this.timer2 = new System.Windows.Forms.Timer(this.components);
             this.pictureBox4 = new System.Windows.Forms.PictureBox();
+            this.timer3 = new System.Windows.Forms.Timer(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox3)).BeginInit();
@@ -95,7 +96,15 @@
             this.pictureBox4.Click += new System.EventHandler(this.pictureBox4_Click);
             this.pictureBox4.Paint += new System.Windows.Forms.PaintEventHandler(this.pictureBox4_Paint);
             this.pictureBox4.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pictureBox4_MouseDown);
+            this.pictureBox4.MouseEnter += new System.EventHandler(this.pictureBox4_MouseEnter);
+            this.pictureBox4.MouseLeave += new System.EventHandler(this.pictureBox4_MouseLeave);
             this.pictureBox4.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pictureBox4_MouseMove);
+            // 
+            // timer3
+            // 
+            this.timer3.Enabled = true;
+            this.timer3.Interval = 10;
+            this.timer3.Tick += new System.EventHandler(this.timer3_Tick);
             // 
             // Form4
             // 
@@ -112,6 +121,7 @@
             this.Name = "Form4";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = " ";
+            this.Activated += new System.EventHandler(this.Form4_Activated);
             this.Load += new System.EventHandler(this.Form4_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form4_KeyDown);
             this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form4_MouseDown);
@@ -133,5 +143,6 @@
         private System.Windows.Forms.PictureBox pictureBox3;
         private System.Windows.Forms.Timer timer2;
         private System.Windows.Forms.PictureBox pictureBox4;
+        private System.Windows.Forms.Timer timer3;
     }
 }
