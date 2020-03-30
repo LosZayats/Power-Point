@@ -8,6 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MATH_2;
+using System.Runtime.InteropServices;
+using System.Drawing.Text;
 using System.Drawing.Drawing2D;
 
 namespace WindowsFormsApp66
@@ -578,6 +580,27 @@ namespace WindowsFormsApp66
             void SetY(int y);
             double GetValue();
         }
+        PrivateFontCollection pfc = new PrivateFontCollection();
+        public void AddFont(string name)
+        {
+
+            //Select your font from the resources.
+            //My font here is "Digireu.ttf"            
+            var resourse = (byte[])Properties.Resources.ResourceManager.GetObject(name);
+            int fontLength = resourse.Length;
+
+            // create a buffer to read in to
+            byte[] fontdata = resourse;
+
+            // create an unsafe memory block for the font data
+            System.IntPtr data = Marshal.AllocCoTaskMem(fontLength);
+
+            // copy the bytes to the unsafe memory block
+            Marshal.Copy(fontdata, 0, data, fontLength);
+
+            // pass the font to the font collection
+            pfc.AddMemoryFont(data, fontLength);
+        }
         IScrollAble xCord;
         IScrollAble yCord;
         Rectangle drawingSpace;
@@ -756,7 +779,7 @@ namespace WindowsFormsApp66
                 }
                 if (tool == tools.colorpick)
                 {
-                    needValue = false;
+                    needValue = true;
                 }
                 if (tool == tools.transparent)
                 {
@@ -769,8 +792,7 @@ namespace WindowsFormsApp66
         {
             var xLast = drawingSpace.X;
             var deltaValue = xCord.GetValue();
-            drawingSpace.X = (int)(drawingSpace.Width * (deltaValue - 0.5)) + pictureBox1.Width / 2 - drawingSpace.Width / 2;
-
+            drawingSpace.X = (int)(drawingSpace.Width * (deltaValue*2 - 1)) + pictureBox1.Width / 2 - drawingSpace.Width / 2;
             lastXValue = xCord.GetValue();
             Replace(drawingSpace.X - xLast, 0);
         }
@@ -778,8 +800,7 @@ namespace WindowsFormsApp66
         {
             var yLast = drawingSpace.Y;
             var deltaValue = yCord.GetValue();
-            drawingSpace.Y = (int)(drawingSpace.Height * (deltaValue - 0.5)) + pictureBox1.Height / 2 - drawingSpace.Height / 2;
-
+            drawingSpace.Y = (int)(drawingSpace.Height * (deltaValue*2  - 1)) + pictureBox1.Height / 2 - (int)(drawingSpace.Height *0.5);
             lastYValue = yCord.GetValue();
             Replace(0, drawingSpace.Y - yLast);
         }
@@ -1140,22 +1161,22 @@ namespace WindowsFormsApp66
             var maxR = Selected.R + value;
             var maxG = Selected.G + value;
             var maxB = Selected.B + value;
-            for (int x = 0; x < selectedImage.Width - 1; x++)
+            for (int x = 0; x < selectedImage.Width; x++)
             {
-                for (int y = 0; y < selectedImage.Height - 1; y++)
+                for (int y = 0; y < selectedImage.Height; y++)
                 {
                     var color = selectedImage.GetPixel(x, y);
                     if (color.R > minR)
                     {
                         if (color.B > minB)
                         {
-                            if (color.R > minG)
+                            if (color.G > minG)
                             {
                                 if (color.R < maxR)
                                 {
                                     if (color.B < maxB)
                                     {
-                                        if (color.R < maxG)
+                                        if (color.G < maxG)
                                         {
                                             selectedImage.SetPixel(x, y, Color.Transparent);
                                         }
@@ -1251,11 +1272,12 @@ namespace WindowsFormsApp66
         {
             if (cool)
             {
+                gr.TextRenderingHint = TextRenderingHint.AntiAlias;
                 var transparency = second / coolDown * 255;
                 var mes = gr.MeasureString(scale.ToString(), new Font(new FontFamily("Ink Free"), 20F));
                 var rect = new Rectangle(pictureBox1.Width / 2 - (int)mes.Width / 2, pictureBox1.Height / (int)mes.Height / 2, (int)mes.Width, (int)mes.Height);
                 gr.FillRectangle(new SolidBrush(Color.FromArgb((int)transparency, Color.IndianRed)), rect);
-                gr.DrawString(scale.ToString(), new Font(new FontFamily("Ink Free"), 20F), new SolidBrush(Color.FromArgb((int)transparency, Color.Black)), new Point(pictureBox1.Width / 2 - (int)mes.Width / 2, pictureBox1.Height / (int)mes.Height / 2));
+                gr.DrawString(scale.ToString(), new Font(pfc.Families[0], 20F), new SolidBrush(Color.FromArgb((int)transparency, Color.Black)), new Point(pictureBox1.Width / 2 - (int)mes.Width / 2, pictureBox1.Height / (int)mes.Height / 2));
             }
         }
         public void Replace(int deltaX, int deltaY)
@@ -1348,7 +1370,7 @@ namespace WindowsFormsApp66
         const int FormBorder = 3;
         MenuButton brush;
         MenuButton colorpick;
-        Font defaultFont = new Font(new FontFamily("Arial"), 10F);
+        Font defaultFont;
         const string MyName = "Photoshop для бедных";
         MenuButton unselection;
         public void Add()
@@ -1506,6 +1528,7 @@ namespace WindowsFormsApp66
             }
         }
         bool needValue;
+        Rectangle originalRect;
         public Form4()
         {
             InitializeComponent();
@@ -1533,6 +1556,9 @@ namespace WindowsFormsApp66
             points.Add(new Point());
             points.Add(new Point());
             ResizePoints();
+            AddFont("SpicyRice_Regular");
+            AddFont("рашн_фонт");
+            defaultFont = new Font(pfc.Families[1], 10F);
             //new Form6().Show();
         }
 
@@ -1551,7 +1577,7 @@ namespace WindowsFormsApp66
             painting.SmoothingMode = SmoothingMode.AntiAlias;
             PlaceByX();
             PlaceByY();
-            e.Graphics.FillRectangle(new SolidBrush(Color.White), drawingSpace);
+            //e.Graphics.FillRectangle(new SolidBrush(Color.White), drawingSpace);
             e.Graphics.DrawImage(selectedImage, drawingSpace);
             xCord.Visualize(e.Graphics);
             yCord.Visualize(e.Graphics);
@@ -1620,6 +1646,7 @@ namespace WindowsFormsApp66
         private void pictureBox3_Paint(object sender, PaintEventArgs e)
         {
             e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
+            e.Graphics.TextRenderingHint = TextRenderingHint.AntiAlias;
             e.Graphics.DrawImage(picker, 0, 0);
             e.Graphics.DrawImage(rainball, 0, picker.Height + border);
             e.Graphics.FillEllipse(new SolidBrush(Selected), new Rectangle(new Point(point.X - circleDiametr / 2, point.Y - circleDiametr / 2), new Size(circleDiametr, circleDiametr)));
@@ -1639,7 +1666,7 @@ namespace WindowsFormsApp66
                 valueRect.Y = picker.Height + border + rainballHeight + buttonWidth;
                 valueRect.Width = (double)e.Graphics.MeasureString(value.ToString(), new Font(new FontFamily("Ink Free"), 20.0F)).Width;
                 valueRect.Height = (double)e.Graphics.MeasureString(value.ToString(), new Font(new FontFamily("Ink Free"), 20.0F)).Width;
-                e.Graphics.DrawString(value.ToString(), new Font(new FontFamily("Ink Free"), 20.0F), new SolidBrush(Color.Black), new Point(valueRect.ConvertToRectangle().X, valueRect.ConvertToRectangle().Y));
+                e.Graphics.DrawString(value.ToString(), new Font(pfc.Families[0], 20.0F), new SolidBrush(Color.Black), new Point(valueRect.ConvertToRectangle().X, valueRect.ConvertToRectangle().Y));
             }
             //e.Graphics.DrawImage(Properties.Resources.select_none, 0, 0);
         }
@@ -1713,7 +1740,7 @@ namespace WindowsFormsApp66
                 scale *= 0.5;
                 ScaleShapes(0.5);
             }
-            else if (scale * 1.5 < 20000)
+            else if (scale * 1.5 < 10000)
             {
                 scale *= 1.5;
                 ScaleShapes(1.5);
@@ -1887,11 +1914,11 @@ namespace WindowsFormsApp66
             }
             if (lastBorderPoint.X > this.Width - closeWidth - maximizeWidth && lastBorderPoint.X < this.Width - closeWidth && !leaved)
             {
-                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(buttonOpacity, Color.LightGray)), new Rectangle(Width - (int)closeWidth - (int)maximizeWidth, 0, (int)maximizeWidth, ControlsHeihgt));
+                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(buttonOpacity, Color.FromArgb(220, 220, 220))), new Rectangle(Width - (int)closeWidth - (int)maximizeWidth, 0, (int)maximizeWidth, ControlsHeihgt));
             }
             if (lastBorderPoint.X > this.Width - closeWidth - maximizeWidth - minimizeWidth && lastBorderPoint.X < this.Width - closeWidth - maximizeWidth && !leaved)
             {
-                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(buttonOpacity, Color.LightGray)), new Rectangle(Width - (int)closeWidth - (int)maximizeWidth - (int)minimizeWidth, 0, (int)minimizeWidth, ControlsHeihgt));
+                e.Graphics.FillRectangle(new SolidBrush(Color.FromArgb(buttonOpacity, Color.FromArgb(220, 220, 220))), new Rectangle(Width - (int)closeWidth - (int)maximizeWidth - (int)minimizeWidth, 0, (int)minimizeWidth, ControlsHeihgt));
             }
             e.Graphics.DrawImage(exit, new Rectangle(Width - (int)closeWidth, 0, (int)minimizeWidth, ControlsHeihgt));
             e.Graphics.DrawImage(max, new Rectangle(Width - (int)closeWidth - (int)maximizeWidth, 0, (int)maximizeWidth, ControlsHeihgt));
@@ -1925,13 +1952,16 @@ namespace WindowsFormsApp66
             }
             if (e.X > this.Width - closeWidth - maximizeWidth && e.X < this.Width - closeWidth)
             {
-                if (this.WindowState == FormWindowState.Maximized)
+                if (WindowState == FormWindowState.Maximized)
                 {
                     this.WindowState = FormWindowState.Normal;
+                    this.Height = originalRect.Height;
                 }
                 else
                 {
+                    originalRect = this.ClientRectangle;                  
                     this.WindowState = FormWindowState.Maximized;
+                    this.Height = SystemInformation.WorkingArea.Height;
                 }
             }
             if (e.X > this.Width - closeWidth - maximizeWidth - minimizeWidth && e.X < this.Width - closeWidth - maximizeWidth)
@@ -2093,7 +2123,7 @@ namespace WindowsFormsApp66
             }
             if (maximize && opacity < 100)
             {
-                opacity += 5;
+                opacity += 20;
                 this.Opacity = opacity / 100.0;
                 this.Enabled = false;
             }
@@ -2104,7 +2134,7 @@ namespace WindowsFormsApp66
             }
             if (opacity > 0 && animateDisactive)
             {
-                opacity -= 5;
+                opacity -= 20;
                 this.Opacity = opacity / 100.0;
                 this.Enabled = false;
             }

@@ -821,6 +821,16 @@ namespace WindowsFormsApp66.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] SpicyRice_Regular {
+            get {
+                object obj = ResourceManager.GetObject("SpicyRice_Regular", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap trsparent {
@@ -897,6 +907,16 @@ namespace WindowsFormsApp66.Properties {
             get {
                 object obj = ResourceManager.GetObject("пипекта", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] рашн_фонт {
+            get {
+                object obj = ResourceManager.GetObject("рашн_фонт", resourceCulture);
+                return ((byte[])(obj));
             }
         }
     }

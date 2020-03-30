@@ -659,6 +659,156 @@ namespace WindowsFormsApp66
             public int counter;
         }
         public static List<Image2> imagess = new List<Image2>();
+        public void EnterLink(MouseEventArgs e)
+        {
+            foreach (var text in texts)
+            {
+                if (text.image != null)
+                {
+                    if (e.X > text.drawPoint.X & e.X < text.drawPoint.X + Graphics.FromImage(pictureBox1.Image).MeasureString(text.text2, text.myFont).Width & e.Y > text.drawPoint.Y & e.Y < Graphics.FromImage(pictureBox1.Image).MeasureString(text.text2, text.myFont).Height + text.drawPoint.Y)
+                    {
+                        if (text.Link & redact)
+                        {
+                            text.myColor = Color.Purple;
+                            text.VisMe(new RichTextBox() { Text = text.text2 }, text.drawPoint, text.myColor);
+                            PageNow.page.DrawImage(text.image, 0, 0);
+                            pictureBox1.Image = PageNow.imageOfPage;
+                        }
+                    }
+                    else
+                    {
+                        if (e.Button == MouseButtons.None)
+                        {
+                            if (text.Link & button2.Text == "redact")
+                            {
+                                // PageNow.page.Clear(Color.Transparent);                                                                    
+                                text.myColor = Color.Blue;
+                                text.VisMe(new RichTextBox() { Text = text.text2 }, text.drawPoint, text.myColor);
+                                PageNow.page.DrawImage(text.image, 0, 0);
+                                if (!redact)
+                                {
+                                    foreach (var t in texts)
+                                    {
+                                        PageNow.page.DrawImage(t.image, 0, 0);
+                                    }
+                                    ImageVisualize();
+                                }
+                                pictureBox1.Image = PageNow.imageOfPage;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        public void Visualize()
+        {
+            TableVis();
+            ImageVisualize();
+            int index = 0;            
+            if(button2.Text == "redact")
+            {
+                foreach (var text in texts)
+                {
+                    PageNow.VisualizeOnPage(text, layers[index]);
+                    index++;
+                }
+            }
+            else
+            {
+                Func();
+                RichTextBoxVisualize();
+            }
+        }
+        public void SetCursor(MouseEventArgs e)
+        {
+            bool imageSelected = false;
+            bool imageResize = false;            
+            foreach (var im in imagess)
+            {
+                if (button2.Text == "redact")
+                {
+                    pictureBox1.Cursor = new Cursor(Properties.Resources.pen1.Handle);
+                    return;
+                }
+                if (e.X > im.rect.X + im.rect.Width - 4 & e.Y > im.rect.Y)
+                {
+                    if (e.X <= im.rect.X + im.rect.Width + 4 & e.Y <= im.rect.Y + im.rect.Height && button2.Text == "preview")
+                    {
+                        pictureBox1.Cursor = Cursors.SizeWE;
+                        imageResize = true;                        
+                    }
+                    else
+                    {
+                        if (button2.Text == "preview")
+                        {
+                            //pictureBox1.Cursor = Cursors.Default;                            
+                        }
+                    }
+                }               
+
+            }
+            foreach(var im in imagess)
+            {
+                if (e.X < im.rect.X + im.rect.Width - 16 & e.X > im.rect.X + 16 && button2.Text == "preview" && !imageResize)
+                {
+                    if (e.Y > im.rect.Y + 16 & e.Y < im.rect.Y + im.rect.Height - 16)
+                    {
+                        pictureBox1.Cursor = Cursors.Hand;
+                        imageSelected = true;
+                    }
+                    else
+                    {
+                        //pictureBox1.Cursor = Cursors.Default;                            
+                    }
+                }
+            }
+            if(!imageSelected&&!imageResize)
+            {
+                pictureBox1.Cursor = Cursors.Default;
+            }
+        }
+        public void ReplaceImage(MouseEventArgs e, ref bool move, ref bool resize)
+        {
+            foreach (var im in imagess)
+            {
+                //foreach (var image in imagess)
+                //{
+                //    PageNow.page.DrawImage(image.image, image.rect);
+                //    pictureBox1.Image = PageNow.imageOfPage;
+                //}
+                if (e.X > im.rect.X + im.rect.Width - 8 & e.Y > im.rect.Y)
+                {
+                    if (e.X <= im.rect.X + im.rect.Width + 8 & e.Y <= im.rect.Y + im.rect.Height && button2.Text == "preview")
+                    {
+                        im.rect.Width += e.X - (im.rect.X + im.rect.Width);                        
+                    }
+                }
+                else
+                {
+                    if (e.X < im.rect.X + im.rect.Width & e.X > im.rect.X)
+                    {
+                        if (e.Y > im.rect.Y & e.Y < im.rect.Y + im.rect.Height) { }
+                    }
+                }
+                if (e.X > im.rect.X & e.X < im.rect.X + im.rect.Width - 8)
+                {
+                    if (e.Y > im.rect.Y && e.Y < im.rect.Y + im.rect.Height - 8 && button2.Text == "preview" && !resize)
+                    {
+                        im.rect.Y += e.Y - ClickOnImagePoint.Y;
+                        im.rect.X += e.X - ClickOnImagePoint.X;
+                        ClickOnImagePoint = e.Location;                       
+                        move = true;
+                    }
+                }
+                PageNow.page.Clear(Color.Transparent);
+                foreach (var image in imagess)
+                {
+                    PageNow.page.DrawImage(image.image, image.rect);
+                    DrawStroke(4, image.rect);
+                }
+                pictureBox1.Image = PageNow.imageOfPage;
+            }
+        }
         Image2 selectedImage;
         [Serializable]
         public class Text1
@@ -1018,7 +1168,9 @@ namespace WindowsFormsApp66
                     Parentness();
                 }
             }
+            Visualize();
             TableVis();
+            pictureBox1.Image = PageNow.imageOfPage;
         }
 
         private void button4_Click(object sender, EventArgs e)
@@ -1205,180 +1357,19 @@ namespace WindowsFormsApp66
             {
                 pictureBox1.Cursor = new Cursor(Properties.Resources.pen1.Handle);
             }
-            if (redact)
+            if (button2.Text == "redact")
             {
-                foreach (var text in texts)
-                {
-                    if (text.image != null)
-                    {
-                        if (e.X > text.drawPoint.X & e.X < text.drawPoint.X + Graphics.FromImage(pictureBox1.Image).MeasureString(text.text2, text.myFont).Width & e.Y > text.drawPoint.Y & e.Y < Graphics.FromImage(pictureBox1.Image).MeasureString(text.text2, text.myFont).Height + text.drawPoint.Y)
-                        {
-                            if (text.Link & redact)
-                            {
-                                text.myColor = Color.Purple;
-                                text.VisMe(new RichTextBox() { Text = text.text2 }, text.drawPoint, text.myColor);
-                                PageNow.page.DrawImage(text.image, 0, 0);
-                                pictureBox1.Image = PageNow.imageOfPage;
-                            }
-                        }
-                        else
-                        {
-                            if (e.Button == MouseButtons.None)
-                            {
-                                if (text.Link & button2.Text == "redact")
-                                {
-                                    // PageNow.page.Clear(Color.Transparent);                                                                    
-                                    text.myColor = Color.Blue;
-                                    text.VisMe(new RichTextBox() { Text = text.text2 }, text.drawPoint, text.myColor);
-                                    PageNow.page.DrawImage(text.image, 0, 0);
-                                    if (!redact)
-                                    {
-                                        foreach (var t in texts)
-                                        {
-                                            PageNow.page.DrawImage(t.image, 0, 0);
-                                        }
-                                        ImageVisualize();
-                                    }
-                                    pictureBox1.Image = PageNow.imageOfPage;
-                                }
-                            }
-                        }
-                    }
-                }
-
+                EnterLink(e);
             }
-            foreach (var im in imagess)
-            {
-                if (e.X > im.rect.X + im.rect.Width - 4 & e.Y > im.rect.Y)
-                {
-                    if (e.X <= im.rect.X + im.rect.Width + 4 & e.Y <= im.rect.Y + im.rect.Height && button2.Text == "preview")
-                    {
-                        pictureBox1.Cursor = Cursors.SizeWE;
-                    }
-                    else
-                    {
-                        if (button2.Text == "preview")
-                        {
-                            pictureBox1.Cursor = Cursors.Default;
-                        }
-                    }
-                }
-                else
-                {
-                    if (e.X < im.rect.X + im.rect.Width - 16 & e.X > im.rect.X + 16 && button2.Text == "preview")
-                    {
-                        if (e.Y > im.rect.Y + 16 & e.Y < im.rect.Y + im.rect.Height - 16)
-                        {
-                            pictureBox1.Cursor = Cursors.Hand;
-                        }
-                        else
-                        {
-                            pictureBox1.Cursor = Cursors.Default;
-                        }
-                    }
-                    else
-                    {
-                        if (button2.Text == "preview")
-                        {
-                            pictureBox1.Cursor = Cursors.Default;
-                        }
-                        else
-                        {
-                            pictureBox1.Cursor = new Cursor(Properties.Resources.pen1.Handle);
-                        }
-                    }
-                }
-
-            }
+            SetCursor(e);
             bool resize = false;
             bool move = false;
             if (e.Button == MouseButtons.Left)
             {
                 redact = true;
-                foreach (var im in imagess)
+                if (button2.Text == "preview")
                 {
-                    foreach (var image in imagess)
-                    {
-                        PageNow.page.DrawImage(image.image, image.rect);
-                        pictureBox1.Image = PageNow.imageOfPage;
-                    }
-                    if (e.X > im.rect.X + im.rect.Width - 8 & e.Y > im.rect.Y)
-                    {
-                        if (e.X <= im.rect.X + im.rect.Width + 8 & e.Y <= im.rect.Y + im.rect.Height && button2.Text == "preview")
-                        {
-                            im.rect.Width += e.X - (im.rect.X + im.rect.Width);
-                            pictureBox1.Image = null;
-                            PageNow.page.Clear(Color.Transparent);
-                            resize = true;
-                            foreach (var image in imagess)
-                            {
-                                PageNow.page.DrawImage(image.image, image.rect);
-                                pictureBox1.Image = PageNow.imageOfPage;
-                            }
-                            DrawStroke(4, im.rect);
-                        }
-                    }
-                    else
-                    {
-                        if (e.X < im.rect.X + im.rect.Width & e.X > im.rect.X)
-                        {
-                            if (e.Y > im.rect.Y & e.Y < im.rect.Y + im.rect.Height) { }
-                        }
-                    }
-                    if (e.X > im.rect.X & e.X < im.rect.X + im.rect.Width - 8)
-                    {
-                        if (e.Y > im.rect.Y && e.Y < im.rect.Y + im.rect.Height - 8 && button2.Text == "preview" && !resize)
-                        {
-                            im.rect.Y += e.Y - ClickOnImagePoint.Y;
-                            im.rect.X += e.X - ClickOnImagePoint.X;
-                            ClickOnImagePoint = e.Location;
-                            PageNow.page.Clear(Color.Transparent);
-                            foreach (var image in imagess)
-                            {
-                                PageNow.page.DrawImage(image.image, image.rect);
-                                DrawStroke(4, image.rect);
-                            }
-                            pictureBox1.Image = PageNow.imageOfPage;
-                            move = true;
-                        }
-                    }
-                }
-            }
-            bool imageClick = false;
-            bool TextClick = false;
-            foreach (var im in imagess)
-            {
-                if (e.X > im.rect.X + im.rect.Width - 4 & e.Y > im.rect.Y)
-                {
-                    if (e.X <= im.rect.X + im.rect.Width + 4 & e.Y <= im.rect.Y + im.rect.Height)
-                    {
-                    }
-                    else
-                    {
-                        imageClick = true;
-                    }
-                }
-                else
-                {
-                    imageClick = true;
-                }
-            }
-            foreach (var im in texts)
-            {
-                if (e.X > im.drawPoint.X & e.Y > im.drawPoint.Y)
-                {
-                    if (e.X <= im.drawPoint.X + (int)PageNow.page.MeasureString(im.text2, im.myFont).Width & e.Y <= im.drawPoint.Y + (int)PageNow.page.MeasureString(im.text2, im.myFont).Height)
-                    {
-
-                    }
-                    else
-                    {
-                        TextClick = true;
-                    }
-                }
-                else
-                {
-                    TextClick = true;
+                    ReplaceImage(e, ref move, ref resize);
                 }
             }
             if (e.Button == MouseButtons.Left & !resize & !move && button2.Text == "redact")
@@ -1407,8 +1398,8 @@ namespace WindowsFormsApp66
                 scale.Height = 1080;
                 DrawLine(PageNow.page, LastDrawPoint, e.Location, brushColl, Thikness);
                 LastDrawPoint = e.Location;
-                pictureBox1.Image = PageNow.imageOfPage;
             }
+            pictureBox1.Image = PageNow.imageOfPage;
         }
 
         private void button5_Click(object sender, EventArgs e)
@@ -1696,7 +1687,7 @@ namespace WindowsFormsApp66
                 var destRect = new Rectangle(x, 0, 1, original.Height);
                 var srcRect = new Rectangle(0, 0, 1, original.Height);
                 var graph = Graphics.FromImage(bmp2);
-                graph.DrawImage(original, srcRect, destRect,GraphicsUnit.Pixel);
+                graph.DrawImage(original, srcRect, destRect, GraphicsUnit.Pixel);
                 gr.DrawImage(bmp2, new Rectangle(x + rect.X, (int)Y1, 1, (int)Y2 - (int)Y1));
             }
             return bitmap;
@@ -1704,14 +1695,14 @@ namespace WindowsFormsApp66
 
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
-           // offset = (int)numericUpDown1.Value;
-           // var p1 = new Point(selectedImage.rect.X, selectedImage.rect.Y);
-           // var p2 = new Point(selectedImage.rect.X + selectedImage.rect.Width, selectedImage.rect.Y+offset);
-           // var p3 = new Point(selectedImage.rect.X, selectedImage.rect.Y + selectedImage.rect.Height);
-           // var p4 = new Point(selectedImage.rect.X + selectedImage.rect.Width, selectedImage.rect.Y + selectedImage.rect.Height);
-           // selectedImage.image = ResizeY(selectedImage.image, p1, p2, p3, p4);
-           // ImageVisualize();
-           // pictureBox1.Image = selectedImage.image;
+            // offset = (int)numericUpDown1.Value;
+            // var p1 = new Point(selectedImage.rect.X, selectedImage.rect.Y);
+            // var p2 = new Point(selectedImage.rect.X + selectedImage.rect.Width, selectedImage.rect.Y+offset);
+            // var p3 = new Point(selectedImage.rect.X, selectedImage.rect.Y + selectedImage.rect.Height);
+            // var p4 = new Point(selectedImage.rect.X + selectedImage.rect.Width, selectedImage.rect.Y + selectedImage.rect.Height);
+            // selectedImage.image = ResizeY(selectedImage.image, p1, p2, p3, p4);
+            // ImageVisualize();
+            // pictureBox1.Image = selectedImage.image;
         }
     }
 }
