@@ -1888,7 +1888,8 @@ namespace WindowsFormsApp66
 
         private void timer3_Tick(object sender, EventArgs e)
         {
-            if(close) maximize = false;            
+            if(close) maximize = false;
+            if (minimize) close = false;
             if(entered)
             {
                 if(buttonOpacity<255)
@@ -1901,16 +1902,21 @@ namespace WindowsFormsApp66
                     entered = false;
                 }
             }
-            if(opacity>0 && animateDisactive)
-            {
-                opacity -= 5;
-                this.Opacity = opacity/100.0;
-                this.Enabled = false;
-            }
-            else if(maximize && opacity <100)
+            if (maximize && opacity < 100)
             {
                 opacity += 5;
                 this.Opacity = opacity / 100.0;
+                this.Enabled = false;
+            }
+            else
+            {
+                maximize = false;
+                this.Enabled = true;
+            }
+            if (opacity>0 && animateDisactive)
+            {
+                opacity -= 5;
+                this.Opacity = opacity/100.0;
                 this.Enabled = false;
             }            
             else
@@ -1922,10 +1928,9 @@ namespace WindowsFormsApp66
                 if (minimize)
                 {
                     this.WindowState = FormWindowState.Minimized;
+                    minimize = false;
                 }                             
-                animateDisactive = false;
-                maximize = false;
-                minimize = false;                            
+                animateDisactive = false;                                                    
                 this.Enabled = true;
             }
             Console.WriteLine(cl);
