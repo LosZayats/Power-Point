@@ -1015,21 +1015,33 @@ namespace WindowsFormsApp66
             var scope = value;
             var minR = Selected.R - value;
             var minG = Selected.G - value;
-            var minB = Selected.B - value;
-            var minAverage = (minB + minR + minG) / 3;
+            var minB = Selected.B - value;         
             var maxR = Selected.R + value;
             var maxG = Selected.G + value;
-            var maxB = Selected.B + value;
-            var maxAverage = (maxG + maxR + maxB) / 3;
+            var maxB = Selected.B + value;           
             for (int x = 0; x < selectedImage.Width - 1; x++)
             {
                 for (int y = 0; y < selectedImage.Height - 1; y++)
                 {
-                    var color = selectedImage.GetPixel(x, y);
-                    var nowAverage = (color.R + color.G + color.B) / 3;
-                    if (nowAverage > minAverage && nowAverage < maxAverage)
+                    var color = selectedImage.GetPixel(x, y);                   
+                    if (color.R>minR)
                     {
-                        selectedImage.SetPixel(x, y, Color.Transparent);
+                        if (color.B > minB)
+                        {
+                            if (color.R > minG)
+                            {
+                                if (color.R < maxR)
+                                {
+                                    if (color.B < maxB)
+                                    {
+                                        if (color.R < maxG)
+                                        {
+                                            selectedImage.SetPixel(x, y, Color.Transparent);
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -1092,7 +1104,7 @@ namespace WindowsFormsApp66
                             {
                                 selectedImage.SetPixel((int)x, (int)y, Color.Transparent);
                                 var p = new Point((int)x1, (int)y1);
-                                Console.WriteLine(p.ToString());
+                                // Console.WriteLine(p.ToString());
                             }
                         }
                     }
@@ -1327,6 +1339,7 @@ namespace WindowsFormsApp66
         int index = -1;
         Point lastBorderPoint;
         bool leaved;
+        int ind = 0;
         bool animateDisactive;
         bool cl;
         bool close
@@ -1787,35 +1800,40 @@ namespace WindowsFormsApp66
                 }               
             }
             lastBorderPoint = e.Location;
-            if (e.X > this.Width - closeWidth && !leaved&&!entered)
+            if (e.X > this.Width - closeWidth)
             {
                 if(leavedButton)
                 {
                     entered = true;
+                    leavedButton = false;
                     buttonOpacity = 0;
 
                 }                
             }
-            else if (e.X > this.Width - closeWidth - maximizeWidth && e.X < this.Width - closeWidth && !leaved && !entered)
+            else if (e.X > this.Width - closeWidth - maximizeWidth && e.X < this.Width - closeWidth )
             {
                 if (leavedButton)
                 {
                     entered = true;
+                    leavedButton = false;
                     buttonOpacity = 0;
                 }
             }
-            else if (e.X > this.Width - closeWidth - maximizeWidth - minimizeWidth && !entered && e.X < this.Width - closeWidth - maximizeWidth && !leaved)
+            else if (e.X > this.Width - closeWidth - maximizeWidth - minimizeWidth && e.X < this.Width - closeWidth - maximizeWidth)
             {
                 if (leavedButton)
                 {
                     entered = true;
+                    leavedButton = false;
                     buttonOpacity = 0;
                 }
             }
             else
             {
                 leavedButton = true;
-                Console.WriteLine("leaved");
+                entered = false;
+                ind++;
+                Console.WriteLine("leaved"+ ind);
             }
             pictureBox4.Refresh();
         }
@@ -1911,7 +1929,7 @@ namespace WindowsFormsApp66
             else
             {
                 maximize = false;
-                this.Enabled = true;
+                this.Enabled = true;                
             }
             if (opacity>0 && animateDisactive)
             {
@@ -1933,7 +1951,7 @@ namespace WindowsFormsApp66
                 animateDisactive = false;                                                    
                 this.Enabled = true;
             }
-            Console.WriteLine(cl);
+            //Console.WriteLine(cl);
         }
     }
 }
