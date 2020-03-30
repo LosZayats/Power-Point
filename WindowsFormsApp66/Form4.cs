@@ -581,6 +581,127 @@ namespace WindowsFormsApp66
         IScrollAble xCord;
         IScrollAble yCord;
         Rectangle drawingSpace;
+        List<Point> points = new List<Point>();
+        public Rectangle BoundingBox(Point p1, Point p2, Point p3, Point p4)
+        {
+            var height = 0;
+            var min2 = 0;
+            var min = 0;
+            if (p1.X < p2.X)
+            {
+                min = p1.X;
+            }
+            else
+            {
+                min = p2.X;
+            }
+            var width = 0;
+            if (p3.X > p4.X)
+            {
+                width = p3.X - min;
+            }
+            else
+            {
+                width = p4.X - min;
+            }
+            if (p1.Y < p2.Y)
+            {
+                min2 = p1.Y;
+            }
+            else
+            {
+                min2 = p2.Y;
+            }
+            if (p3.Y > p4.Y)
+            {
+                height = p3.Y - min2;
+            }
+            else
+            {
+                height = p4.Y - min2;
+            }
+            return new Rectangle(min, min2, width, height);
+        }
+        public Rectangle BoundingBox(params Point[] p)
+        {
+            var p1 = p[0];
+            var p2 = p[1];
+            var p3 = p[2];
+            var p4 = p[3];
+            var height = 0;
+            var min2 = 0;
+            var min = 0;
+            if (p1.X < p2.X)
+            {
+                min = p1.X;
+            }
+            else
+            {
+                min = p2.X;
+            }
+            var width = 0;
+            if (p3.X > p4.X)
+            {
+                width = p3.X - min;
+            }
+            else
+            {
+                width = p4.X - min;
+            }
+            if (p1.Y < p2.Y)
+            {
+                min2 = p1.Y;
+            }
+            else
+            {
+                min2 = p2.Y;
+            }
+            if (p3.Y > p4.Y)
+            {
+                height = p3.Y - min2;
+            }
+            else
+            {
+                height = p4.Y - min2;
+            }
+            return new Rectangle(min, min2, width, height);
+        }
+        public Bitmap ResizeY(Bitmap original, Point p1, Point p2, Point p3, Point p4)
+        {
+            var rect = BoundingBox(p1, p2, p3, p4);
+            var bitmap = new Bitmap(original.Width + rect.X, rect.Height + rect.Y);
+            var gr = Graphics.FromImage(bitmap);
+            gr.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+            for (int x = 0; x < original.Width - 1; x++)
+            {
+                var y1 = (double)(p2.Y - p1.Y) / rect.Width;
+                var y2 = (double)(p4.Y - p3.Y) / rect.Width;
+                var Y1 = y1 * x + p1.Y;
+                var Y2 = y2 * x + p3.Y;
+                gr.DrawImage(original, new Rectangle(x + rect.X, (int)Y1, 1, (int)Y2 - (int)Y1), new Rectangle(x, 0, 1, original.Height), GraphicsUnit.Pixel);
+            }
+            return bitmap;
+        }
+        public Bitmap ResizeY(Bitmap original, params Point[] p)
+        {
+            var p1 = p[0];
+            var p2 = p[1];
+            var p3 = p[2];
+            var p4 = p[3];
+            var rect = BoundingBox(p1, p2, p3, p4);
+            var bitmap = new Bitmap(rect.Width, rect.Height);
+            var gr = Graphics.FromImage(bitmap);
+            gr.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
+            for (int x = 0; x < original.Width - 1; x++)
+            {
+                var y1 = (double)(p2.Y - p1.Y) / bitmap.Width;
+                var y2 = (double)(p4.Y - p3.Y) / bitmap.Width;
+                var Y1 = y1 * x + p1.Y;
+                var Y2 = y2 * x + p3.Y;
+                gr.DrawImage(original, new Rectangle(x, (int)Y1, 1, (int)Y2 - (int)Y1), new Rectangle(x, 0, 1, original.Height), GraphicsUnit.Pixel);
+            }
+            return bitmap;
+        }
         double scale = 1;
         double second = 0;
         int coolDown = 2;
@@ -604,12 +725,12 @@ namespace WindowsFormsApp66
         }
         enum tools
         {
-            brush, selection, colorpick, transparent, unselection, none
+            brush, selection, colorpick, transparent, unselection,incline, none
         }
         Bitmap picture = new Bitmap(SystemInformation.PrimaryMonitorSize.Width, SystemInformation.PrimaryMonitorSize.Height);
         Graphics painting;
         List<Shape> shapes = new List<Shape>();
-        tools t = tools.selection;
+        tools t = tools.brush;
         tools tool
         {
             get
@@ -1015,16 +1136,16 @@ namespace WindowsFormsApp66
             var scope = value;
             var minR = Selected.R - value;
             var minG = Selected.G - value;
-            var minB = Selected.B - value;         
+            var minB = Selected.B - value;
             var maxR = Selected.R + value;
             var maxG = Selected.G + value;
-            var maxB = Selected.B + value;           
+            var maxB = Selected.B + value;
             for (int x = 0; x < selectedImage.Width - 1; x++)
             {
                 for (int y = 0; y < selectedImage.Height - 1; y++)
                 {
-                    var color = selectedImage.GetPixel(x, y);                   
-                    if (color.R>minR)
+                    var color = selectedImage.GetPixel(x, y);
+                    if (color.R > minR)
                     {
                         if (color.B > minB)
                         {
@@ -1197,6 +1318,13 @@ namespace WindowsFormsApp66
                 }
             }
         }
+        public void ResizePoints()
+        {
+            points[0] = new Point(0, 0);
+            points[1] = new Point(0 + selectedImage.Width, 0);
+            points[2] = new Point(0, 0 + selectedImage.Height);
+            points[3] = new Point(0 + selectedImage.Width, 0 + selectedImage.Height);
+        }
         Point lastclick2;
         const int circleDiametr = 20;
         const int border = 3;
@@ -1282,7 +1410,7 @@ namespace WindowsFormsApp66
                 tool = tools.unselection;
                 SelectButton(unselection);
                 selectedRectangle = null;
-            }
+            }           
         }
         RectangleD valueRect;
         int buttonOpacity = 255;
@@ -1321,6 +1449,7 @@ namespace WindowsFormsApp66
                 }
                 y += height + 5;
             }
+            ResizePoints();
         }
         class lox
         {
@@ -1356,8 +1485,10 @@ namespace WindowsFormsApp66
         }
         bool minimize = false;
         bool maximize = false;
-        bool entered;        
+        bool entered;
         bool leavedButton = false;
+        bool left;
+        Point start;
         public void Save()
         {
             if (index < 0)
@@ -1374,7 +1505,7 @@ namespace WindowsFormsApp66
                 Form1.refresh();
             }
         }
-        bool needValue;        
+        bool needValue;
         public Form4()
         {
             InitializeComponent();
@@ -1397,6 +1528,11 @@ namespace WindowsFormsApp66
             Selected = Color.Black;
             GetPosition();
             Add();
+            points.Add(new Point());
+            points.Add(new Point());
+            points.Add(new Point());
+            points.Add(new Point());
+            ResizePoints();
             //new Form6().Show();
         }
 
@@ -1414,7 +1550,7 @@ namespace WindowsFormsApp66
             FillTransparecy(e.Graphics);
             painting.SmoothingMode = SmoothingMode.AntiAlias;
             PlaceByX();
-            PlaceByY();            
+            PlaceByY();
             e.Graphics.FillRectangle(new SolidBrush(Color.White), drawingSpace);
             e.Graphics.DrawImage(selectedImage, drawingSpace);
             xCord.Visualize(e.Graphics);
@@ -1449,6 +1585,27 @@ namespace WindowsFormsApp66
                 if (click1 || click2)
                 {
                     ResizeSelection();
+                    ResizePoints();
+                }
+                if (tool == tools.incline)
+                {
+                    if (e.Button == MouseButtons.Left)
+                    {
+                        var offset = e.Y - start.Y;
+                        if (left)
+                        {
+                            points[0] = new Point(points[0].X, points[0].Y + offset);
+                            points[2] = new Point(points[2].X, points[2].Y + offset);
+                        }
+                        else
+                        {
+                            points[1] = new Point(points[1].X, points[1].Y + offset);
+                            points[3] = new Point(points[3].X, points[3].Y + offset);
+                        }
+                        selectedImage = ResizeY(selectedImage, points.ToArray());
+                        drawingSpace = BoundingBox(points.ToArray());
+                        start = e.Location;
+                    }
                 }
                 lastclick2 = e.Location;
                 pictureBox1.Refresh();
@@ -1556,7 +1713,7 @@ namespace WindowsFormsApp66
                 scale *= 0.5;
                 ScaleShapes(0.5);
             }
-            else if(scale * 1.5<20000)
+            else if (scale * 1.5 < 20000)
             {
                 scale *= 1.5;
                 ScaleShapes(1.5);
@@ -1568,6 +1725,7 @@ namespace WindowsFormsApp66
             else
             {
                 ResizeWorkingSpace();
+                ResizePoints();
             }
             second = coolDown;
             cool = true;
@@ -1624,6 +1782,19 @@ namespace WindowsFormsApp66
                 Selected = GetColor(e.Location);
                 GetPosition();
                 pictureBox3.Refresh();
+            }
+            if(tool == tools.incline)
+            {
+                if (e.X < points[1].X / 2)
+                {
+                    left = true;
+                    start = e.Location;
+                }
+                else
+                {
+                    left = false;
+                    start = e.Location;
+                }
             }
         }
 
@@ -1701,14 +1872,14 @@ namespace WindowsFormsApp66
             var closeWidth = (double)exit.Width / exit.Height * ControlsHeihgt;
             if (lastBorderPoint.X > this.Width - closeWidth && !leaved)
             {
-                for(int x = 0;x< exit.Width;x++)
+                for (int x = 0; x < exit.Width; x++)
                 {
                     for (int y = 0; y < exit.Height; y++)
                     {
                         var color = exit.GetPixel(x, y);
-                        if(color.A>125)
+                        if (color.A > 125)
                         {
-                            exit.SetPixel(x, y,Color.White);
+                            exit.SetPixel(x, y, Color.White);
                         }
                     }
                 }
@@ -1736,7 +1907,7 @@ namespace WindowsFormsApp66
             Brush brush;
             brush = Brushes.Black;
             var maxWidth = Width - (int)closeWidth - (int)maximizeWidth - (int)minimizeWidth - (int)width;
-            e.Graphics.DrawString(caption, defaultFont, brush, new Rectangle((int)width, ControlsHeihgt / 2 - (int)measure.Height / 2, maxWidth, (int)measure.Height));           
+            e.Graphics.DrawString(caption, defaultFont, brush, new Rectangle((int)width, ControlsHeihgt / 2 - (int)measure.Height / 2, maxWidth, (int)measure.Height));
         }
 
         private void pictureBox4_MouseDown(object sender, MouseEventArgs e)
@@ -1750,7 +1921,7 @@ namespace WindowsFormsApp66
             if (e.X > this.Width - closeWidth)
             {
                 close = true;
-                animateDisactive = true;                
+                animateDisactive = true;
             }
             if (e.X > this.Width - closeWidth - maximizeWidth && e.X < this.Width - closeWidth)
             {
@@ -1761,10 +1932,10 @@ namespace WindowsFormsApp66
                 else
                 {
                     this.WindowState = FormWindowState.Maximized;
-                }               
+                }
             }
             if (e.X > this.Width - closeWidth - maximizeWidth - minimizeWidth && e.X < this.Width - closeWidth - maximizeWidth)
-            {                
+            {
                 minimize = true;
                 animateDisactive = true;
             }
@@ -1785,7 +1956,7 @@ namespace WindowsFormsApp66
             var maximizeWidth = (double)max.Width / max.Height * ControlsHeihgt;
             var closeWidth = (double)exit.Width / exit.Height * ControlsHeihgt;
             if (e.Button == MouseButtons.Left)
-            {                
+            {
                 if (resizePoint.X < 0)
                 {
                     resizePoint = e.Location;
@@ -1797,20 +1968,20 @@ namespace WindowsFormsApp66
                     this.Left = Cursor.Position.X - resizePoint.X;
                     Console.WriteLine(deltaX);
                     this.Top += deltaY;
-                }               
+                }
             }
             lastBorderPoint = e.Location;
             if (e.X > this.Width - closeWidth)
             {
-                if(leavedButton)
+                if (leavedButton)
                 {
                     entered = true;
                     leavedButton = false;
                     buttonOpacity = 0;
 
-                }                
+                }
             }
-            else if (e.X > this.Width - closeWidth - maximizeWidth && e.X < this.Width - closeWidth )
+            else if (e.X > this.Width - closeWidth - maximizeWidth && e.X < this.Width - closeWidth)
             {
                 if (leavedButton)
                 {
@@ -1833,7 +2004,7 @@ namespace WindowsFormsApp66
                 leavedButton = true;
                 entered = false;
                 ind++;
-                Console.WriteLine("leaved"+ ind);
+                Console.WriteLine("leaved" + ind);
             }
             pictureBox4.Refresh();
         }
@@ -1889,7 +2060,7 @@ namespace WindowsFormsApp66
 
         private void Form4_Activated(object sender, EventArgs e)
         {
-            pictureBox4.Refresh();           
+            pictureBox4.Refresh();
             maximize = true;
         }
 
@@ -1906,11 +2077,11 @@ namespace WindowsFormsApp66
 
         private void timer3_Tick(object sender, EventArgs e)
         {
-            if(close) maximize = false;
+            if (close) maximize = false;
             if (minimize) close = false;
-            if(entered)
+            if (entered)
             {
-                if(buttonOpacity<255)
+                if (buttonOpacity < 255)
                 {
                     buttonOpacity += 15;
                     pictureBox4.Refresh();
@@ -1929,16 +2100,16 @@ namespace WindowsFormsApp66
             else
             {
                 maximize = false;
-                this.Enabled = true;                
+                this.Enabled = true;
             }
-            if (opacity>0 && animateDisactive)
+            if (opacity > 0 && animateDisactive)
             {
                 opacity -= 5;
-                this.Opacity = opacity/100.0;
+                this.Opacity = opacity / 100.0;
                 this.Enabled = false;
-            }            
+            }
             else
-            {              
+            {
                 if (cl)
                 {
                     this.Close();
@@ -1947,8 +2118,8 @@ namespace WindowsFormsApp66
                 {
                     this.WindowState = FormWindowState.Minimized;
                     minimize = false;
-                }                             
-                animateDisactive = false;                                                    
+                }
+                animateDisactive = false;
                 this.Enabled = true;
             }
             //Console.WriteLine(cl);
